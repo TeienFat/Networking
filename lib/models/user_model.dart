@@ -1,0 +1,80 @@
+class Users {
+  String? userId;
+  String? userName;
+  String? email;
+  String? imageUrl;
+  bool? gender;
+  DateTime? birthday;
+  String? phone;
+  String? facebook;
+  String? zalo;
+  String? skype;
+  Map<String, dynamic>? otherInfo;
+  DateTime? createdAt;
+  DateTime? updateAt;
+  DateTime? deleteAt;
+  bool? isOnline;
+  List<String>? blockUsers;
+  String? token;
+
+  Users({
+    required this.userId,
+    required this.userName,
+    required this.email,
+    required this.imageUrl,
+    required this.gender,
+    required this.birthday,
+    required this.phone,
+    required this.facebook,
+    required this.zalo,
+    required this.skype,
+    required this.otherInfo,
+    required this.createdAt,
+    required this.updateAt,
+    required this.deleteAt,
+    required this.isOnline,
+    required this.blockUsers,
+    required this.token,
+  });
+
+  Users.fromMap(Map<String, dynamic> map) {
+    userId = map['userId'];
+    userName = map['userName'];
+    email = map['email'];
+    imageUrl = map['imageUrl'];
+    gender = map['gender'];
+    birthday = map['birthday'] != null ? DateTime.parse(map['birthday']) : null;
+    phone = map['phone'];
+    facebook = map['facebook'];
+    zalo = map['zalo'];
+    skype = map['skype'];
+    otherInfo = map['otherInfo'];
+    createdAt = DateTime.parse(map['createdAt']);
+    updateAt = map['updateAt'] != null ? DateTime.parse(map['updateAt']) : null;
+    deleteAt = map['deleteAt'] != null ? DateTime.parse(map['deleteAt']) : null;
+    isOnline = map['isOnline'];
+    blockUsers = List<String>.from(map['blockUsers']);
+    token = map['token'];
+  }
+  Map<String, dynamic> toMap() {
+    return ({
+      "userId": userId,
+      "userName": userName,
+      "email": email,
+      "imageUrl": imageUrl,
+      "gender": gender,
+      "birthday": birthday != null ? birthday!.toIso8601String() : null,
+      "phone": phone,
+      "facebook": facebook,
+      "zalo": zalo,
+      "skype": skype,
+      "otherInfo": otherInfo,
+      "createdAt": createdAt!.toIso8601String(),
+      "updateAt": updateAt != null ? updateAt!.toIso8601String() : null,
+      "deleteAt": deleteAt != null ? deleteAt!.toIso8601String() : null,
+      "isOnline": isOnline,
+      "blockUsers": blockUsers,
+      "token": token
+    });
+  }
+}
