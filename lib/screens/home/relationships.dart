@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:networking/apis/apis_user.dart';
 import 'package:networking/apis/apis_user_relationship.dart';
 import 'package:networking/helpers/helpers.dart';
 import 'package:networking/widgets/relationship_card.dart';
@@ -156,7 +157,6 @@ class _RelationshipScreenState extends State<RelationshipScreen> {
                 return Center(
                     child: Column(
                   children: [
-                    // Icon(Icons.arc)
                     Text("Không có mối quan hệ nào"),
                   ],
                 ));
@@ -172,7 +172,30 @@ class _RelationshipScreenState extends State<RelationshipScreen> {
                   itemBuilder: (context, index) {
                     return Column(
                       children: [
-                        RelationShipCard(users: _listMyRelationship[index]),
+                        FutureBuilder(
+                          future: APIsUser.getUserFromId(
+                              _listMyRelationship[index].myRelationShipId!),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(child: Text("Đang load"));
+                            }
+                            if (!snapshot.hasData) {
+                              return Center(
+                                  child: Column(
+                                children: [
+                                  Text("Mối quan hệ không tồn tại"),
+                                ],
+                              ));
+                            }
+                            if (snapshot.hasError) {
+                              return Center(child: Text("Có gì đó sai sai..."));
+                            }
+                            return RelationShipCard(
+                                userRelationship: _listMyRelationship[index],
+                                user: snapshot.data!);
+                          },
+                        ),
                         SizedBox(
                           height: 10.sp,
                         ),

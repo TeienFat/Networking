@@ -1,11 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:networking/screens/auth/auth.dart';
-import 'package:networking/screens/auth/forgot_password/reset_password.dart';
-import 'package:networking/screens/auth/verify_email.dart';
-import 'package:networking/screens/auth/waitting_auth.dart';
 import 'package:networking/screens/home/main_screen.dart';
 import 'package:networking/screens/splash/splash_screen.dart';
 import 'package:networking/screens/splash/welcome_screen.dart';
@@ -61,13 +57,9 @@ class MyApp extends StatelessWidget {
             //   backgroundColor: kColorScheme.primary,
             //   foregroundColor: kColorScheme.primaryContainer,
             // ),
-            // cardTheme: const CardTheme().copyWith(
-            //   color: kColorScheme.secondaryContainer,
-            //   margin: const EdgeInsets.symmetric(
-            //     horizontal: 16,
-            //     vertical: 8,
-            //   ),
-            // ),
+            cardTheme: const CardTheme()
+                .copyWith(elevation: 2.sp, color: Colors.white),
+
             elevatedButtonTheme: ElevatedButtonThemeData(
               style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange[600],

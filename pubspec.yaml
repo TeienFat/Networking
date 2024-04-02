@@ -52,6 +52,8 @@ dependencies:
   smooth_page_indicator: ^1.1.0
   # Sử dụng các phông chữ của Google
   google_fonts: ^4.0.4
+  # Icon đẹp
+  font_awesome_flutter: ^10.7.0
   # Giúp giao diện phù hợp với các màn hình
   flutter_screenutil: ^5.9.0
   # Hiện thị thông báo
@@ -60,6 +62,12 @@ dependencies:
   uuid: ^4.2.1
   # Chuyển tiếng việt sang tiếng anh
   tiengviet: ^1.0.0
+  # Định dạng ngày tháng
+  intl: ^0.19.0
+  # lưu trữ ảnh
+  path_provider: ^2.1.2
+  #mở app khác
+  url_launcher: ^6.2.5
 
 
 dev_dependencies:
@@ -95,15 +103,9 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/images/logo.png
-    - assets/images/wel-1.png
-    - assets/images/wel-2.png
-    - assets/images/wel-3.png
-    - assets/images/wel-4.png
-    - assets/images/user.png
-    - assets/images/v-email.png
-    - assets/images/forgot.png
-    - assets/images/reset-password.png
+
+    - assets/images/
+    - assets/data.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
