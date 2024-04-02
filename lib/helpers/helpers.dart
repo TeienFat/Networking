@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:networking/apis/apis_relationships.dart';
+import 'package:networking/models/relationship_model.dart';
 
 Widget searchBar(Function filter) {
   return Container(
@@ -91,6 +94,28 @@ extension DateTimeExtension on DateTime {
   }
 }
 
+String calculateTimeRange(DateTime startDate) {
+  DateTime currentDate = DateTime.now();
+  Duration timeRange = currentDate.difference(startDate);
+
+  if (timeRange.inDays == 0) {
+    return 'Hôm nay';
+  } else if (timeRange.inDays == 1) {
+    return 'Hôm qua';
+  } else if (timeRange.inDays < 7) {
+    return '${timeRange.inDays} ngày trước';
+  } else if (timeRange.inDays < 30) {
+    int weeks = (timeRange.inDays / 7).floor();
+    return '$weeks tuần trước';
+  } else if (timeRange.inDays < 365) {
+    int months = (timeRange.inDays / 30).floor();
+    return '$months tháng trước';
+  } else {
+    int years = (timeRange.inDays / 365).floor();
+    return '$years năm trước';
+  }
+}
+
 void toast(String content) {
   Fluttertoast.showToast(
       msg: content,
@@ -166,4 +191,112 @@ void showSnackbar(
   );
   ScaffoldMessenger.of(context).clearSnackBars();
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+}
+
+FaIcon showRelationshipTypeIcon(int type, double iconSize) {
+  switch (type) {
+    case 0:
+      return FaIcon(
+        FontAwesomeIcons.houseUser,
+        size: iconSize,
+      );
+    case 1:
+      return FaIcon(
+        FontAwesomeIcons.heart,
+        size: iconSize,
+      );
+
+    case 2:
+      return FaIcon(
+        FontAwesomeIcons.briefcase,
+        size: iconSize,
+      );
+
+    case 3:
+      return FaIcon(
+        FontAwesomeIcons.userGroup,
+        size: iconSize,
+      );
+
+    default:
+      return FaIcon(
+        FontAwesomeIcons.bookOpenReader,
+        size: iconSize,
+      );
+  }
+}
+
+FaIcon showAddressTypeIcon(int type, double iconSize) {
+  switch (type) {
+    case 0:
+      return FaIcon(
+        FontAwesomeIcons.house,
+        size: iconSize,
+      );
+    case 1:
+      return FaIcon(
+        FontAwesomeIcons.building,
+        size: iconSize,
+      );
+    case 2:
+      return FaIcon(
+        FontAwesomeIcons.school,
+        size: iconSize,
+      );
+    default:
+      return FaIcon(
+        FontAwesomeIcons.mapSigns,
+        size: iconSize,
+      );
+  }
+}
+
+String showAddressTypeText(int type) {
+  switch (type) {
+    case 0:
+      return "Nhà";
+    case 1:
+      return "Công ty";
+    case 2:
+      return "Trường học";
+    default:
+      return "Khác";
+  }
+}
+
+Future<List<Widget>> getRowRelationship(List<Relationship> relationships,
+    int num, double fontSize, double iconSize) async {
+  List<Widget> list = [];
+  FaIcon icon;
+  String name;
+  int numCheck = 0;
+  for (var element in relationships) {
+    if (numCheck != num) {
+      icon = showRelationshipTypeIcon(element.type!, iconSize);
+      Relationship? re =
+          await APIsRelationship.getRelationshipFromId(element.relationshipId!);
+      if (re != null) {
+        name = re.name!;
+      } else {
+        name = element.relationshipId!;
+      }
+      list.add(Row(
+        children: [
+          icon,
+          SizedBox(
+            width: 5.sp,
+          ),
+          Text(
+            name,
+            style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.normal),
+          ),
+          SizedBox(
+            width: 15.sp,
+          ),
+        ],
+      ));
+      numCheck++;
+    }
+  }
+  return list;
 }

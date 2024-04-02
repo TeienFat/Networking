@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:networking/apis/apis_auth.dart';
+import 'package:networking/apis/apis_relationships.dart';
 import 'package:networking/apis/apis_user.dart';
 import 'package:networking/apis/apis_user_relationship.dart';
 import 'package:networking/screens/home/chat_home.dart';
 import 'package:networking/screens/home/my_profile.dart';
 import 'package:networking/screens/home/relationships.dart';
 import 'package:networking/screens/home/take_care_list.dart';
+import 'package:networking/screens/relationships/new/new_relationship.dart';
 import 'package:networking/widgets/bottom_navigartion_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -48,14 +50,16 @@ class _MainScreenState extends State<MainScreen> {
   void onTapAdd(int index) async {
     switch (index) {
       case 0:
+        // APIsUsRe.removeTable('usRes');
         // APIsUser.getAllUser();
         // final meId = await APIsAuth.getCurrentUserId();
         // if (meId != null) {
-        //   APIsUsRe.createNewUsRe('2af962fa-e2e6-4d69-80c4-d142621be197',
-        //       '796b5c38-806b-4d94-b11e-3d1cb3b06735');
+        //   APIsUsRe.createNewUsRe(meId, '98648d8b-c35f-45b7-b9a6-df4824937a21');
         // }
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => NewRelationship(),
+        ));
         // APIsUsRe.getAllMyRelationship();
-
         break;
       case 1:
         print("B");

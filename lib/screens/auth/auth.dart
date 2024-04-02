@@ -72,7 +72,8 @@ class _AuthScreenState extends State<AuthScreen> {
       if (!already) {
         APIsAuth.createNewAccount(_enteredLoginName, _enteredPassword,
             _enteredQuestion, _enteredAnswer, _userId);
-        APIsUser.createNewUser(_userId, _enteredUserName);
+        APIsUser.createNewUser(_userId, _enteredUserName, '', '', false, null,
+            '', '', {}, {}, {}, [], {});
 
         showSnackbar(context, "Đăng kí tài khoản thành công",
             Duration(seconds: 2), true);

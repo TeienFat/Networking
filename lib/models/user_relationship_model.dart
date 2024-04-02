@@ -1,9 +1,12 @@
+import 'package:networking/models/address_model.dart';
+import 'package:networking/models/relationship_model.dart';
+
 class UserRelationship {
   String? usReId;
   String? meId;
   String? myRelationShipId;
   bool? special;
-  List<dynamic>? relationships;
+  List<Relationship>? relationships;
   List<dynamic>? notification;
   int? time_of_care;
   DateTime? createdAt;
@@ -28,7 +31,7 @@ class UserRelationship {
     meId = map['meId'];
     myRelationShipId = map['myRelationShipId'];
     special = map['special'];
-    relationships = map['relationships'];
+    relationships = Relationship.decode(map['relationships']);
     notification = map['notification'];
     time_of_care = map['time_of_care'];
     createdAt = DateTime.parse(map['createdAt']);
@@ -41,7 +44,7 @@ class UserRelationship {
       "meId": meId,
       "myRelationShipId": myRelationShipId,
       "special": special,
-      "relationships": relationships,
+      "relationships": Relationship.encode(relationships!),
       "notification": notification,
       "time_of_care": time_of_care,
       "createdAt": createdAt!.toIso8601String(),

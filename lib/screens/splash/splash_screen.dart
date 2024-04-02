@@ -20,21 +20,24 @@ class _SplashScreenState extends State<SplashScreen>
 
   checkFirstTime() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool firstTime = prefs.getBool('first_time') ?? false;
-    bool logged = prefs.getBool('logged') ?? false;
+    bool firstTime = prefs.getBool('first_time') ?? true;
     var _duration = new Duration(seconds: 3);
 
     if (!firstTime) {
       // not first time
-      return Timer(_duration, goToNextScreen(false, logged));
+      return Timer(_duration, goToNextScreen(false));
     } else {
       // first time
       prefs.setBool('first_time', false);
-      return new Timer(_duration, goToNextScreen(true, logged));
+      return new Timer(_duration, goToNextScreen(true));
     }
   }
 
-  goToNextScreen(bool firstTime, bool logged) {
+  goToNextScreen(bool firstTime) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    bool logged = prefs.getBool('logged') ?? false;
+
     if (firstTime) {
       Navigator.of(context).pushReplacementNamed("/Welcome");
     } else {

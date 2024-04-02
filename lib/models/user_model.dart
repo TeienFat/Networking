@@ -1,3 +1,5 @@
+import 'package:networking/models/address_model.dart';
+
 class Users {
   String? userId;
   String? userName;
@@ -5,10 +7,12 @@ class Users {
   String? imageUrl;
   bool? gender;
   DateTime? birthday;
+  String? hobby;
   String? phone;
-  String? facebook;
-  String? zalo;
-  String? skype;
+  Map<String, dynamic>? facebook;
+  Map<String, dynamic>? zalo;
+  Map<String, dynamic>? skype;
+  List<Address>? address;
   Map<String, dynamic>? otherInfo;
   DateTime? createdAt;
   DateTime? updateAt;
@@ -24,10 +28,12 @@ class Users {
     required this.imageUrl,
     required this.gender,
     required this.birthday,
+    required this.hobby,
     required this.phone,
     required this.facebook,
     required this.zalo,
     required this.skype,
+    required this.address,
     required this.otherInfo,
     required this.createdAt,
     required this.updateAt,
@@ -44,10 +50,12 @@ class Users {
     imageUrl = map['imageUrl'];
     gender = map['gender'];
     birthday = map['birthday'] != null ? DateTime.parse(map['birthday']) : null;
+    hobby = map['hobby'];
     phone = map['phone'];
     facebook = map['facebook'];
     zalo = map['zalo'];
     skype = map['skype'];
+    address = map['address'] != null ? Address.decode(map['address']) : null;
     otherInfo = map['otherInfo'];
     createdAt = DateTime.parse(map['createdAt']);
     updateAt = map['updateAt'] != null ? DateTime.parse(map['updateAt']) : null;
@@ -64,10 +72,12 @@ class Users {
       "imageUrl": imageUrl,
       "gender": gender,
       "birthday": birthday != null ? birthday!.toIso8601String() : null,
+      "hobby": hobby,
       "phone": phone,
       "facebook": facebook,
       "zalo": zalo,
       "skype": skype,
+      "address": Address.encode(address!),
       "otherInfo": otherInfo,
       "createdAt": createdAt!.toIso8601String(),
       "updateAt": updateAt != null ? updateAt!.toIso8601String() : null,
