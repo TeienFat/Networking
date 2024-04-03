@@ -53,7 +53,8 @@ class _AuthScreenState extends State<AuthScreen> {
       final validLogin =
           await APIsAuth.login(_enteredLoginName, _enteredPassword);
       if (validLogin) {
-        Navigator.of(context).pushReplacementNamed("/Main");
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil("/Main", (route) => false);
       } else {
         showSnackbar(
           context,
@@ -78,7 +79,8 @@ class _AuthScreenState extends State<AuthScreen> {
         showSnackbar(context, "Đăng kí tài khoản thành công",
             Duration(seconds: 2), true);
 
-        Navigator.of(context).pushReplacementNamed("/Main");
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil("/Main", (route) => false);
       } else {
         showSnackbar(context, "Tên đăng nhập đã được sử dụng",
             Duration(seconds: 2), false);

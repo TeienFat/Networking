@@ -11,8 +11,8 @@ class ProfileScreen extends StatelessWidget {
         IconButton(
           onPressed: () {
             APIsAuth.logout();
-            Navigator.of(context).pushReplacementNamed("/Auth");
-            // FirebaseAuth.instance.signOut();
+            Navigator.of(context).pushNamedAndRemoveUntil(
+                "/Auth", (route) => false); // FirebaseAuth.instance.signOut();
             // APIs.updateStatus(false);
           },
           icon: Icon(Icons.logout_rounded),

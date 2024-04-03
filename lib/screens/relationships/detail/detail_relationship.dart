@@ -1,13 +1,10 @@
-import 'dart:io';
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:networking/helpers/helpers.dart';
 import 'package:networking/models/user_model.dart';
 import 'package:networking/models/user_relationship_model.dart';
 import 'package:networking/screens/relationships/detail/custom_appbar.dart';
 import 'package:networking/screens/relationships/detail/custom_button_switch.dart';
+import 'package:networking/screens/relationships/detail/list_info.dart';
 
 class DetailRelationship extends StatefulWidget {
   const DetailRelationship(
@@ -20,6 +17,15 @@ class DetailRelationship extends StatefulWidget {
 }
 
 class _DetailRelationshipState extends State<DetailRelationship> {
+  bool _page = true;
+  void _onChangePage(bool page) {
+    setState(() {
+      _page = page;
+    });
+  }
+
+  void _onRemoveRelationship() {}
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -29,37 +35,50 @@ class _DetailRelationshipState extends State<DetailRelationship> {
           SliverPersistentHeader(
             pinned: true,
             delegate: MySliverAppBar(
-                expandedHeight: 200.0,
+                expandedHeight: ScreenUtil().screenHeight / 2.4,
                 user: widget.user,
                 userRelationship: widget.userRelationship),
           ),
           SliverPersistentHeader(
             pinned: true,
             delegate: MySliverButtonSwicth(
-                expandedHeight: 200.0,
                 user: widget.user,
-                userRelationship: widget.userRelationship),
+                userRelationship: widget.userRelationship,
+                onChangePage: _onChangePage),
           ),
           SliverList(
             delegate: SliverChildListDelegate([
-              const SizedBox(
-                height: 120,
-              ),
-              listCardWidget(text1: 'Full Name:', text2: 'George John Carter'),
-              listCardWidget(text1: 'Father\'s Name:', text2: 'John Carter'),
-              listCardWidget(text1: 'Gender:', text2: 'Male'),
-              listCardWidget(text1: 'Marital Status:', text2: 'Single'),
-              listCardWidget(text1: 'Email:', text2: 'jane123@123.com'),
-              listCardWidget(text1: 'Username:', text2: 'misty123'),
-              listCardWidget(text1: 'Phone:', text2: '0987654321'),
-              listCardWidget(text1: 'Country', text2: 'India'),
-              listCardWidget(text1: 'City', text2: 'Hyderabad'),
-              listCardWidget(text1: 'Pincode:', text2: '500014'),
-              listCardWidget(text1: 'Company:', text2: 'All Shakes'),
-              listCardWidget(text1: 'Website:', text2: 'allshakes.com'),
-              listCardWidget(text1: 'Position', text2: 'Manager'),
-              listCardWidget(text1: 'LinkedIn Id:', text2: 'misty123'),
-              listCardWidget(text1: 'Interest:', text2: 'Swimming,Cycling'),
+              _page
+                  ? Padding(
+                      padding: EdgeInsets.all(10.sp),
+                      child: ListInfo(user: widget.user),
+                    )
+                  : Column(
+                      children: [
+                        listCardWidget(
+                            text1: 'ĐÂY LÀ MỤC CHĂM SÓC:', text2: 'SỐ 1'),
+                        listCardWidget(
+                            text1: 'ĐÂY LÀ MỤC CHĂM SÓC:', text2: 'SỐ 2'),
+                        listCardWidget(
+                            text1: 'ĐÂY LÀ MỤC CHĂM SÓC:', text2: 'SỐ 3'),
+                        listCardWidget(
+                            text1: 'ĐÂY LÀ MỤC CHĂM SÓC:', text2: 'SỐ 4'),
+                        listCardWidget(
+                            text1: 'ĐÂY LÀ MỤC CHĂM SÓC:', text2: 'SỐ 5'),
+                        listCardWidget(
+                            text1: 'ĐÂY LÀ MỤC CHĂM SÓC:', text2: 'SỐ 6'),
+                        listCardWidget(
+                            text1: 'ĐÂY LÀ MỤC CHĂM SÓC:', text2: 'SỐ 7'),
+                        listCardWidget(
+                            text1: 'ĐÂY LÀ MỤC CHĂM SÓC:', text2: 'SỐ 8'),
+                        listCardWidget(
+                            text1: 'ĐÂY LÀ MỤC CHĂM SÓC:', text2: 'SỐ 9'),
+                        listCardWidget(
+                            text1: 'ĐÂY LÀ MỤC CHĂM SÓC:', text2: 'SỐ 10'),
+                        listCardWidget(
+                            text1: 'ĐÂY LÀ MỤC CHĂM SÓC:', text2: 'SỐ 11'),
+                      ],
+                    ),
             ]),
           )
         ],

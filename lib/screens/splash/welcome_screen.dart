@@ -170,7 +170,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                               backgroundColor: kColorScheme.primary,
                               foregroundColor: kColorScheme.onPrimary),
                           onPressed: () {
-                            Navigator.of(context).pushReplacementNamed("/Auth");
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                                "/Auth", (route) => false);
                           },
                           child: Text(
                             "Bắt đầu ngay",

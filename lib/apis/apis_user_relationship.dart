@@ -60,7 +60,21 @@ class APIsUsRe {
         .toList() // lọc ra những relationship của mình
         .map((e) => UserRelationship.fromMap(jsonDecode(e)))
         .toList();
-    // print(listMyRelationship);
+
+    print(listMyRelationship.length);
     return listMyRelationship;
+  }
+
+  static Future<void> removeUsRe(String usReId) async {
+    final SharedPreferences _prefs = await prefs;
+    List<String> listUsReRead = await _prefs.getStringList('usRes') ?? [];
+    for (var usRe in listUsReRead) {
+      UserRelationship uR = UserRelationship.fromMap(jsonDecode(usRe));
+      if ((uR.usReId!.length == usReId.length) && (uR.usReId == usReId)) {
+        listUsReRead.remove(usRe);
+        await _prefs.setStringList('usRes', listUsReRead);
+        return;
+      }
+    }
   }
 }

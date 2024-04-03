@@ -79,9 +79,9 @@ class APIsUser {
     List<String> listUser = await _prefs.getStringList('users') ?? [];
     for (var element in listUser) {
       Users u = Users.fromMap(jsonDecode(element));
-      print(u.userId);
+      print(u.userName);
     }
-    print(listUser);
+    print(listUser.length);
   }
 
   static Future<Users?> getUserFromId(String userId) async {
@@ -104,5 +104,20 @@ class APIsUser {
     // ).toList();
     for (var user in listUserRead) {}
     return null;
+  }
+
+  static Future<void> removeUser(String userId) async {
+    final SharedPreferences _prefs = await prefs;
+    List<String> listUserRead = await _prefs.getStringList('users') ?? [];
+    print(listUserRead);
+    for (var user in listUserRead) {
+      Users u = Users.fromMap(jsonDecode(user));
+      if ((u.userId!.length == userId.length) && (u.userId == userId)) {
+        listUserRead.remove(user);
+        await _prefs.setStringList('users', listUserRead);
+
+        return;
+      }
+    }
   }
 }

@@ -99,7 +99,8 @@ class _NewRelationshipState extends State<NewRelationship> {
               _otherInfo);
         }
         APIsUsRe.createNewUsRe(meId!, userId, _listRelationship);
-        Navigator.of(context).pop();
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil("/Main", (route) => false);
       } else {
         showSnackbar(context, "Vui lòng thiết lập mối quan hệ",
             Duration(seconds: 3), false);
@@ -202,7 +203,7 @@ class _NewRelationshipState extends State<NewRelationship> {
               ],
             ),
           ),
-          _hr,
+          hr,
         ],
       ));
     });
@@ -238,11 +239,6 @@ class _NewRelationshipState extends State<NewRelationship> {
       }
     }
   }
-
-  Widget _hr = Divider(
-    color: Colors.grey[300],
-    thickness: 1.5.sp,
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -304,11 +300,17 @@ class _NewRelationshipState extends State<NewRelationship> {
                               border: InputBorder.none,
                               hintText: "Họ tên",
                             ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Họ tên không được để trống.";
+                              }
+                              return null;
+                            },
                             onSaved: (value) {
                               _enteredUserName = value!.trim();
                             },
                           ),
-                          _hr,
+                          hr,
                           Column(
                             children: _listRelationship.map((e) {
                               return Column(
@@ -356,7 +358,7 @@ class _NewRelationshipState extends State<NewRelationship> {
                                       ),
                                     ],
                                   ),
-                                  _hr,
+                                  hr,
                                 ],
                               );
                             }).toList(),
@@ -472,7 +474,7 @@ class _NewRelationshipState extends State<NewRelationship> {
                                 ),
                               ],
                             ),
-                            _hr,
+                            hr,
                             Column(
                               children: _listAddress.map((e) {
                                 return Column(
@@ -560,7 +562,7 @@ class _NewRelationshipState extends State<NewRelationship> {
                                         ),
                                       ],
                                     ),
-                                    _hr,
+                                    hr,
                                   ],
                                 );
                               }).toList(),
@@ -602,7 +604,7 @@ class _NewRelationshipState extends State<NewRelationship> {
                                 ],
                               ),
                             ),
-                            _hr,
+                            hr,
                             Row(
                               children: [
                                 SizedBox(
@@ -622,7 +624,7 @@ class _NewRelationshipState extends State<NewRelationship> {
                                 ),
                               ],
                             ),
-                            _hr,
+                            hr,
                             Row(
                               children: [
                                 SizedBox(
@@ -651,7 +653,7 @@ class _NewRelationshipState extends State<NewRelationship> {
                                 ),
                               ],
                             ),
-                            _hr,
+                            hr,
                             Row(
                               children: [
                                 SizedBox(
@@ -683,7 +685,7 @@ class _NewRelationshipState extends State<NewRelationship> {
                                 ),
                               ],
                             ),
-                            _hr,
+                            hr,
                             Row(
                               children: [
                                 SizedBox(
@@ -704,7 +706,7 @@ class _NewRelationshipState extends State<NewRelationship> {
                                                       "Tên tài khoản Facebook",
                                                 ),
                                               ),
-                                              _hr,
+                                              hr,
                                               TextFormField(
                                                 controller: _enteredFBLink,
                                                 decoration: InputDecoration(
@@ -753,7 +755,7 @@ class _NewRelationshipState extends State<NewRelationship> {
                                     : SizedBox(),
                               ],
                             ),
-                            _hr,
+                            hr,
                             Row(
                               children: [
                                 SizedBox(
@@ -773,7 +775,7 @@ class _NewRelationshipState extends State<NewRelationship> {
                                 ),
                               ],
                             ),
-                            _hr,
+                            hr,
                             Row(
                               children: [
                                 SizedBox(
@@ -851,7 +853,7 @@ class _NewRelationshipState extends State<NewRelationship> {
                                                       hintText: "Tiêu đề",
                                                     ),
                                                   ),
-                                                  _hr,
+                                                  hr,
                                                   TextFormField(
                                                     controller: _enteredContent,
                                                     decoration: InputDecoration(
@@ -864,7 +866,7 @@ class _NewRelationshipState extends State<NewRelationship> {
                                             ),
                                           ],
                                         ),
-                                        _hr,
+                                        hr,
                                       ],
                                     )
                                   : SizedBox(),
