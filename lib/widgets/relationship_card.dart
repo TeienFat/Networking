@@ -2,12 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:networking/apis/apis_relationships.dart';
 import 'package:networking/helpers/helpers.dart';
-import 'package:networking/models/relationship_model.dart';
 import 'package:networking/models/user_model.dart';
 import 'package:networking/models/user_relationship_model.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:networking/screens/relationships/detail/detail_relationship.dart';
 
 class RelationShipCard extends StatefulWidget {
@@ -34,7 +31,7 @@ class _RelationShipCardState extends State<RelationShipCard> {
         decoration: BoxDecoration(
             color: Colors.purple[50],
             borderRadius: BorderRadius.circular(5.sp)),
-        padding: EdgeInsets.all(10.sp),
+        padding: EdgeInsets.symmetric(vertical: 10.sp, horizontal: 5.sp),
         child: Row(
           children: [
             CircleAvatar(
@@ -62,9 +59,6 @@ class _RelationShipCardState extends State<RelationShipCard> {
                   future: getRowRelationship(
                       widget.userRelationship.relationships!, 2, 12.sp, 12.sp),
                   builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: Text("Đang load"));
-                    }
                     if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return Center(
                           child: Column(

@@ -2,9 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:networking/helpers/helpers.dart';
 import 'package:networking/models/user_model.dart';
 import 'package:networking/models/user_relationship_model.dart';
+import 'package:networking/widgets/popup_menu_detail_relationship.dart';
+
+enum Menu { preview, share, getLink, remove, download }
 
 class MySliverAppBar extends SliverPersistentHeaderDelegate {
   final double expandedHeight;
@@ -18,38 +22,58 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
+    double valueOpacityShow = (shrinkOffset / expandedHeight);
+    if (shrinkOffset <= 20) {
+      valueOpacityShow = (shrinkOffset / expandedHeight);
+    } else {
+      valueOpacityShow = (shrinkOffset / expandedHeight) + 0.25;
+    }
+
+    if (valueOpacityShow > 1.0) valueOpacityShow = 1.0;
+    double valueOpacityHide;
+    if (shrinkOffset <= 20) {
+      valueOpacityHide = 1 - (shrinkOffset / expandedHeight);
+    } else {
+      valueOpacityHide = 1 - ((shrinkOffset / expandedHeight) + 0.4);
+    }
+
+    if (valueOpacityHide < 0.0) valueOpacityHide = 0.0;
     return Stack(
       clipBehavior: Clip.none,
       children: [
         Container(
+          height: 180,
           alignment: Alignment.centerLeft,
           color: Colors.purple[50],
-          child: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(
-              Icons.arrow_back_ios,
-              color: Colors.black,
+          child: Stack(children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: const Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.black,
+                ),
+              ),
             ),
-          ),
-        ),
-        Container(
-          alignment: Alignment.centerRight,
-          child: IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.more_vert,
-              color: Colors.black,
+            Align(
+              alignment: Alignment.centerRight,
+              child: PopupMenuDetailRelationship(
+                user: user,
+                userRelationship: userRelationship,
+              ),
             ),
-          ),
+          ]),
         ),
+        Container(),
         Positioned(
           left: MediaQuery.of(context).size.width / 7,
           child: Opacity(
-            opacity: shrinkOffset / expandedHeight,
+            opacity: valueOpacityShow,
             child: Padding(
-              padding: EdgeInsets.only(top: 10.sp),
+              padding: EdgeInsets.only(top: 20.sp),
               child: Row(children: [
                 Container(
                   decoration: BoxDecoration(
@@ -76,6 +100,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                       Text(
                         user.userName!,
                         style: TextStyle(fontSize: 16.sp),
+                        overflow: TextOverflow.ellipsis,
                       ),
                       SizedBox(
                         height: 5.sp,
@@ -114,23 +139,106 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
             ),
           ),
         ),
-        Positioned(
-          top: expandedHeight / 2.5 - shrinkOffset,
-          left: MediaQuery.of(context).size.width / 3.35,
-          child: Opacity(
-            opacity: (1 - shrinkOffset / expandedHeight),
-            child: Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(75.sp),
-                  border: Border.all(color: Colors.white, width: 3.sp)),
-              child: CircleAvatar(
-                backgroundColor: Colors.grey[100],
-                backgroundImage: user.imageUrl != ''
-                    ? FileImage(
-                        File(user.imageUrl!),
-                      ) as ImageProvider
-                    : AssetImage('assets/images/user.png'),
-                radius: 70.sp,
+        Positioned.fill(
+          top: expandedHeight / 4.5 - shrinkOffset,
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: Opacity(
+              opacity: valueOpacityHide,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(75.sp),
+                        border: Border.all(color: Colors.white, width: 3.sp)),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.grey[100],
+                      backgroundImage: user.imageUrl != ''
+                          ? FileImage(
+                              File(user.imageUrl!),
+                            ) as ImageProvider
+                          : AssetImage('assets/images/user.png'),
+                      radius: 70.sp,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10.sp,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10.sp),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 10.sp),
+                      decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(5.sp),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                              offset: Offset(0, 5),
+                            ),
+                          ]),
+                      child: Column(
+                        children: [
+                          Text(
+                            user.userName!,
+                            style: TextStyle(
+                                fontSize: 18.sp, fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 5.sp,
+                          ),
+                          FutureBuilder(
+                            future: getRowRelationship(
+                                userRelationship.relationships!,
+                                2,
+                                14.sp,
+                                12.sp),
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                return Center(
+                                    child: Column(
+                                  children: [
+                                    Text(
+                                      "Chưa thiết lập mối quan hệ",
+                                      style: TextStyle(fontSize: 12.sp),
+                                    ),
+                                  ],
+                                ));
+                              }
+                              if (snapshot.hasError) {
+                                return Center(
+                                    child: Text(
+                                  "Có gì đó sai sai...",
+                                  style: TextStyle(fontSize: 12.sp),
+                                ));
+                              }
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: snapshot.data!,
+                              );
+                            },
+                          ),
+                          SizedBox(
+                            height: 5.sp,
+                          ),
+                          Text(
+                            "Đã thêm vào " +
+                                DateFormat('dd/MM/yyyy')
+                                    .format(userRelationship.createdAt!),
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -143,7 +251,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
   double get maxExtent => expandedHeight;
 
   @override
-  double get minExtent => 70.sp;
+  double get minExtent => 90.sp;
 
   @override
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => true;

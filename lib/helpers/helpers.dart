@@ -264,6 +264,11 @@ String showAddressTypeText(int type) {
   }
 }
 
+Widget hr = Divider(
+  color: Colors.grey[300],
+  thickness: 1.5.sp,
+);
+
 Future<List<Widget>> getRowRelationship(List<Relationship> relationships,
     int num, double fontSize, double iconSize) async {
   List<Widget> list = [];

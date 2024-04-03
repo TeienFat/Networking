@@ -106,7 +106,7 @@ class _RelationshipScreenState extends State<RelationshipScreen> {
       ),
     ];
     return Padding(
-      padding: EdgeInsets.all(10.sp),
+      padding: EdgeInsets.all(5.sp),
       child: Column(
         children: [
           SizedBox(
@@ -150,9 +150,6 @@ class _RelationshipScreenState extends State<RelationshipScreen> {
           FutureBuilder(
             future: APIsUsRe.getAllMyRelationship(),
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: Text("Đang load"));
-              }
               if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return Center(
                     child: Column(
@@ -176,10 +173,6 @@ class _RelationshipScreenState extends State<RelationshipScreen> {
                           future: APIsUser.getUserFromId(
                               _listMyRelationship[index].myRelationShipId!),
                           builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return Center(child: Text("Đang load"));
-                            }
                             if (!snapshot.hasData) {
                               return Center(
                                   child: Column(
