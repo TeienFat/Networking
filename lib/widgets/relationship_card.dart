@@ -55,25 +55,9 @@ class _RelationShipCardState extends State<RelationShipCard> {
                 SizedBox(
                   height: 5.sp,
                 ),
-                FutureBuilder(
-                  future: getRowRelationship(
+                Row(
+                  children: getRowRelationship(
                       widget.userRelationship.relationships!, 2, 12.sp, 12.sp),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Center(
-                          child: Column(
-                        children: [
-                          Text("Chưa thiết lập mối quan hệ"),
-                        ],
-                      ));
-                    }
-                    if (snapshot.hasError) {
-                      return Center(child: Text("Có gì đó sai sai..."));
-                    }
-                    return Row(
-                      children: snapshot.data!,
-                    );
-                  },
                 ),
                 SizedBox(
                   height: 5.sp,
@@ -90,6 +74,14 @@ class _RelationShipCardState extends State<RelationShipCard> {
                         Icons.star,
                         color: Colors.yellow[700],
                         size: 35.sp,
+                        shadows: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: Offset(3, 3),
+                          ),
+                        ],
                       )
                     : SizedBox(),
                 SizedBox(

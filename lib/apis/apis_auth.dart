@@ -93,9 +93,10 @@ class APIsAuth {
   static Future<bool> login(String loginName, String password) async {
     final SharedPreferences _prefs = await prefs;
     List<String> listAccRead = await _prefs.getStringList('accounts') ?? [];
-    List<Account> listAccParse =
-        listAccRead.map((e) => Account.fromMap(jsonDecode(e))).toList();
-    for (Account acc in listAccParse) {
+    // List<Account> listAccParse =
+    //     listAccRead.map((e) => Account.fromMap(jsonDecode(e))).toList();
+    for (var account in listAccRead) {
+      Account acc = Account.fromMap(jsonDecode(account));
       if ((acc.loginName!.length == loginName.length) &&
           (acc.loginName == loginName) &&
           (acc.password!.length == password.length) &&

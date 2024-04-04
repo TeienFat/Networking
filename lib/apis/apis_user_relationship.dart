@@ -65,6 +65,27 @@ class APIsUsRe {
     return listMyRelationship;
   }
 
+  static Future<void> updateUsRe(
+    String usReId,
+    bool special,
+    List<Relationship> relationships,
+  ) async {
+    final SharedPreferences _prefs = await prefs;
+    List<String> listUsReRead = await _prefs.getStringList('usRes') ?? [];
+    for (var usRe in listUsReRead) {
+      UserRelationship uR = UserRelationship.fromMap(jsonDecode(usRe));
+      if ((uR.usReId!.length == usReId.length) && (uR.usReId == usReId)) {
+        uR.special = special;
+        uR.relationships = relationships;
+        uR.updateAt = DateTime.now();
+        listUsReRead.remove(usRe);
+        listUsReRead.add(jsonEncode(uR.toMap()));
+        await _prefs.setStringList('usRes', listUsReRead);
+        return;
+      }
+    }
+  }
+
   static Future<void> removeUsRe(String usReId) async {
     final SharedPreferences _prefs = await prefs;
     List<String> listUsReRead = await _prefs.getStringList('usRes') ?? [];

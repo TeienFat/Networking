@@ -1,4 +1,3 @@
-import 'package:networking/models/address_model.dart';
 import 'package:networking/models/relationship_model.dart';
 
 class UserRelationship {

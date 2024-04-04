@@ -94,16 +94,45 @@ class APIsUser {
     return null;
   }
 
-  static Future<Users?> updateUser() async {
+  static Future<void> updateUser(
+    String userId,
+    String userName,
+    String email,
+    String imageUrl,
+    bool gender,
+    DateTime? birthday,
+    String hobby,
+    String phone,
+    Map<String, String> facebook,
+    Map<String, String> zalo,
+    Map<String, String> skype,
+    List<Address> address,
+    Map<String, dynamic> otherInfo,
+  ) async {
     final SharedPreferences _prefs = await prefs;
     List<String> listUserRead = await _prefs.getStringList('users') ?? [];
-    // List<Users> listU = listUserRead.map(
-    //   (e) {
-    //    return Users.fromMap(e).facebook = {};
-    //   },
-    // ).toList();
-    for (var user in listUserRead) {}
-    return null;
+    for (var user in listUserRead) {
+      Users u = Users.fromMap(jsonDecode(user));
+      if ((u.userId!.length == userId.length) && (u.userId == userId)) {
+        u.userName = userName;
+        u.email = email;
+        u.imageUrl = imageUrl;
+        u.gender = gender;
+        u.birthday = birthday;
+        u.hobby = hobby;
+        u.phone = phone;
+        u.facebook = facebook;
+        u.zalo = zalo;
+        u.skype = skype;
+        u.address = address;
+        u.otherInfo = otherInfo;
+        u.updateAt = DateTime.now();
+        listUserRead.remove(user);
+        listUserRead.add(jsonEncode(u.toMap()));
+        await _prefs.setStringList('users', listUserRead);
+        return;
+      }
+    }
   }
 
   static Future<void> removeUser(String userId) async {

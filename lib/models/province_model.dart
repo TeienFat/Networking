@@ -1,5 +1,3 @@
-import 'package:networking/models/district_model.dart';
-
 class Province {
   String? id;
   String? name;

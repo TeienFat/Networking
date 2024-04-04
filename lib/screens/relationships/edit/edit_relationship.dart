@@ -11,23 +11,28 @@ import 'package:networking/apis/apis_user_relationship.dart';
 import 'package:networking/helpers/helpers.dart';
 import 'package:networking/models/address_model.dart';
 import 'package:networking/models/relationship_model.dart';
+import 'package:networking/models/user_model.dart';
+import 'package:networking/models/user_relationship_model.dart';
 import 'package:networking/screens/relationships/new/change_address.dart';
 import 'package:networking/screens/relationships/new/change_relationship.dart';
 import 'package:networking/widgets/date_picker.dart';
 import 'package:networking/widgets/user_image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 final _uuid = Uuid();
 
-class NewRelationship extends StatefulWidget {
-  const NewRelationship({super.key});
-
+class EditRelationship extends StatefulWidget {
+  const EditRelationship(
+      {super.key, required this.user, required this.userRelationship});
+  final Users user;
+  final UserRelationship userRelationship;
   @override
-  State<NewRelationship> createState() => _NewRelationshipState();
+  State<EditRelationship> createState() => _EditRelationshipState();
 }
 
-class _NewRelationshipState extends State<NewRelationship> {
+class _EditRelationshipState extends State<EditRelationship> {
   final _formKey = GlobalKey<FormState>();
 
   File? _enteredImageFile;
@@ -36,42 +41,82 @@ class _NewRelationshipState extends State<NewRelationship> {
   var _enteredPhone;
   var _enteredEmail;
   var _enteredHobby;
-  var _enteredGender = false;
+  var _enteredGender;
   var _enteredSkype;
   var _enteredZalo;
+  var _enteredSpecial;
 
   TextEditingController _enteredTitle = TextEditingController();
   TextEditingController _enteredContent = TextEditingController();
   TextEditingController _enteredFBName = TextEditingController();
   TextEditingController _enteredFBLink = TextEditingController();
 
-  DateTime _enteredBirthday = DateTime(2000, 01, 01);
+  late DateTime _enteredBirthday;
   var _isNewOtherInfo = false;
-  var _numOfRelationship = 0;
-  var _numOfAddress = 0;
-  List<Relationship> _listRelationship = [];
-  List<Address> _listAddress = [];
-  Map<String, String> _otherInfo = {};
+  var _numOfRelationship;
+  var _numOfAddress;
+  late List<Relationship> _listRelationship;
+  late List<Address> _listAddress;
+  late Map<String, dynamic> _otherInfo;
 
-  void _createNewRelationship() async {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (widget.user.imageUrl! != '') {
+      _enteredImageFile = File(widget.user.imageUrl!);
+    }
+
+    _enteredUserName = widget.user.userName;
+    _enteredPhone = widget.user.phone;
+    _enteredEmail = widget.user.email;
+    _enteredHobby = widget.user.hobby;
+    _enteredGender = widget.user.gender!;
+
+    if (widget.user.facebook!.keys.first.isNotEmpty)
+      _enteredFBName.text = widget.user.facebook!.keys.first;
+    if (widget.user.facebook!.values.first.isNotEmpty)
+      _enteredFBLink.text = widget.user.facebook!.values.first;
+
+    _enteredSkype = widget.user.skype;
+    _enteredZalo = widget.user.zalo;
+    _enteredBirthday = widget.user.birthday!;
+    _numOfRelationship = widget.userRelationship.relationships!.length;
+    _numOfAddress = widget.user.address!.length;
+    _listRelationship = widget.userRelationship.relationships!;
+    _enteredSpecial = widget.userRelationship.special;
+    _listAddress = widget.user.address!;
+    _otherInfo = widget.user.otherInfo!;
+
+    //    _enteredTitle = ;
+    //  _enteredContent = ;
+
+    //  _enteredFBLink = ;
+  }
+
+  void _updateRelationship() async {
     final isValid = _formKey.currentState!.validate();
-    final userId = _uuid.v4();
+    final userId = widget.user.userId!;
     if (!isValid) {
       return;
     } else {
       if (_listRelationship.isNotEmpty) {
-        String imageUrl;
         Map<String, String> _enteredFacebook = {
           _enteredFBName.text.trim(): _enteredFBLink.text.trim()
         };
-        String? meId = await APIsAuth.getCurrentUserId();
+        String imageUrl;
         if (_enteredImageFile != null) {
-          imageUrl =
-              await APIsUser.saveUserImage(_enteredImageFile!, '$userId.jpg');
+          if (_enteredImageFile!.path != widget.user.imageUrl!) {
+            File(widget.user.imageUrl!).delete();
+            imageUrl =
+                await APIsUser.saveUserImage(_enteredImageFile!, '$userId.jpg');
+          } else {
+            imageUrl = widget.user.imageUrl!;
+          }
         } else {
           imageUrl = '';
         }
-        APIsUser.createNewUser(
+        APIsUser.updateUser(
             userId,
             _enteredUserName,
             _enteredEmail,
@@ -85,9 +130,9 @@ class _NewRelationshipState extends State<NewRelationship> {
             {_enteredSkype: 'Skype'},
             _listAddress,
             _otherInfo);
-        APIsUsRe.createNewUsRe(meId!, userId, _listRelationship);
-        Navigator.of(context)
-            .pushNamedAndRemoveUntil("/Main", (route) => false);
+        APIsUsRe.updateUsRe(widget.userRelationship.usReId!, _enteredSpecial,
+            _listRelationship);
+        Navigator.of(context).pop();
       } else {
         showSnackbar(context, "Vui lòng thiết lập mối quan hệ",
             Duration(seconds: 3), false);
@@ -231,20 +276,18 @@ class _NewRelationshipState extends State<NewRelationship> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Padding(
-          padding: EdgeInsets.only(left: 50.sp),
-          child: Text("Mối quan hệ mới"),
-        ),
+        centerTitle: true,
+        title: Text("Chỉnh sửa mối quan hệ"),
         actions: [
           TextButton(
             onPressed: () {
               _formKey.currentState!.save();
-              _createNewRelationship();
+              _updateRelationship();
             },
             child: Padding(
               padding: EdgeInsets.only(right: 10.sp),
               child: Text(
-                "Thêm",
+                "Xong",
                 style: TextStyle(color: Colors.blue[800]),
               ),
             ),
@@ -261,6 +304,7 @@ class _NewRelationshipState extends State<NewRelationship> {
                 child: Column(
                   children: [
                     UserImagePicker(
+                      initImageUrl: _enteredImageFile,
                       onPickImage: (pickedImage) {
                         _enteredImageFile = pickedImage;
                       },
@@ -286,6 +330,7 @@ class _NewRelationshipState extends State<NewRelationship> {
                         padding: EdgeInsets.all(5.sp),
                         child: Column(children: [
                           TextFormField(
+                            initialValue: _enteredUserName,
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Họ tên",
@@ -299,6 +344,30 @@ class _NewRelationshipState extends State<NewRelationship> {
                             onSaved: (value) {
                               _enteredUserName = value!.trim();
                             },
+                          ),
+                          hr,
+                          Row(
+                            children: [
+                              SizedBox(
+                                width: 10.sp,
+                              ),
+                              Text(
+                                "Chăm sóc đặc biệt",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w400, fontSize: 16),
+                              ),
+                              Spacer(),
+                              Switch(
+                                value: _enteredSpecial,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _enteredSpecial = value;
+                                  });
+                                },
+                                activeColor: Colors.yellow[900],
+                                inactiveTrackColor: Colors.grey[400],
+                              ),
+                            ],
                           ),
                           hr,
                           Column(
@@ -325,7 +394,7 @@ class _NewRelationshipState extends State<NewRelationship> {
                                             fontSize: 16),
                                       ),
                                       Spacer(),
-                                      showRelationshipTypeIcon(e.type!, 20.sp),
+                                       showRelationshipTypeIcon(e.type!, 20.sp),
                                       SizedBox(width: 10.sp),
                                       IconButton(
                                         onPressed: () => Navigator.of(context)
@@ -603,6 +672,7 @@ class _NewRelationshipState extends State<NewRelationship> {
                                 FaIcon(FontAwesomeIcons.solidHeart),
                                 Expanded(
                                   child: TextFormField(
+                                    initialValue: _enteredHobby,
                                     decoration: InputDecoration(
                                       border: InputBorder.none,
                                       hintText: "Sở thích",
@@ -623,6 +693,7 @@ class _NewRelationshipState extends State<NewRelationship> {
                                 FaIcon(FontAwesomeIcons.phone),
                                 Expanded(
                                   child: TextFormField(
+                                    initialValue: _enteredPhone,
                                     decoration: InputDecoration(
                                       border: InputBorder.none,
                                       hintText: "Số điện thoại",
@@ -654,6 +725,7 @@ class _NewRelationshipState extends State<NewRelationship> {
                                 ),
                                 Expanded(
                                   child: TextFormField(
+                                    initialValue: _enteredEmail,
                                     decoration: InputDecoration(
                                       border: InputBorder.none,
                                       hintText: "Email",
