@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:networking/apis/apis_user.dart';
 import 'package:networking/apis/apis_user_relationship.dart';
+import 'package:networking/helpers/helpers.dart';
 import 'package:networking/models/user_model.dart';
 import 'package:networking/models/user_relationship_model.dart';
 import 'package:networking/screens/relationships/edit/edit_relationship.dart';
@@ -19,6 +20,8 @@ class PopupMenuDetailRelationship extends StatefulWidget {
 
 class _PopupMenuDetailRelationshipState
     extends State<PopupMenuDetailRelationship> {
+  void _onRemoveRelationship() {}
+
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<Menu>(
@@ -44,12 +47,41 @@ class _PopupMenuDetailRelationshipState
 
             break;
           default:
-            {
-              APIsUsRe.removeUsRe(widget.userRelationship.usReId!);
-              APIsUser.removeUser(widget.user.userId!);
-              Navigator.of(context)
-                  .pushNamedAndRemoveUntil("/Main", (route) => false);
-            }
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text(
+                  "Xóa mối quan hệ",
+                  textAlign: TextAlign.center,
+                ),
+                content: Text(
+                  "Bạn chắc chắn muốn xóa mối quan hệ này?",
+                  textAlign: TextAlign.center,
+                ),
+                actions: [
+                  ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.grey)),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text("Hủy"),
+                  ),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.red)),
+                    onPressed: () {
+                      APIsUsRe.removeUsRe(widget.userRelationship.usReId!);
+                      APIsUser.removeUser(widget.user.userId!);
+                      Navigator.pop(context);
+                      Navigator.of(context)
+                          .pushNamedAndRemoveUntil("/Main", (route) => false);
+                    },
+                    child: Text("Xóa"),
+                  ),
+                ],
+              ),
+            );
         }
       },
       itemBuilder: (BuildContext context) => <PopupMenuEntry<Menu>>[
