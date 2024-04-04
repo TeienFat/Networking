@@ -69,7 +69,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
         ),
         Container(),
         Positioned(
-          left: MediaQuery.of(context).size.width / 7,
+          left: MediaQuery.of(context).size.width / 10,
           child: Opacity(
             opacity: valueOpacityShow,
             child: Padding(
@@ -93,7 +93,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                   width: 10.sp,
                 ),
                 Container(
-                  width: ScreenUtil().screenWidth * 0.5,
+                  width: ScreenUtil().screenWidth * 0.52,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -105,36 +105,28 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                       SizedBox(
                         height: 5.sp,
                       ),
-                      FutureBuilder(
-                        future: getRowRelationship(
+                      Row(
+                        children: getRowRelationship(
                             userRelationship.relationships!, 1, 12.sp, 12.sp),
-                        builder: (context, snapshot) {
-                          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                            return Center(
-                                child: Column(
-                              children: [
-                                Text(
-                                  "Chưa thiết lập mối quan hệ",
-                                  style: TextStyle(fontSize: 12.sp),
-                                ),
-                              ],
-                            ));
-                          }
-                          if (snapshot.hasError) {
-                            return Center(
-                                child: Text(
-                              "Có gì đó sai sai...",
-                              style: TextStyle(fontSize: 12.sp),
-                            ));
-                          }
-                          return Row(
-                            children: snapshot.data!,
-                          );
-                        },
                       ),
                     ],
                   ),
                 ),
+                userRelationship.special!
+                    ? Icon(
+                        shadows: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.3),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: Offset(3, 3),
+                          ),
+                        ],
+                        Icons.star,
+                        color: Colors.yellow[700],
+                        size: 35.sp,
+                      )
+                    : SizedBox(),
               ]),
             ),
           ),
@@ -152,15 +144,39 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(75.sp),
                         border: Border.all(color: Colors.white, width: 3.sp)),
-                    child: CircleAvatar(
-                      backgroundColor: Colors.grey[100],
-                      backgroundImage: user.imageUrl != ''
-                          ? FileImage(
-                              File(user.imageUrl!),
-                            ) as ImageProvider
-                          : AssetImage('assets/images/user.png'),
-                      radius: 70.sp,
-                    ),
+                    child: Stack(children: [
+                      CircleAvatar(
+                        backgroundColor: Colors.grey[100],
+                        backgroundImage: user.imageUrl != ''
+                            ? FileImage(
+                                File(user.imageUrl!),
+                              ) as ImageProvider
+                            : AssetImage('assets/images/user.png'),
+                        radius: 70.sp,
+                      ),
+                      userRelationship.special!
+                          ? Positioned.fill(
+                              top: -3.sp,
+                              right: -0.5.sp,
+                              child: Align(
+                                alignment: Alignment.topRight,
+                                child: Icon(
+                                  shadows: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.3),
+                                      spreadRadius: 2,
+                                      blurRadius: 5,
+                                      offset: Offset(3, 5),
+                                    ),
+                                  ],
+                                  Icons.star,
+                                  color: Colors.yellow[700],
+                                  size: 45.sp,
+                                ),
+                              ),
+                            )
+                          : SizedBox(),
+                    ]),
                   ),
                   SizedBox(
                     height: 10.sp,
@@ -168,6 +184,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10.sp),
                     child: Container(
+                      width: double.infinity,
                       padding: EdgeInsets.symmetric(vertical: 10.sp),
                       decoration: BoxDecoration(
                           color: Colors.grey[100],
@@ -192,37 +209,16 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                           SizedBox(
                             height: 5.sp,
                           ),
-                          FutureBuilder(
-                            future: getRowRelationship(
-                                userRelationship.relationships!,
-                                2,
-                                14.sp,
-                                12.sp),
-                            builder: (context, snapshot) {
-                              if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                return Center(
-                                    child: Column(
-                                  children: [
-                                    Text(
-                                      "Chưa thiết lập mối quan hệ",
-                                      style: TextStyle(fontSize: 12.sp),
-                                    ),
-                                  ],
-                                ));
-                              }
-                              if (snapshot.hasError) {
-                                return Center(
-                                    child: Text(
-                                  "Có gì đó sai sai...",
-                                  style: TextStyle(fontSize: 12.sp),
-                                ));
-                              }
-                              return Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: snapshot.data!,
-                              );
-                            },
-                          ),
+                          userRelationship.time_of_care! > 0
+                              ? Text(
+                                  "Đã chăm sóc " +
+                                      userRelationship.time_of_care.toString() +
+                                      ' lần',
+                                  style: TextStyle(
+                                    fontSize: 14.sp,
+                                  ),
+                                )
+                              : SizedBox(),
                           SizedBox(
                             height: 5.sp,
                           ),

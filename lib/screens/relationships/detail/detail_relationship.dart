@@ -51,7 +51,9 @@ class _DetailRelationshipState extends State<DetailRelationship> {
               _page
                   ? Padding(
                       padding: EdgeInsets.all(10.sp),
-                      child: ListInfo(user: widget.user),
+                      child: ListInfo(
+                          user: widget.user,
+                          userRelationship: widget.userRelationship),
                     )
                   : Column(
                       children: [
@@ -79,6 +81,7 @@ class _DetailRelationshipState extends State<DetailRelationship> {
                             text1: 'ĐÂY LÀ MỤC CHĂM SÓC:', text2: 'SỐ 11'),
                       ],
                     ),
+              SizedBox(height: 100.sp),
             ]),
           )
         ],

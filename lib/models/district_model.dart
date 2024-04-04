@@ -1,5 +1,3 @@
-import 'package:networking/models/wards_model.dart';
-
 class District {
   String? id;
   String? name;

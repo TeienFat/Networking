@@ -6,11 +6,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:networking/widgets/menu_pick_image.dart';
 
 class UserImagePicker extends StatefulWidget {
-  const UserImagePicker({
-    super.key,
-    required this.onPickImage,
-  });
-
+  const UserImagePicker(
+      {super.key, required this.onPickImage, this.initImageUrl});
+  final File? initImageUrl;
   final void Function(File pickedImage) onPickImage;
 
   @override
@@ -19,6 +17,14 @@ class UserImagePicker extends StatefulWidget {
 
 class _UserImagePickerState extends State<UserImagePicker> {
   File? _pickedImageFile;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (widget.initImageUrl != null) {
+      _pickedImageFile = widget.initImageUrl;
+    }
+  }
 
   void _pickImage(bool pickerType) async {
     var pickedImage;

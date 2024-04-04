@@ -269,22 +269,14 @@ Widget hr = Divider(
   thickness: 1.5.sp,
 );
 
-Future<List<Widget>> getRowRelationship(List<Relationship> relationships,
-    int num, double fontSize, double iconSize) async {
+List<Widget> getRowRelationship(List<Relationship> relationships, int num,
+    double fontSize, double iconSize) {
   List<Widget> list = [];
   FaIcon icon;
-  String name;
   int numCheck = 0;
   for (var element in relationships) {
     if (numCheck != num) {
       icon = showRelationshipTypeIcon(element.type!, iconSize);
-      Relationship? re =
-          await APIsRelationship.getRelationshipFromId(element.relationshipId!);
-      if (re != null) {
-        name = re.name!;
-      } else {
-        name = element.relationshipId!;
-      }
       list.add(Row(
         children: [
           icon,
@@ -292,7 +284,7 @@ Future<List<Widget>> getRowRelationship(List<Relationship> relationships,
             width: 5.sp,
           ),
           Text(
-            name,
+            element.name!,
             style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.normal),
           ),
           SizedBox(
@@ -303,5 +295,33 @@ Future<List<Widget>> getRowRelationship(List<Relationship> relationships,
       numCheck++;
     }
   }
+  return list;
+}
+
+List<Widget> getAllRowRelationship(List<Relationship> relationships,
+    double fontSize, double iconSize, double width) {
+  List<Widget> list = [];
+
+  list = relationships
+      .map((e) => Row(
+            children: [
+              Container(
+                  width: 41.sp,
+                  child: showRelationshipTypeIcon(e.type!, iconSize)),
+              // SizedBox(
+              //   width: width,
+              // ),
+              Text(
+                e.name!,
+                style: TextStyle(
+                    fontSize: fontSize, fontWeight: FontWeight.normal),
+              ),
+              SizedBox(
+                width: 15.sp,
+              ),
+            ],
+          ))
+      .toList();
+
   return list;
 }
