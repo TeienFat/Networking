@@ -325,3 +325,41 @@ List<Widget> getAllRowRelationship(List<Relationship> relationships,
 
   return list;
 }
+
+void showMyDialog(
+    BuildContext context,
+    String title,
+    String content,
+    String cancleButtonName,
+    String confirmButtonName,
+    Set<Function> confirmFunction) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(
+        title,
+        textAlign: TextAlign.center,
+      ),
+      content: Text(
+        content,
+        textAlign: TextAlign.center,
+      ),
+      actions: [
+        ElevatedButton(
+          style: ButtonStyle(
+              backgroundColor: MaterialStatePropertyAll(Colors.grey)),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text(cancleButtonName),
+        ),
+        ElevatedButton(
+          style: ButtonStyle(
+              backgroundColor: MaterialStatePropertyAll(Colors.red)),
+          onPressed: () => confirmFunction,
+          child: Text(confirmButtonName),
+        ),
+      ],
+    ),
+  );
+}
