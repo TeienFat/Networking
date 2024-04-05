@@ -37,13 +37,15 @@ class _NewRelationshipState extends State<NewRelationship> {
   var _enteredEmail;
   var _enteredHobby;
   var _enteredGender = false;
-  var _enteredSkype;
-  var _enteredZalo;
 
   TextEditingController _enteredTitle = TextEditingController();
   TextEditingController _enteredContent = TextEditingController();
   TextEditingController _enteredFBName = TextEditingController();
   TextEditingController _enteredFBLink = TextEditingController();
+  TextEditingController _enteredSkypeName = TextEditingController();
+  TextEditingController _enteredSkypeId = TextEditingController();
+  TextEditingController _enteredZaloName = TextEditingController();
+  TextEditingController _enteredZaloPhone = TextEditingController();
 
   DateTime _enteredBirthday = DateTime(2000, 01, 01);
   var _isNewOtherInfo = false;
@@ -64,6 +66,12 @@ class _NewRelationshipState extends State<NewRelationship> {
         Map<String, String> _enteredFacebook = {
           _enteredFBName.text.trim(): _enteredFBLink.text.trim()
         };
+        Map<String, String> _enteredSkype = {
+          _enteredSkypeName.text.trim(): _enteredSkypeId.text.trim()
+        };
+        Map<String, String> _enteredZalo = {
+          _enteredZaloName.text.trim(): _enteredZaloPhone.text.trim()
+        };
         String? meId = await APIsAuth.getCurrentUserId();
         if (_enteredImageFile != null) {
           imageUrl =
@@ -81,8 +89,8 @@ class _NewRelationshipState extends State<NewRelationship> {
             _enteredHobby,
             _enteredPhone,
             _enteredFacebook,
-            {_enteredZalo: 'Zalo'},
-            {_enteredSkype: 'Skype'},
+            _enteredZalo,
+            _enteredSkype,
             _listAddress,
             _otherInfo);
         APIsUsRe.createNewUsRe(meId!, userId, _listRelationship);
@@ -701,6 +709,14 @@ class _NewRelationshipState extends State<NewRelationship> {
                                             border: InputBorder.none,
                                             hintText: "Link tài khoản Facebook",
                                           ),
+                                          validator: (value) {
+                                            if (value != null &&
+                                                value.isNotEmpty &&
+                                                !Uri.parse(value).isAbsolute) {
+                                              return "Vui lòng nhập link hợp lệ.";
+                                            }
+                                            return null;
+                                          },
                                         ),
                                       ],
                                     ),
@@ -734,14 +750,27 @@ class _NewRelationshipState extends State<NewRelationship> {
                                 ),
                                 FaIcon(FontAwesomeIcons.skype),
                                 Expanded(
-                                  child: TextFormField(
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      hintText: "Skype",
+                                  child: Padding(
+                                    padding: EdgeInsets.only(left: 10.sp),
+                                    child: Column(
+                                      children: [
+                                        TextFormField(
+                                          controller: _enteredSkypeName,
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            hintText: "Tên tài khoản Skype",
+                                          ),
+                                        ),
+                                        hr,
+                                        TextFormField(
+                                          controller: _enteredSkypeId,
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            hintText: "Id Skype",
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    onSaved: (value) {
-                                      _enteredSkype = value!.trim();
-                                    },
                                   ),
                                 ),
                               ],
@@ -750,21 +779,43 @@ class _NewRelationshipState extends State<NewRelationship> {
                             Row(
                               children: [
                                 SizedBox(
-                                  width: 8.sp,
+                                  width: 5.sp,
                                 ),
                                 Image.asset(
                                   'assets/images/icon-zalo.png',
                                   width: 25.sp,
                                 ),
                                 Expanded(
-                                  child: TextFormField(
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      hintText: "Zalo",
+                                  child: Padding(
+                                    padding: EdgeInsets.only(left: 8.sp),
+                                    child: Column(
+                                      children: [
+                                        TextFormField(
+                                          controller: _enteredZaloName,
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            hintText: "Tên tài khoản Zalo",
+                                          ),
+                                        ),
+                                        hr,
+                                        TextFormField(
+                                          controller: _enteredZaloPhone,
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            hintText: "Số điện thoại Zalo",
+                                          ),
+                                          keyboardType: TextInputType.number,
+                                          validator: (value) {
+                                            if (value != null &&
+                                                value.isNotEmpty &&
+                                                value.length != 10) {
+                                              return "Vui lòng nhập số điện thoai hợp lệ.";
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ],
                                     ),
-                                    onSaved: (value) {
-                                      _enteredZalo = value!.trim();
-                                    },
                                   ),
                                 ),
                               ],
