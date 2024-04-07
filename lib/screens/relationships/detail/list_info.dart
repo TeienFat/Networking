@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -60,6 +61,9 @@ class ListInfo extends StatelessWidget {
   }
 
   Widget build(BuildContext context) {
+    final zaloWidgetkey = GlobalKey();
+    final skypeWidgetkey = GlobalKey();
+    final facebookWidgetkey = GlobalKey();
     List<Widget> listRowRelationship = getAllRowRelationship(
         userRelationship.relationships!, 14.sp, 20.sp, 20.sp);
     return Column(
@@ -311,64 +315,208 @@ class ListInfo extends StatelessWidget {
                   ),
                 ),
                 hr,
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.sp),
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 10.sp,
-                      ),
-                      FaIcon(FontAwesomeIcons.facebook),
-                      SizedBox(
-                        width: 17.sp,
-                      ),
-                      Text(
-                        user.facebook!.keys.first,
-                        style: TextStyle(
-                            fontWeight: FontWeight.w400, fontSize: 14.sp),
-                      ),
-                    ],
+                InkWell(
+                  key: facebookWidgetkey,
+                  onLongPress: () {
+                    RenderBox renderbox = facebookWidgetkey.currentContext!
+                        .findRenderObject() as RenderBox;
+                    Offset position = renderbox.localToGlobal(Offset.zero);
+                    double y = position.dy;
+
+                    showMenu(
+                        context: context,
+                        color: Colors.grey[100],
+                        position: RelativeRect.fromLTRB(280, y + 10, 20, 0),
+                        items: [
+                          PopupMenuItem(
+                            onTap: () async {
+                              await Clipboard.setData(ClipboardData(
+                                text: user.facebook!.keys.first,
+                              )).then((value) {
+                                toast("Đã sao chép");
+                              });
+                            },
+                            child: ListTile(
+                              leading: Icon(Icons.copy),
+                              title: Text(
+                                'Tên người dùng',
+                                style: TextStyle(fontSize: 12.sp),
+                              ),
+                            ),
+                          ),
+                          PopupMenuItem(
+                            onTap: () async {
+                              await Clipboard.setData(ClipboardData(
+                                text: user.facebook!.values.first,
+                              )).then((value) {
+                                toast("Đã sao chép");
+                              });
+                            },
+                            child: ListTile(
+                              leading: Icon(Icons.copy),
+                              title: Text(
+                                'Link',
+                                style: TextStyle(fontSize: 12.sp),
+                              ),
+                            ),
+                          ),
+                        ]);
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.sp),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 10.sp,
+                        ),
+                        FaIcon(FontAwesomeIcons.facebook),
+                        SizedBox(
+                          width: 17.sp,
+                        ),
+                        Text(
+                          user.facebook!.keys.first,
+                          style: TextStyle(
+                              fontWeight: FontWeight.w400, fontSize: 14.sp),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 hr,
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.sp),
-                  child: Row(children: [
-                    SizedBox(
-                      width: 10.sp,
-                    ),
-                    FaIcon(FontAwesomeIcons.skype),
-                    SizedBox(
-                      width: 20.sp,
-                    ),
-                    Text(
-                      user.skype!.keys.first,
-                      style: TextStyle(
-                          fontWeight: FontWeight.w400, fontSize: 14.sp),
-                    ),
-                  ]),
-                ),
-                hr,
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.sp),
-                  child: Row(
-                    children: [
+                InkWell(
+                  key: skypeWidgetkey,
+                  onLongPress: () {
+                    RenderBox renderbox = skypeWidgetkey.currentContext!
+                        .findRenderObject() as RenderBox;
+                    Offset position = renderbox.localToGlobal(Offset.zero);
+                    double y = position.dy;
+
+                    showMenu(
+                        context: context,
+                        color: Colors.grey[100],
+                        position: RelativeRect.fromLTRB(280, y + 10, 20, 0),
+                        items: [
+                          PopupMenuItem(
+                            onTap: () async {
+                              await Clipboard.setData(ClipboardData(
+                                text: user.skype!.keys.first,
+                              )).then((value) {
+                                toast("Đã sao chép");
+                              });
+                            },
+                            child: ListTile(
+                              leading: Icon(Icons.copy),
+                              title: Text(
+                                'Tên người dùng',
+                                style: TextStyle(fontSize: 12.sp),
+                              ),
+                            ),
+                          ),
+                          PopupMenuItem(
+                            onTap: () async {
+                              await Clipboard.setData(ClipboardData(
+                                text: user.skype!.values.first,
+                              )).then((value) {
+                                toast("Đã sao chép");
+                              });
+                            },
+                            child: ListTile(
+                              leading: Icon(Icons.copy),
+                              title: Text(
+                                'ID Skype',
+                                style: TextStyle(fontSize: 12.sp),
+                              ),
+                            ),
+                          ),
+                        ]);
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.sp),
+                    child: Row(children: [
                       SizedBox(
-                        width: 5.sp,
+                        width: 10.sp,
                       ),
-                      Image.asset(
-                        'assets/images/icon-zalo.png',
-                        width: 25.sp,
-                      ),
+                      FaIcon(FontAwesomeIcons.skype),
                       SizedBox(
-                        width: 18.sp,
+                        width: 20.sp,
                       ),
                       Text(
-                        user.zalo!.keys.first,
+                        user.skype!.keys.first,
                         style: TextStyle(
                             fontWeight: FontWeight.w400, fontSize: 14.sp),
                       ),
-                    ],
+                    ]),
+                  ),
+                ),
+                hr,
+                InkWell(
+                  key: zaloWidgetkey,
+                  onLongPress: () {
+                    RenderBox renderbox = zaloWidgetkey.currentContext!
+                        .findRenderObject() as RenderBox;
+                    Offset position = renderbox.localToGlobal(Offset.zero);
+                    double y = position.dy;
+
+                    showMenu(
+                        context: context,
+                        color: Colors.grey[100],
+                        position: RelativeRect.fromLTRB(280, y + 10, 20, 0),
+                        items: [
+                          PopupMenuItem(
+                            onTap: () async {
+                              await Clipboard.setData(ClipboardData(
+                                text: user.zalo!.keys.first,
+                              )).then((value) {
+                                toast("Đã sao chép");
+                              });
+                            },
+                            child: ListTile(
+                              leading: Icon(Icons.copy),
+                              title: Text(
+                                'Tên người dùng',
+                                style: TextStyle(fontSize: 12.sp),
+                              ),
+                            ),
+                          ),
+                          PopupMenuItem(
+                            onTap: () async {
+                              await Clipboard.setData(ClipboardData(
+                                text: user.zalo!.values.first,
+                              )).then((value) {
+                                toast("Đã sao chép");
+                              });
+                            },
+                            child: ListTile(
+                              leading: Icon(Icons.copy),
+                              title: Text(
+                                'Số điện thoại',
+                                style: TextStyle(fontSize: 12.sp),
+                              ),
+                            ),
+                          ),
+                        ]);
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.sp),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 5.sp,
+                        ),
+                        Image.asset(
+                          'assets/images/icon-zalo.png',
+                          width: 25.sp,
+                        ),
+                        SizedBox(
+                          width: 18.sp,
+                        ),
+                        Text(
+                          user.zalo!.keys.first,
+                          style: TextStyle(
+                              fontWeight: FontWeight.w400, fontSize: 14.sp),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 hr,

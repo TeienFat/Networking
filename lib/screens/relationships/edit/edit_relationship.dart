@@ -50,6 +50,10 @@ class _EditRelationshipState extends State<EditRelationship> {
   TextEditingController _enteredContent = TextEditingController();
   TextEditingController _enteredFBName = TextEditingController();
   TextEditingController _enteredFBLink = TextEditingController();
+  TextEditingController _enteredSkypeName = TextEditingController();
+  TextEditingController _enteredSkypeId = TextEditingController();
+  TextEditingController _enteredZaloName = TextEditingController();
+  TextEditingController _enteredZaloPhone = TextEditingController();
 
   late DateTime _enteredBirthday;
   var _isNewOtherInfo = false;
@@ -78,6 +82,16 @@ class _EditRelationshipState extends State<EditRelationship> {
     if (widget.user.facebook!.values.first.isNotEmpty)
       _enteredFBLink.text = widget.user.facebook!.values.first;
 
+    if (widget.user.skype!.keys.first.isNotEmpty)
+      _enteredSkypeName.text = widget.user.skype!.keys.first;
+    if (widget.user.skype!.values.first.isNotEmpty)
+      _enteredSkypeId.text = widget.user.skype!.values.first;
+
+    if (widget.user.zalo!.keys.first.isNotEmpty)
+      _enteredZaloName.text = widget.user.zalo!.keys.first;
+    if (widget.user.zalo!.values.first.isNotEmpty)
+      _enteredZaloPhone.text = widget.user.zalo!.values.first;
+
     _enteredSkype = widget.user.skype;
     _enteredZalo = widget.user.zalo;
     _enteredBirthday = widget.user.birthday!;
@@ -87,11 +101,6 @@ class _EditRelationshipState extends State<EditRelationship> {
     _enteredSpecial = widget.userRelationship.special;
     _listAddress = widget.user.address!;
     _otherInfo = widget.user.otherInfo!;
-
-    //    _enteredTitle = ;
-    //  _enteredContent = ;
-
-    //  _enteredFBLink = ;
   }
 
   void _updateRelationship() async {
@@ -103,6 +112,12 @@ class _EditRelationshipState extends State<EditRelationship> {
       if (_listRelationship.isNotEmpty) {
         Map<String, String> _enteredFacebook = {
           _enteredFBName.text.trim(): _enteredFBLink.text.trim()
+        };
+        Map<String, String> _enteredSkype = {
+          _enteredSkypeName.text.trim(): _enteredSkypeId.text.trim()
+        };
+        Map<String, String> _enteredZalo = {
+          _enteredZaloName.text.trim(): _enteredZaloPhone.text.trim()
         };
         String imageUrl;
         if (_enteredImageFile != null) {
@@ -126,8 +141,8 @@ class _EditRelationshipState extends State<EditRelationship> {
             _enteredHobby,
             _enteredPhone,
             _enteredFacebook,
-            {_enteredZalo: 'Zalo'},
-            {_enteredSkype: 'Skype'},
+            _enteredZalo,
+            _enteredSkype,
             _listAddress,
             _otherInfo);
         APIsUsRe.updateUsRe(widget.userRelationship.usReId!, _enteredSpecial,
@@ -394,7 +409,7 @@ class _EditRelationshipState extends State<EditRelationship> {
                                             fontSize: 16),
                                       ),
                                       Spacer(),
-                                       showRelationshipTypeIcon(e.type!, 20.sp),
+                                      showRelationshipTypeIcon(e.type!, 20.sp),
                                       SizedBox(width: 10.sp),
                                       IconButton(
                                         onPressed: () => Navigator.of(context)
@@ -773,6 +788,14 @@ class _EditRelationshipState extends State<EditRelationship> {
                                             border: InputBorder.none,
                                             hintText: "Link tài khoản Facebook",
                                           ),
+                                          validator: (value) {
+                                            if (value != null &&
+                                                value.isNotEmpty &&
+                                                !Uri.parse(value).isAbsolute) {
+                                              return "Vui lòng nhập link hợp lệ.";
+                                            }
+                                            return null;
+                                          },
                                         ),
                                       ],
                                     ),
@@ -806,14 +829,27 @@ class _EditRelationshipState extends State<EditRelationship> {
                                 ),
                                 FaIcon(FontAwesomeIcons.skype),
                                 Expanded(
-                                  child: TextFormField(
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      hintText: "Skype",
+                                  child: Padding(
+                                    padding: EdgeInsets.only(left: 10.sp),
+                                    child: Column(
+                                      children: [
+                                        TextFormField(
+                                          controller: _enteredSkypeName,
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            hintText: "Tên tài khoản Skype",
+                                          ),
+                                        ),
+                                        hr,
+                                        TextFormField(
+                                          controller: _enteredSkypeId,
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            hintText: "Id Skype",
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    onSaved: (value) {
-                                      _enteredSkype = value!.trim();
-                                    },
                                   ),
                                 ),
                               ],
@@ -829,14 +865,36 @@ class _EditRelationshipState extends State<EditRelationship> {
                                   width: 25.sp,
                                 ),
                                 Expanded(
-                                  child: TextFormField(
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      hintText: "Zalo",
+                                  child: Padding(
+                                    padding: EdgeInsets.only(left: 8.sp),
+                                    child: Column(
+                                      children: [
+                                        TextFormField(
+                                          controller: _enteredZaloName,
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            hintText: "Tên tài khoản Zalo",
+                                          ),
+                                        ),
+                                        hr,
+                                        TextFormField(
+                                          controller: _enteredZaloPhone,
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            hintText: "Số điện thoại Zalo",
+                                          ),
+                                          keyboardType: TextInputType.number,
+                                          validator: (value) {
+                                            if (value != null &&
+                                                value.isNotEmpty &&
+                                                value.length != 10) {
+                                              return "Vui lòng nhập số điện thoai hợp lệ.";
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ],
                                     ),
-                                    onSaved: (value) {
-                                      _enteredZalo = value!.trim();
-                                    },
                                   ),
                                 ),
                               ],
