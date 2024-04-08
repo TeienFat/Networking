@@ -13,6 +13,7 @@ import 'package:networking/models/address_model.dart';
 import 'package:networking/models/relationship_model.dart';
 import 'package:networking/screens/relationships/new/change_address.dart';
 import 'package:networking/screens/relationships/new/change_relationship.dart';
+import 'package:networking/screens/relationships/new/qr_scan.dart';
 import 'package:networking/widgets/date_picker.dart';
 import 'package:networking/widgets/user_image_picker.dart';
 import 'package:uuid/uuid.dart';
@@ -857,6 +858,8 @@ class _NewRelationshipState extends State<NewRelationship> {
                                             IconButton(
                                               onPressed: () {
                                                 setState(() {
+                                                  _enteredTitle.clear();
+                                                  _enteredContent.clear();
                                                   _isNewOtherInfo = false;
                                                 });
                                               },
@@ -957,6 +960,27 @@ class _NewRelationshipState extends State<NewRelationship> {
               ),
             ),
           ),
+        ),
+      ),
+      floatingActionButton: Container(
+        padding: EdgeInsets.all(5.sp),
+        decoration: BoxDecoration(
+            color: Colors.orange[600],
+            borderRadius: BorderRadius.circular(10.sp)),
+        child: IconButton(
+          padding: EdgeInsets.all(0),
+          icon: Icon(
+            Icons.qr_code_scanner_outlined,
+            color: Colors.black,
+            size: 40.sp,
+          ),
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => QRScan(),
+                ));
+          },
         ),
       ),
     );

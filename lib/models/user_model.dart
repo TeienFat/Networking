@@ -57,7 +57,8 @@ class Users {
     skype = map['skype'];
     address = map['address'] != null ? Address.decode(map['address']) : null;
     otherInfo = map['otherInfo'];
-    createdAt = DateTime.parse(map['createdAt']);
+    createdAt =
+        map['createdAt'] != null ? DateTime.parse(map['createdAt']) : null;
     updateAt = map['updateAt'] != null ? DateTime.parse(map['updateAt']) : null;
     deleteAt = map['deleteAt'] != null ? DateTime.parse(map['deleteAt']) : null;
     isOnline = map['isOnline'];
@@ -79,7 +80,7 @@ class Users {
       "skype": skype,
       "address": Address.encode(address!),
       "otherInfo": otherInfo,
-      "createdAt": createdAt!.toIso8601String(),
+      "createdAt": createdAt != null ? createdAt!.toIso8601String() : null,
       "updateAt": updateAt != null ? updateAt!.toIso8601String() : null,
       "deleteAt": deleteAt != null ? deleteAt!.toIso8601String() : null,
       "isOnline": isOnline,

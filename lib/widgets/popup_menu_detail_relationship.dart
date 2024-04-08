@@ -4,6 +4,7 @@ import 'package:networking/apis/apis_user_relationship.dart';
 import 'package:networking/models/user_model.dart';
 import 'package:networking/models/user_relationship_model.dart';
 import 'package:networking/screens/relationships/edit/edit_relationship.dart';
+import 'package:networking/screens/relationships/share/share_relationship.dart';
 
 enum Menu { notification, edit, share, remove }
 
@@ -29,7 +30,6 @@ class _PopupMenuDetailRelationshipState
             print("A");
             break;
           case Menu.edit:
-            print("E");
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => EditRelationship(
@@ -39,8 +39,13 @@ class _PopupMenuDetailRelationshipState
             );
             break;
           case Menu.share:
-            print("S");
-            APIsUsRe.getAllMyRelationship();
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => ShareRelationship(
+                    user: widget.user,
+                    userRelationship: widget.userRelationship),
+              ),
+            );
 
             break;
           default:
