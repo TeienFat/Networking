@@ -68,7 +68,10 @@ dependencies:
   path_provider: ^2.1.2
   #mở app khác
   url_launcher: ^6.2.5
-
+  #scan QR code
+  mobile_scanner: ^3.5.5
+  # tạo QR code
+  pretty_qr_code: ^3.3.0
 
 dev_dependencies:
   flutter_test:

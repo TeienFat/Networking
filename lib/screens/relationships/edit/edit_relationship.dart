@@ -936,6 +936,8 @@ class _EditRelationshipState extends State<EditRelationship> {
                                             IconButton(
                                               onPressed: () {
                                                 setState(() {
+                                                  _enteredTitle.clear();
+                                                  _enteredContent.clear();
                                                   _isNewOtherInfo = false;
                                                 });
                                               },
