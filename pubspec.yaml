@@ -72,6 +72,8 @@ dependencies:
   mobile_scanner: ^3.5.5
   # tạo QR code
   pretty_qr_code: ^3.3.0
+  # import danh bạ
+  flutter_contacts: ^1.1.7+1
 
 dev_dependencies:
   flutter_test:

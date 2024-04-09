@@ -92,7 +92,8 @@ class ForgotPassword extends StatelessWidget {
                               context,
                               'Vui lòng kiểm tra lại tên đăng nhập',
                               Duration(seconds: 2),
-                              false);
+                              false,
+                              ScreenUtil().screenHeight - 120);
                         }
                       },
                       icon: Icon(

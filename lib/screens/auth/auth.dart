@@ -61,6 +61,7 @@ class _AuthScreenState extends State<AuthScreen> {
           "Đăng nhập thất bại",
           Duration(seconds: 2),
           false,
+          ScreenUtil().screenHeight - 120,
           subtitle: "Sai tên đăng nhập hoặc mật khẩu",
         );
         setState(() {
@@ -77,13 +78,13 @@ class _AuthScreenState extends State<AuthScreen> {
             '', '', {}, {}, {}, [], {});
 
         showSnackbar(context, "Đăng kí tài khoản thành công",
-            Duration(seconds: 2), true);
+            Duration(seconds: 2), true, ScreenUtil().screenHeight - 120);
 
         Navigator.of(context)
             .pushNamedAndRemoveUntil("/Main", (route) => false);
       } else {
         showSnackbar(context, "Tên đăng nhập đã được sử dụng",
-            Duration(seconds: 2), false);
+            Duration(seconds: 2), false, ScreenUtil().screenHeight - 120);
       }
     }
   }

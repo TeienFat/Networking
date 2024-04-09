@@ -13,6 +13,7 @@ import 'package:networking/models/address_model.dart';
 import 'package:networking/models/relationship_model.dart';
 import 'package:networking/screens/relationships/new/change_address.dart';
 import 'package:networking/screens/relationships/new/change_relationship.dart';
+import 'package:networking/screens/relationships/new/import_contacts.dart';
 import 'package:networking/screens/relationships/new/qr_scan.dart';
 import 'package:networking/widgets/date_picker.dart';
 import 'package:networking/widgets/user_image_picker.dart';
@@ -99,7 +100,7 @@ class _NewRelationshipState extends State<NewRelationship> {
             .pushNamedAndRemoveUntil("/Main", (route) => false);
       } else {
         showSnackbar(context, "Vui lòng thiết lập mối quan hệ",
-            Duration(seconds: 3), false);
+            Duration(seconds: 3), false, ScreenUtil().screenHeight - 180);
         return;
       }
     }
@@ -223,7 +224,7 @@ class _NewRelationshipState extends State<NewRelationship> {
     if (_enteredFBName.text.trim().isEmpty &&
         _enteredFBLink.text.trim().isEmpty) {
       showSnackbar(context, 'Hãy nhập tên tài khoản hoặc link',
-          Duration(seconds: 3), false);
+          Duration(seconds: 3), false, ScreenUtil().screenHeight - 180);
     } else {
       if (_enteredFBLink.text.trim().isNotEmpty) {
         _launchSocial('fb://page/', _enteredFBLink.text.trim());
@@ -240,24 +241,39 @@ class _NewRelationshipState extends State<NewRelationship> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Padding(
-          padding: EdgeInsets.only(left: 50.sp),
-          child: Text("Mối quan hệ mới"),
-        ),
+        title: Text("Mối quan hệ mới"),
+        centerTitle: true,
         actions: [
-          TextButton(
-            onPressed: () {
-              _formKey.currentState!.save();
-              _createNewRelationship();
-            },
-            child: Padding(
-              padding: EdgeInsets.only(right: 10.sp),
-              child: Text(
-                "Thêm",
-                style: TextStyle(color: Colors.blue[800]),
-              ),
+          IconButton(
+            padding: EdgeInsets.all(0),
+            icon: Icon(
+              Icons.contacts,
+              color: Colors.black,
+              size: 25.sp,
             ),
-          )
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ImportContacts(),
+                  ));
+            },
+          ),
+          IconButton(
+            padding: EdgeInsets.all(0),
+            icon: Icon(
+              Icons.qr_code_scanner_outlined,
+              color: Colors.black,
+              size: 25.sp,
+            ),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => QRScan(),
+                  ));
+            },
+          ),
         ],
       ),
       body: SafeArea(
@@ -962,25 +978,16 @@ class _NewRelationshipState extends State<NewRelationship> {
           ),
         ),
       ),
-      floatingActionButton: Container(
-        padding: EdgeInsets.all(5.sp),
-        decoration: BoxDecoration(
-            color: Colors.orange[600],
-            borderRadius: BorderRadius.circular(10.sp)),
-        child: IconButton(
-          padding: EdgeInsets.all(0),
-          icon: Icon(
-            Icons.qr_code_scanner_outlined,
-            color: Colors.black,
-            size: 40.sp,
-          ),
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => QRScan(),
-                ));
-          },
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.grey[400],
+        onPressed: () {
+          _formKey.currentState!.save();
+          _createNewRelationship();
+        },
+        child: Icon(
+          Icons.save_rounded,
+          color: Colors.black,
+          size: 35.sp,
         ),
       ),
     );
