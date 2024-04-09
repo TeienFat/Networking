@@ -41,8 +41,8 @@ class APIsUsRe {
     List<String> listUsReRead = await _prefs.getStringList('usRes') ?? [];
     listUsReRead.add(jsonEncode(newUsRe.toMap()));
     await _prefs.setStringList('usRes', listUsReRead);
-    List<String> listUser = await _prefs.getStringList('usRes') ?? [];
-    print(listUser);
+    // List<String> listUser = await _prefs.getStringList('usRes') ?? [];
+    // print(listUser);
   }
 
   static Future<void> removeTable(String tableName) async {
@@ -61,7 +61,7 @@ class APIsUsRe {
         .map((e) => UserRelationship.fromMap(jsonDecode(e)))
         .toList();
 
-    print(listMyRelationship.length);
+    // print(listMyRelationship.length);
     return listMyRelationship;
   }
 

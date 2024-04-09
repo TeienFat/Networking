@@ -127,12 +127,12 @@ void toast(String content) {
       fontSize: 16.0);
 }
 
-void showSnackbar(
-    BuildContext context, String content, Duration duration, bool type,
+void showSnackbar(BuildContext context, String content, Duration duration,
+    bool type, double top,
     {String? subtitle, ElevatedButton? button}) {
   final snackBar = SnackBar(
     margin: EdgeInsets.only(
-      bottom: ScreenUtil().screenHeight - 120,
+      bottom: top,
       left: 70.sp,
       right: 10.sp,
     ),

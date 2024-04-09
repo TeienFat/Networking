@@ -271,12 +271,20 @@ class QRScan extends StatelessWidget {
                               newUser.email!,
                               newUser.imageUrl!,
                               newUser.gender!,
-                              newUser.birthday,
+                              newUser.birthday != null
+                                  ? newUser.birthday
+                                  : DateTime(2000, 01, 01),
                               newUser.hobby!,
                               newUser.phone!,
-                              newUser.facebook!,
-                              newUser.zalo!,
-                              newUser.skype!,
+                              newUser.facebook!.isNotEmpty
+                                  ? newUser.facebook!
+                                  : {'': ''},
+                              newUser.zalo!.isNotEmpty
+                                  ? newUser.zalo!
+                                  : {'': ''},
+                              newUser.skype!.isNotEmpty
+                                  ? newUser.skype!
+                                  : {'': ''},
                               newUser.address!,
                               newUser.otherInfo!);
                           APIsUsRe.createNewUsRe(meId!, userId, relationships);

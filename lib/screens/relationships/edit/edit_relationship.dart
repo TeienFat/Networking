@@ -150,7 +150,7 @@ class _EditRelationshipState extends State<EditRelationship> {
         Navigator.of(context).pop();
       } else {
         showSnackbar(context, "Vui lòng thiết lập mối quan hệ",
-            Duration(seconds: 3), false);
+            Duration(seconds: 3), false, ScreenUtil().screenHeight - 120);
         return;
       }
     }
@@ -274,7 +274,7 @@ class _EditRelationshipState extends State<EditRelationship> {
     if (_enteredFBName.text.trim().isEmpty &&
         _enteredFBLink.text.trim().isEmpty) {
       showSnackbar(context, 'Hãy nhập tên tài khoản hoặc link',
-          Duration(seconds: 3), false);
+          Duration(seconds: 3), false, ScreenUtil().screenHeight - 120);
     } else {
       if (_enteredFBLink.text.trim().isNotEmpty) {
         _launchSocial('fb://page/', _enteredFBLink.text.trim());

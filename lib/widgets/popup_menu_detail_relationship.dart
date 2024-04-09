@@ -27,7 +27,6 @@ class _PopupMenuDetailRelationshipState
       onSelected: (Menu item) {
         switch (item) {
           case Menu.notification:
-            print("A");
             break;
           case Menu.edit:
             Navigator.of(context).push(
