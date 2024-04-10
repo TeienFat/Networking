@@ -1,13 +1,15 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:networking/apis/apis_auth.dart';
 import 'package:networking/apis/apis_relationships.dart';
 import 'package:networking/apis/apis_user.dart';
-import 'package:networking/apis/apis_user_relationship.dart';
+import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
+import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/helpers/helpers.dart';
 import 'package:networking/models/address_model.dart';
 import 'package:networking/models/relationship_model.dart';
@@ -81,23 +83,25 @@ class _NewRelationshipState extends State<NewRelationship> {
         } else {
           imageUrl = '';
         }
-        APIsUser.createNewUser(
-            userId,
-            _enteredUserName,
-            _enteredEmail,
-            imageUrl,
-            _enteredGender,
-            _enteredBirthday,
-            _enteredHobby,
-            _enteredPhone,
-            _enteredFacebook,
-            _enteredZalo,
-            _enteredSkype,
-            _listAddress,
-            _otherInfo);
-        APIsUsRe.createNewUsRe(meId!, userId, _listRelationship);
-        Navigator.of(context)
-            .pushNamedAndRemoveUntil("/Main", (route) => false);
+        context.read<UserListBloc>().add(AddUser(
+            userId: userId,
+            userName: _enteredUserName,
+            email: _enteredEmail,
+            imageUrl: imageUrl,
+            gender: _enteredGender,
+            birthday: _enteredBirthday,
+            hobby: _enteredHobby,
+            phone: _enteredPhone,
+            facebook: _enteredFacebook,
+            zalo: _enteredZalo,
+            skype: _enteredSkype,
+            address: _listAddress,
+            otherInfo: _otherInfo));
+        context.read<UsReListBloc>().add(AddUsRe(
+            meId: meId!, myReId: userId, relationships: _listRelationship));
+        showSnackbar(context, "Đã thêm mối quan hệ mới", Duration(seconds: 3),
+            true, ScreenUtil().screenHeight - 120.sp);
+        Navigator.of(context).pop();
       } else {
         showSnackbar(context, "Vui lòng thiết lập mối quan hệ",
             Duration(seconds: 3), false, ScreenUtil().screenHeight - 180);

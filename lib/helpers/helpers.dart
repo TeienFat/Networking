@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:networking/apis/apis_relationships.dart';
 import 'package:networking/models/relationship_model.dart';
 
 Widget searchBar(Function filter) {

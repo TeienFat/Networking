@@ -1,13 +1,14 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:networking/apis/apis_auth.dart';
 import 'package:networking/apis/apis_relationships.dart';
 import 'package:networking/apis/apis_user.dart';
-import 'package:networking/apis/apis_user_relationship.dart';
+import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
+import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/helpers/helpers.dart';
 import 'package:networking/models/address_model.dart';
 import 'package:networking/models/relationship_model.dart';
@@ -17,7 +18,6 @@ import 'package:networking/screens/relationships/new/change_address.dart';
 import 'package:networking/screens/relationships/new/change_relationship.dart';
 import 'package:networking/widgets/date_picker.dart';
 import 'package:networking/widgets/user_image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -122,31 +122,36 @@ class _EditRelationshipState extends State<EditRelationship> {
         String imageUrl;
         if (_enteredImageFile != null) {
           if (_enteredImageFile!.path != widget.user.imageUrl!) {
+            var time = DateTime.now().microsecondsSinceEpoch;
             File(widget.user.imageUrl!).delete();
-            imageUrl =
-                await APIsUser.saveUserImage(_enteredImageFile!, '$userId.jpg');
+            imageUrl = await APIsUser.saveUserImage(
+                _enteredImageFile!, '${userId + '-T' + time.toString()}.jpg');
           } else {
             imageUrl = widget.user.imageUrl!;
           }
         } else {
           imageUrl = '';
         }
-        APIsUser.updateUser(
-            userId,
-            _enteredUserName,
-            _enteredEmail,
-            imageUrl,
-            _enteredGender,
-            _enteredBirthday,
-            _enteredHobby,
-            _enteredPhone,
-            _enteredFacebook,
-            _enteredZalo,
-            _enteredSkype,
-            _listAddress,
-            _otherInfo);
-        APIsUsRe.updateUsRe(widget.userRelationship.usReId!, _enteredSpecial,
-            _listRelationship);
+
+        context.read<UserListBloc>().add(UpdateUser(
+            userId: userId,
+            userName: _enteredUserName,
+            email: _enteredEmail,
+            imageUrl: imageUrl,
+            gender: _enteredGender,
+            birthday: _enteredBirthday,
+            hobby: _enteredHobby,
+            phone: _enteredPhone,
+            facebook: _enteredFacebook,
+            zalo: _enteredZalo,
+            skype: _enteredSkype,
+            address: _listAddress,
+            otherInfo: _otherInfo));
+
+        context.read<UsReListBloc>().add(UpdateUsRe(
+            usReId: widget.userRelationship.usReId!,
+            special: _enteredSpecial,
+            relationships: _listRelationship));
         Navigator.of(context).pop();
       } else {
         showSnackbar(context, "Vui lòng thiết lập mối quan hệ",

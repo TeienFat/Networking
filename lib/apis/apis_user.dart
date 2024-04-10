@@ -74,14 +74,16 @@ class APIsUser {
     // print(listUser);
   }
 
-  static Future<void> getAllUser() async {
+  static Future<List<Users>> getAllUser() async {
     final SharedPreferences _prefs = await prefs;
-    List<String> listUser = await _prefs.getStringList('users') ?? [];
-    for (var element in listUser) {
-      Users u = Users.fromMap(jsonDecode(element));
-      print(u.userName);
-    }
-    // print(listUser.length);
+    List<String> listUserRead = await _prefs.getStringList('users') ?? [];
+    // for (var element in listUser) {
+    //   Users u = Users.fromMap(jsonDecode(element));
+    //   print(u.userName);
+    // }
+    var listUser =
+        listUserRead.map((e) => Users.fromMap(jsonDecode(e))).toList();
+    return listUser;
   }
 
   static Future<Users?> getUserFromId(String userId) async {
@@ -111,28 +113,28 @@ class APIsUser {
   ) async {
     final SharedPreferences _prefs = await prefs;
     List<String> listUserRead = await _prefs.getStringList('users') ?? [];
-    for (var user in listUserRead) {
-      Users u = Users.fromMap(jsonDecode(user));
-      if ((u.userId!.length == userId.length) && (u.userId == userId)) {
-        u.userName = userName;
-        u.email = email;
-        u.imageUrl = imageUrl;
-        u.gender = gender;
-        u.birthday = birthday;
-        u.hobby = hobby;
-        u.phone = phone;
-        u.facebook = facebook;
-        u.zalo = zalo;
-        u.skype = skype;
-        u.address = address;
-        u.otherInfo = otherInfo;
-        u.updateAt = DateTime.now();
-        listUserRead.remove(user);
-        listUserRead.add(jsonEncode(u.toMap()));
-        await _prefs.setStringList('users', listUserRead);
-        return;
+    List<Users> listUser =
+        listUserRead.map((e) => Users.fromMap(jsonDecode(e))).toList();
+    for (int i = 0; i < listUser.length; i++) {
+      if ((listUser[i].userId!.length == userId.length) &&
+          (listUser[i].userId == userId)) {
+        listUser[i].userName = userName;
+        listUser[i].email = email;
+        listUser[i].imageUrl = imageUrl;
+        listUser[i].gender = gender;
+        listUser[i].birthday = birthday;
+        listUser[i].hobby = hobby;
+        listUser[i].phone = phone;
+        listUser[i].facebook = facebook;
+        listUser[i].zalo = zalo;
+        listUser[i].skype = skype;
+        listUser[i].address = address;
+        listUser[i].otherInfo = otherInfo;
+        listUser[i].updateAt = DateTime.now();
       }
     }
+    listUserRead = listUser.map((e) => jsonEncode(e.toMap())).toList();
+    await _prefs.setStringList('users', listUserRead);
   }
 
   static Future<void> removeUser(String userId) async {

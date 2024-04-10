@@ -72,18 +72,20 @@ class APIsUsRe {
   ) async {
     final SharedPreferences _prefs = await prefs;
     List<String> listUsReRead = await _prefs.getStringList('usRes') ?? [];
-    for (var usRe in listUsReRead) {
-      UserRelationship uR = UserRelationship.fromMap(jsonDecode(usRe));
-      if ((uR.usReId!.length == usReId.length) && (uR.usReId == usReId)) {
-        uR.special = special;
-        uR.relationships = relationships;
-        uR.updateAt = DateTime.now();
-        listUsReRead.remove(usRe);
-        listUsReRead.add(jsonEncode(uR.toMap()));
-        await _prefs.setStringList('usRes', listUsReRead);
-        return;
+    List<UserRelationship> listUsRe = listUsReRead
+        .map((e) => UserRelationship.fromMap(jsonDecode(e)))
+        .toList();
+
+    for (int i = 0; i < listUsRe.length; i++) {
+      if (listUsRe[i].usReId!.length == usReId.length &&
+          listUsRe[i].usReId! == usReId) {
+        listUsRe[i].special = special;
+        listUsRe[i].relationships = relationships;
+        listUsRe[i].updateAt = DateTime.now();
       }
     }
+    listUsReRead = listUsRe.map((e) => jsonEncode(e.toMap())).toList();
+    await _prefs.setStringList('usRes', listUsReRead);
   }
 
   static Future<void> removeUsRe(String usReId) async {
