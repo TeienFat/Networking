@@ -2,13 +2,14 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:networking/apis/apis_auth.dart';
-import 'package:networking/apis/apis_user.dart';
-import 'package:networking/apis/apis_user_relationship.dart';
+import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
+import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/helpers/helpers.dart';
 import 'package:networking/models/relationship_model.dart';
 import 'package:networking/models/user_model.dart';
@@ -265,32 +266,42 @@ class QRScan extends StatelessWidget {
                         onPressed: () async {
                           String? meId = await APIsAuth.getCurrentUserId();
                           final userId = _uuid.v4();
-                          APIsUser.createNewUser(
-                              userId,
-                              newUser.userName!,
-                              newUser.email!,
-                              newUser.imageUrl!,
-                              newUser.gender!,
-                              newUser.birthday != null
+                          context.read<UserListBloc>().add(AddUser(
+                              userId: userId,
+                              userName: newUser.userName!,
+                              email: newUser.email!,
+                              imageUrl: newUser.imageUrl!,
+                              gender: newUser.gender!,
+                              birthday: newUser.birthday != null
                                   ? newUser.birthday
                                   : DateTime(2000, 01, 01),
-                              newUser.hobby!,
-                              newUser.phone!,
-                              newUser.facebook!.isNotEmpty
+                              hobby: newUser.hobby!,
+                              phone: newUser.phone!,
+                              facebook: newUser.facebook!.isNotEmpty
                                   ? newUser.facebook!
                                   : {'': ''},
-                              newUser.zalo!.isNotEmpty
+                              zalo: newUser.zalo!.isNotEmpty
                                   ? newUser.zalo!
                                   : {'': ''},
-                              newUser.skype!.isNotEmpty
+                              skype: newUser.skype!.isNotEmpty
                                   ? newUser.skype!
                                   : {'': ''},
-                              newUser.address!,
-                              newUser.otherInfo!);
-                          APIsUsRe.createNewUsRe(meId!, userId, relationships);
-                          Navigator.pop(context);
-                          Navigator.of(context).pushNamedAndRemoveUntil(
-                              "/Main", (route) => false);
+                              address: newUser.address!,
+                              otherInfo: newUser.otherInfo!));
+                          context.read<UsReListBloc>().add(AddUsRe(
+                              meId: meId!,
+                              myReId: userId,
+                              relationships: relationships));
+                          showSnackbar(
+                              context,
+                              "Đã thêm mối quan hệ mới",
+                              Duration(seconds: 3),
+                              true,
+                              ScreenUtil().screenHeight - 120.sp);
+                          Navigator.of(context)
+                            ..pop()
+                            ..pop()
+                            ..pop();
                         },
                         child: Text("Thêm"),
                       ),

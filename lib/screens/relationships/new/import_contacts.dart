@@ -1,12 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_contacts/contact.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:networking/apis/apis_auth.dart';
-import 'package:networking/apis/apis_user.dart';
-import 'package:networking/apis/apis_user_relationship.dart';
+import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
+import 'package:networking/bloc/user_list/user_list_bloc.dart';
+import 'package:networking/helpers/helpers.dart';
 import 'package:networking/widgets/contacts_card.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
@@ -55,21 +56,40 @@ class _ImportContactsState extends State<ImportContacts> {
       convertedImg.writeAsBytesSync(contact.photo!);
       imageUrl = convertedImg.path;
     }
-    APIsUser.createNewUser(
-        userId,
-        contact.displayName,
-        email,
-        imageUrl,
-        false,
-        DateTime(2000, 01, 01),
-        '',
-        phone,
-        {'': ''},
-        {'': ''},
-        {'': ''},
-        [],
-        otherInfo);
-    APIsUsRe.createNewUsRe(meId!, userId, []);
+    // APIsUser.createNewUser(
+    //     userId,
+    //     contact.displayName,
+    //     email,
+    //     imageUrl,
+    //     false,
+    //     DateTime(2000, 01, 01),
+    //     '',
+    //     phone,
+    //     {'': ''},
+    //     {'': ''},
+    //     {'': ''},
+    //     [],
+    //     otherInfo);
+    // APIsUsRe.createNewUsRe(meId!, userId, []);
+    context.read<UserListBloc>().add(AddUser(
+        userId: userId,
+        userName: contact.displayName,
+        email: email,
+        imageUrl: imageUrl,
+        gender: false,
+        birthday: DateTime(2000, 01, 01),
+        hobby: '',
+        phone: phone,
+        facebook: {'': ''},
+        zalo: {'': ''},
+        skype: {'': ''},
+        address: [],
+        otherInfo: otherInfo));
+    context
+        .read<UsReListBloc>()
+        .add(AddUsRe(meId: meId!, myReId: userId, relationships: []));
+    showSnackbar(context, "Đã thêm mối quan hệ mới", Duration(seconds: 3), true,
+        ScreenUtil().screenHeight - 120.sp);
     setState(() {
       _contacts!.removeWhere(
         (element) => element.id == contact.id,

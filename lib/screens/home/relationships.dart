@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:networking/apis/apis_user.dart';
-import 'package:networking/apis/apis_user_relationship.dart';
+import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
+import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/helpers/helpers.dart';
 import 'package:networking/widgets/relationship_card.dart';
 
@@ -105,103 +106,97 @@ class _RelationshipScreenState extends State<RelationshipScreen> {
         ),
       ),
     ];
-    return Padding(
-      padding: EdgeInsets.all(5.sp),
-      child: Column(
-        children: [
-          SizedBox(
-            height: 5.sp,
-          ),
-          Row(
-            children: [
-              searchBar(() => _runFilter("_enteredKeyword")),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.filter_list_outlined,
-                  size: 35.sp,
+    return BlocBuilder<UsReListBloc, UsReListState>(
+      builder: (context, state) {
+        if (state is UsReListUploaded && state.usRes.isNotEmpty) {
+          final usRes = state.usRes;
+          return Padding(
+            padding: EdgeInsets.all(5.sp),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 5.sp,
                 ),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 5.sp,
-          ),
-          Container(
-            height: 40.sp,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) {
-                return Row(
+                Row(
                   children: [
-                    _listTextButton[index],
-                    SizedBox(
-                      width: 10.sp,
+                    searchBar(() => _runFilter("_enteredKeyword")),
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.filter_list_outlined,
+                        size: 35.sp,
+                      ),
                     ),
                   ],
-                );
-              },
-              itemCount: _listTextButton.length,
-            ),
-          ),
-          SizedBox(
-            height: 10.sp,
-          ),
-          FutureBuilder(
-            future: APIsUsRe.getAllMyRelationship(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return Center(
-                    child: Column(
-                  children: [
-                    Text("Không có mối quan hệ nào"),
-                  ],
-                ));
-              }
-              if (snapshot.hasError) {
-                return Center(child: Text("Có gì đó sai sai..."));
-              }
-              final _listMyRelationship = snapshot.data!;
-
-              return Container(
-                height: ScreenUtil().screenHeight * 0.7,
-                child: ListView.builder(
-                  itemBuilder: (context, index) {
-                    return Column(
-                      children: [
-                        FutureBuilder(
-                          future: APIsUser.getUserFromId(
-                              _listMyRelationship[index].myRelationShipId!),
-                          builder: (context, snapshot) {
-                            if (!snapshot.hasData) {
-                              return Center(
-                                  child: Column(
-                                children: [
-                                  Text("Mối quan hệ không tồn tại"),
-                                ],
-                              ));
-                            }
-                            if (snapshot.hasError) {
-                              return Center(child: Text("Có gì đó sai sai..."));
-                            }
-                            return RelationShipCard(
-                                userRelationship: _listMyRelationship[index],
-                                user: snapshot.data!);
-                          },
-                        ),
-                        SizedBox(
-                          height: 10.sp,
-                        ),
-                      ],
-                    );
-                  },
-                  itemCount: _listMyRelationship.length,
                 ),
-              );
-            },
-          ),
-        ],
-      ),
+                SizedBox(
+                  height: 5.sp,
+                ),
+                Container(
+                  height: 40.sp,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      return Row(
+                        children: [
+                          _listTextButton[index],
+                          SizedBox(
+                            width: 10.sp,
+                          ),
+                        ],
+                      );
+                    },
+                    itemCount: _listTextButton.length,
+                  ),
+                ),
+                SizedBox(
+                  height: 10.sp,
+                ),
+                Container(
+                  height: ScreenUtil().screenHeight * 0.7,
+                  child: ListView.builder(
+                    itemBuilder: (context, index) {
+                      return Column(
+                        children: [
+                          BlocBuilder<UserListBloc, UserListState>(
+                              builder: (context, state) {
+                            if (state is UserListUploaded &&
+                                state.users.isNotEmpty) {
+                              final users = state.users;
+                              for (var user in users) {
+                                if ((user.userId!.length ==
+                                        usRes[index]
+                                            .myRelationShipId!
+                                            .length) &&
+                                    (user.userId ==
+                                        usRes[index].myRelationShipId!)) {
+                                  return RelationShipCard(
+                                      userRelationship: usRes[index],
+                                      user: user);
+                                }
+                              }
+                            }
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }),
+                          SizedBox(
+                            height: 10.sp,
+                          ),
+                        ],
+                      );
+                    },
+                    itemCount: usRes.length,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
     );
   }
 }
