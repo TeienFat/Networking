@@ -56,21 +56,6 @@ class _ImportContactsState extends State<ImportContacts> {
       convertedImg.writeAsBytesSync(contact.photo!);
       imageUrl = convertedImg.path;
     }
-    // APIsUser.createNewUser(
-    //     userId,
-    //     contact.displayName,
-    //     email,
-    //     imageUrl,
-    //     false,
-    //     DateTime(2000, 01, 01),
-    //     '',
-    //     phone,
-    //     {'': ''},
-    //     {'': ''},
-    //     {'': ''},
-    //     [],
-    //     otherInfo);
-    // APIsUsRe.createNewUsRe(meId!, userId, []);
     context.read<UserListBloc>().add(AddUser(
         userId: userId,
         userName: contact.displayName,

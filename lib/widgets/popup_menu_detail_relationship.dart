@@ -77,7 +77,10 @@ class _PopupMenuDetailRelationshipState
                     style: ButtonStyle(
                         backgroundColor: MaterialStatePropertyAll(Colors.red)),
                     onPressed: () {
-                      File(widget.user.imageUrl!).delete();
+                      if (widget.user.imageUrl! != '') {
+                        File(widget.user.imageUrl!).delete();
+                      }
+
                       context.read<UsReListBloc>().add(
                           DeleteUsRe(usReId: widget.userRelationship.usReId!));
                       context

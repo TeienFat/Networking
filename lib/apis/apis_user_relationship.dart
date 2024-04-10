@@ -22,13 +22,14 @@ class APIsUsRe {
   static Future<SharedPreferences> prefs = SharedPreferences.getInstance();
 
   static Future<void> createNewUsRe(
+    String usReId,
     String meId,
     String myReId,
     List<Relationship> relationships,
   ) async {
     final SharedPreferences _prefs = await prefs;
     final newUsRe = UserRelationship(
-        usReId: uuid.v4(),
+        usReId: usReId,
         meId: meId,
         myRelationShipId: myReId,
         special: false,
@@ -42,7 +43,7 @@ class APIsUsRe {
     listUsReRead.add(jsonEncode(newUsRe.toMap()));
     await _prefs.setStringList('usRes', listUsReRead);
     // List<String> listUser = await _prefs.getStringList('usRes') ?? [];
-    // print(listUser);
+    // print(listUser.length);
   }
 
   static Future<void> removeTable(String tableName) async {
