@@ -22,8 +22,9 @@ class UsReListBloc extends Bloc<UsReListEvent, UsReListState> {
     on<UpdateUsRe>(_updateUsRe);
   }
   void _addUsRe(AddUsRe event, Emitter<UsReListState> emit) {
+    final userId = uuid.v4();
     final newUsRe = UserRelationship(
-        usReId: uuid.v4(),
+        usReId: userId,
         meId: event.meId,
         myRelationShipId: event.myReId,
         special: false,
@@ -34,7 +35,8 @@ class UsReListBloc extends Bloc<UsReListEvent, UsReListState> {
         updateAt: null,
         deleteAt: null);
     state.usRes.add(newUsRe);
-    APIsUsRe.createNewUsRe(event.meId, event.myReId, event.relationships);
+    APIsUsRe.createNewUsRe(
+        userId, event.meId, event.myReId, event.relationships);
     emit(UsReListUploaded(usRes: state.usRes));
   }
 
