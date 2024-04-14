@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:networking/bloc/reCare_list/re_care_list_bloc.dart';
 import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
 import 'package:networking/bloc/user/user_bloc.dart';
 import 'package:networking/bloc/user_list/user_list_bloc.dart';
@@ -37,6 +38,8 @@ class MyApp extends StatelessWidget {
               create: (context) => UsReListBloc()..add(LoadUsReList())),
           BlocProvider(
               create: (context) => UserListBloc()..add(LoadUserList())),
+          BlocProvider(
+              create: (context) => ReCareListBloc()..add(LoadReCareList())),
           BlocProvider(create: (context) => UserBloc()),
         ],
         child: ScreenUtilInit(

@@ -194,7 +194,7 @@ class _RelationshipScreenState extends State<RelationshipScreen> {
           );
         }
         return Center(
-          child: CircularProgressIndicator(),
+          child: Text("Hãy thiết lập các mối quan hệ mới"),
         );
       },
     );

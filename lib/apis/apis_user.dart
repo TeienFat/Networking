@@ -77,9 +77,9 @@ class APIsUser {
   static Future<List<Users>> getAllUser() async {
     final SharedPreferences _prefs = await prefs;
     List<String> listUserRead = await _prefs.getStringList('users') ?? [];
-    // for (var element in listUser) {
+    // for (var element in listUserRead) {
     //   Users u = Users.fromMap(jsonDecode(element));
-    //   print(u.userName);
+    //   print(u.userId);
     // }
     var listUser =
         listUserRead.map((e) => Users.fromMap(jsonDecode(e))).toList();

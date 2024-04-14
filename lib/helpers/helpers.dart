@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:networking/models/relationship_model.dart';
 
 Widget searchBar(Function filter) {
@@ -91,6 +92,36 @@ extension DateTimeExtension on DateTime {
       return sum ~/ 7 + 1;
     }
   }
+}
+
+Widget getRowDateTime(DateTime dateTime) {
+  return Row(
+    children: [
+      Icon(
+        FontAwesomeIcons.solidClock,
+        size: 12.sp,
+      ),
+      SizedBox(
+        width: 3.sp,
+      ),
+      Text(DateFormat("hh:mm").format(dateTime)),
+      SizedBox(
+        width: 10.sp,
+      ),
+      Icon(
+        FontAwesomeIcons.calendar,
+        size: 12.sp,
+      ),
+      SizedBox(
+        width: 3.sp,
+      ),
+      Text(MyDateUtil.getFormattedWeekday(dateTime)),
+      SizedBox(
+        width: 3.sp,
+      ),
+      Text(DateFormat("- d' thg 'M', 'yyyy'").format(dateTime)),
+    ],
+  );
 }
 
 String calculateTimeRange(DateTime startDate) {

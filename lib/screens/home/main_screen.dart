@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:networking/apis/apis_ReCare.dart';
 import 'package:networking/apis/apis_auth.dart';
 import 'package:networking/apis/apis_relationships.dart';
 import 'package:networking/apis/apis_user.dart';
@@ -7,10 +8,13 @@ import 'package:networking/apis/apis_user_relationship.dart';
 import 'package:networking/screens/home/chat_home.dart';
 import 'package:networking/screens/home/my_profile.dart';
 import 'package:networking/screens/home/relationships.dart';
-import 'package:networking/screens/home/take_care_list.dart';
+import 'package:networking/screens/home/take_care.dart';
 import 'package:networking/screens/relationships/new/new_relationship.dart';
 import 'package:networking/widgets/bottom_navigartion_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
+
+var uuid = Uuid();
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -62,7 +66,20 @@ class _MainScreenState extends State<MainScreen> {
         // APIsUsRe.getAllMyRelationship();
         break;
       case 1:
-        print("B");
+        // APIsReCare.getAllMyRelationshipCare();
+
+        // final meId = await APIsAuth.getCurrentUserId();
+        // // APIsUsRe.removeTable('reCares');
+        // APIsUser.getAllUser();
+        // APIsUsRe.getAllMyRelationship();
+        // APIsReCare.removeReCare('d81f7fc8-692a-4497-aa7e-c76222a6e067');
+        // APIsReCare.createNewReCare(
+        //     uuid.v4(),
+        //     meId!,
+        //     '458753d1-b11c-4fee-9201-3b51f7e59ef3',
+        //     DateTime(2024, 8, 30, 7, 00),
+        //     DateTime(2024, 8, 30, 23, 59),
+        //     'Dự lễ tốt nghiệp');
         break;
       case 2:
         print("C");
@@ -80,6 +97,7 @@ class _MainScreenState extends State<MainScreen> {
       child: Stack(children: [
         Column(
           children: [
+            SizedBox(height: 10.sp),
             currentIndex == 3
                 ? SizedBox()
                 : Text(
