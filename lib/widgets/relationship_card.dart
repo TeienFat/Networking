@@ -123,8 +123,16 @@ class _RelationShipCardState extends State<RelationShipCard> {
         ),
         child: Container(
           decoration: BoxDecoration(
-              color: Colors.purple[50],
-              borderRadius: BorderRadius.circular(5.sp)),
+              color: Colors.deepOrange[200],
+              borderRadius: BorderRadius.circular(5.sp),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: Offset(0, 5),
+                ),
+              ]),
           padding: EdgeInsets.symmetric(vertical: 10.sp, horizontal: 5.sp),
           child: Row(
             children: [
@@ -144,7 +152,7 @@ class _RelationShipCardState extends State<RelationShipCard> {
                   Text(
                     widget.user.userName!,
                     style:
-                        TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500),
+                        TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
                     height: 5.sp,

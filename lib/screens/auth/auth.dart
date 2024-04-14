@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:networking/apis/apis_auth.dart';
 import 'package:networking/apis/apis_user.dart';
+import 'package:networking/bloc/reCare_list/re_care_list_bloc.dart';
+import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
 import 'package:networking/models/secuquestions_model.dart';
 import 'package:networking/screens/auth/forgot_password/forgot_password.dart';
 import 'package:uuid/uuid.dart';
@@ -55,6 +58,8 @@ class _AuthScreenState extends State<AuthScreen> {
       if (validLogin) {
         Navigator.of(context)
             .pushNamedAndRemoveUntil("/Main", (route) => false);
+        context.read<UsReListBloc>().add(LoadUsReList());
+        context.read<ReCareListBloc>().add(LoadReCareList());
       } else {
         showSnackbar(
           context,

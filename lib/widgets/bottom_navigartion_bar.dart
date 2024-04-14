@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class MyBottomNavigartionBar extends StatefulWidget {
   const MyBottomNavigartionBar(
@@ -62,8 +63,8 @@ class _MyBottomNavigartionBarState extends State<MyBottomNavigartionBar> {
                             widget.currentIndex == 1 ? Colors.grey[300] : null,
                           )),
                           icon: Icon(
-                            Icons.handshake_outlined,
-                            size: 30,
+                            FontAwesomeIcons.handshake,
+                            size: 25,
                             color: widget.currentIndex == 1
                                 ? Colors.orange[600]
                                 : Colors.grey,
