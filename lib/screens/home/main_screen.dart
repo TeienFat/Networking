@@ -69,7 +69,8 @@ class _MainScreenState extends State<MainScreen> {
         // APIsReCare.getAllMyRelationshipCare();
 
         // final meId = await APIsAuth.getCurrentUserId();
-        // // APIsUsRe.removeTable('reCares');
+        // APIsUsRe.removeTable('relationships');
+        // APIsRelationship.addListDefaut();
         // APIsUser.getAllUser();
         // APIsUsRe.getAllMyRelationship();
         // APIsReCare.removeReCare('d81f7fc8-692a-4497-aa7e-c76222a6e067');

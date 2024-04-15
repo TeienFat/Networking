@@ -8,6 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
 import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/helpers/helpers.dart';
+import 'package:networking/models/relationship_model.dart';
 import 'package:networking/models/user_model.dart';
 import 'package:networking/models/user_relationship_model.dart';
 import 'package:networking/screens/relationships/detail/detail_relationship.dart';
@@ -16,9 +17,29 @@ import 'package:networking/screens/relationships/share/share_relationship.dart';
 
 class RelationShipCard extends StatefulWidget {
   const RelationShipCard(
-      {super.key, required this.user, required this.userRelationship});
+      {super.key, required this.user, required this.userRelationship})
+      : newUser = null,
+        newRelationships = null,
+        this.type = 0;
+  const RelationShipCard.update(
+      {super.key,
+      required this.user,
+      required this.userRelationship,
+      required this.newUser,
+      required this.newRelationships})
+      : this.type = 1;
+  const RelationShipCard.updateFromPhonebook(
+      {super.key,
+      required this.user,
+      required this.userRelationship,
+      required this.newUser,
+      required this.newRelationships})
+      : this.type = 2;
   final UserRelationship userRelationship;
   final Users user;
+  final int type;
+  final Users? newUser;
+  final List<Relationship>? newRelationships;
 
   @override
   State<RelationShipCard> createState() => _RelationShipCardState();
@@ -28,6 +49,7 @@ class _RelationShipCardState extends State<RelationShipCard> {
   @override
   Widget build(BuildContext context) {
     return Slidable(
+      enabled: widget.type == 0 ? true : false,
       endActionPane: ActionPane(motion: DrawerMotion(), children: [
         SlidableAction(
           onPressed: (context) {
@@ -115,12 +137,32 @@ class _RelationShipCardState extends State<RelationShipCard> {
         ),
       ]),
       child: InkWell(
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => DetailRelationship(
-                user: widget.user, userRelationship: widget.userRelationship),
-          ),
-        ),
+        onTap: () {
+          if (widget.type == 0) {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => DetailRelationship(
+                  user: widget.user, userRelationship: widget.userRelationship),
+            ));
+          } else {
+            if (widget.type == 1) {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => EditRelationship.update(
+                    user: widget.user,
+                    userRelationship: widget.userRelationship,
+                    newUser: widget.newUser,
+                    newRelationships: widget.newRelationships),
+              ));
+            } else {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => EditRelationship.updateFromPhonebook(
+                    user: widget.user,
+                    userRelationship: widget.userRelationship,
+                    newUser: widget.newUser,
+                    newRelationships: widget.newRelationships),
+              ));
+            }
+          }
+        },
         child: Container(
           decoration: BoxDecoration(
               color: Colors.deepOrange[200],
@@ -165,36 +207,42 @@ class _RelationShipCardState extends State<RelationShipCard> {
                         12.sp),
                   ),
                   SizedBox(
-                    height: 5.sp,
+                    height: widget.type == 0 ? 5.sp : 0,
                   ),
-                  Text("Đã chăm sóc: ${widget.userRelationship.time_of_care}"),
+                  widget.type == 0
+                      ? Text(
+                          "Đã chăm sóc: ${widget.userRelationship.time_of_care}")
+                      : SizedBox(),
                 ],
               ),
               Spacer(),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  widget.userRelationship.special!
-                      ? Icon(
-                          Icons.star,
-                          color: Colors.yellow[700],
-                          size: 35.sp,
-                          shadows: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.5),
-                              spreadRadius: 2,
-                              blurRadius: 5,
-                              offset: Offset(3, 3),
-                            ),
-                          ],
-                        )
-                      : SizedBox(),
-                  SizedBox(
-                    height: 10.sp,
-                  ),
-                  Text(calculateTimeRange(widget.userRelationship.createdAt!)),
-                ],
-              ),
+              widget.type == 0
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        widget.userRelationship.special!
+                            ? Icon(
+                                Icons.star,
+                                color: Colors.yellow[700],
+                                size: 35.sp,
+                                shadows: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.5),
+                                    spreadRadius: 2,
+                                    blurRadius: 5,
+                                    offset: Offset(3, 3),
+                                  ),
+                                ],
+                              )
+                            : SizedBox(),
+                        SizedBox(
+                          height: 10.sp,
+                        ),
+                        Text(calculateTimeRange(
+                            widget.userRelationship.createdAt!)),
+                      ],
+                    )
+                  : SizedBox(),
             ],
           ),
         ),

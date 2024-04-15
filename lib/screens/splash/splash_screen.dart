@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:networking/apis/apis_relationships.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -29,6 +30,7 @@ class _SplashScreenState extends State<SplashScreen>
     } else {
       // first time
       prefs.setBool('first_time', false);
+      APIsRelationship.addListDefaut();
       return new Timer(_duration, goToNextScreen(true));
     }
   }

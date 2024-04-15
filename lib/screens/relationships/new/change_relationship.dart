@@ -17,7 +17,8 @@ class ChangeRelationship extends StatefulWidget {
 
 class _ChangeRelationshipState extends State<ChangeRelationship> {
   var _isNewRelationship = false;
-  TextEditingController _enteredRelationshipName = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  var _enteredRelationshipName = '';
   int? _enteredRelationshipType;
   void _onSelect(Relationship relationship) {
     widget.onChangeRelationship(relationship);
@@ -25,12 +26,17 @@ class _ChangeRelationshipState extends State<ChangeRelationship> {
   }
 
   void _newRelationship() async {
-    if (_enteredRelationshipName.text.isNotEmpty &&
-        _enteredRelationshipType != null) {
+    final isValid = _formKey.currentState!.validate();
+    _formKey.currentState!.save();
+    if (_enteredRelationshipName.isNotEmpty) {
+      if (!isValid) {
+        return;
+      }
       _onSelect(await APIsRelationship.createNewRelationship(
-          _enteredRelationshipName.text, _enteredRelationshipType!));
+          _enteredRelationshipName, _enteredRelationshipType!));
+    } else {
+      Navigator.of(context).pop();
     }
-    Navigator.of(context).pop();
   }
 
   Widget _hr = Divider(
@@ -77,6 +83,18 @@ class _ChangeRelationshipState extends State<ChangeRelationship> {
               return Center(child: Text("Có gì đó sai sai..."));
             }
             final relationships = snapshot.data!;
+
+            bool checkContainsRelationshipName(String relationshipName) {
+              for (var relationship in relationships) {
+                if ((relationship.name!.length == relationshipName.length) &&
+                    (relationship.name!.toLowerCase() ==
+                        relationshipName.toLowerCase())) {
+                  return true;
+                }
+              }
+              return false;
+            }
+
             var _listGiaDinh =
                 relationships.where((element) => element.type! == 0);
             var _listTinhYeu =
@@ -429,144 +447,162 @@ class _ChangeRelationshipState extends State<ChangeRelationship> {
                           decoration: BoxDecoration(
                             color: Colors.grey[100],
                           ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: TextFormField(
-                                  controller: _enteredRelationshipName,
-                                  decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: "Tên mối quan hệ",
+                          child: Form(
+                            key: _formKey,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: TextFormField(
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: "Tên mối quan hệ",
+                                    ),
+                                    validator: (value) {
+                                      if (value != null &&
+                                          checkContainsRelationshipName(
+                                              value.trim())) {
+                                        return "Quan hệ này đã có.";
+                                      }
+                                      return null;
+                                    },
+                                    onChanged: (value) {
+                                      _enteredRelationshipName = value.trim();
+                                    },
+                                    onSaved: (newValue) {
+                                      _enteredRelationshipName =
+                                          newValue!.trim();
+                                    },
                                   ),
                                 ),
-                              ),
-                              Container(
-                                width: ScreenUtil().screenWidth / 2.5,
-                                child: DropdownButtonFormField<int>(
-                                  decoration:
-                                      InputDecoration(border: InputBorder.none),
-                                  isExpanded: false,
-                                  menuMaxHeight: 100.sp,
-                                  dropdownColor: Colors.grey[100],
-                                  hint: Text(
-                                    'Quan hệ',
-                                    style: TextStyle(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 16),
+                                Container(
+                                  width: ScreenUtil().screenWidth / 2.5,
+                                  child: DropdownButtonFormField<int>(
+                                    decoration: InputDecoration(
+                                        border: InputBorder.none),
+                                    isExpanded: false,
+                                    menuMaxHeight: 100.sp,
+                                    dropdownColor: Colors.grey[100],
+                                    hint: Text(
+                                      'Quan hệ',
+                                      style: TextStyle(
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 16),
+                                    ),
+                                    items: [
+                                      DropdownMenuItem(
+                                        child: Row(
+                                          children: [
+                                            showRelationshipTypeIcon(0, 14.sp),
+                                            SizedBox(
+                                              width: 10.sp,
+                                            ),
+                                            Text(
+                                              "Gia Đình",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 14.sp,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        value: 0,
+                                      ),
+                                      DropdownMenuItem(
+                                        child: Row(
+                                          children: [
+                                            showRelationshipTypeIcon(1, 14.sp),
+                                            SizedBox(
+                                              width: 10.sp,
+                                            ),
+                                            Text(
+                                              "Tình Yêu",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 14.sp,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        value: 1,
+                                      ),
+                                      DropdownMenuItem(
+                                        child: Row(
+                                          children: [
+                                            showRelationshipTypeIcon(2, 14.sp),
+                                            SizedBox(
+                                              width: 10.sp,
+                                            ),
+                                            Text(
+                                              "Công Việc",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 14.sp,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        value: 2,
+                                      ),
+                                      DropdownMenuItem(
+                                        child: Row(
+                                          children: [
+                                            showRelationshipTypeIcon(3, 14.sp),
+                                            SizedBox(
+                                              width: 10.sp,
+                                            ),
+                                            Text(
+                                              "Bạn Bè",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 14.sp,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        value: 3,
+                                      ),
+                                      DropdownMenuItem(
+                                        child: Row(
+                                          children: [
+                                            showRelationshipTypeIcon(4, 14.sp),
+                                            SizedBox(
+                                              width: 10.sp,
+                                            ),
+                                            Text(
+                                              "Học Tập",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 14.sp,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        value: 4,
+                                      ),
+                                    ],
+                                    onChanged: (value) {
+                                      if (value == null) {
+                                        return;
+                                      }
+                                      setState(() {
+                                        _enteredRelationshipType = value;
+                                      });
+                                    },
+                                    validator: (value) {
+                                      if (_enteredRelationshipName.isNotEmpty &&
+                                          value == null) {
+                                        return "Hãy chọn quan hệ.";
+                                      }
+                                      return null;
+                                    },
                                   ),
-                                  items: [
-                                    DropdownMenuItem(
-                                      child: Row(
-                                        children: [
-                                          showRelationshipTypeIcon(0, 14.sp),
-                                          SizedBox(
-                                            width: 10.sp,
-                                          ),
-                                          Text(
-                                            "Gia Đình",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 14.sp,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      value: 0,
-                                    ),
-                                    DropdownMenuItem(
-                                      child: Row(
-                                        children: [
-                                          showRelationshipTypeIcon(1, 14.sp),
-                                          SizedBox(
-                                            width: 10.sp,
-                                          ),
-                                          Text(
-                                            "Tình Yêu",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 14.sp,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      value: 1,
-                                    ),
-                                    DropdownMenuItem(
-                                      child: Row(
-                                        children: [
-                                          showRelationshipTypeIcon(2, 14.sp),
-                                          SizedBox(
-                                            width: 10.sp,
-                                          ),
-                                          Text(
-                                            "Công Việc",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 14.sp,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      value: 2,
-                                    ),
-                                    DropdownMenuItem(
-                                      child: Row(
-                                        children: [
-                                          showRelationshipTypeIcon(3, 14.sp),
-                                          SizedBox(
-                                            width: 10.sp,
-                                          ),
-                                          Text(
-                                            "Bạn Bè",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 14.sp,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      value: 3,
-                                    ),
-                                    DropdownMenuItem(
-                                      child: Row(
-                                        children: [
-                                          showRelationshipTypeIcon(4, 14.sp),
-                                          SizedBox(
-                                            width: 10.sp,
-                                          ),
-                                          Text(
-                                            "Học Tập",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 14.sp,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      value: 4,
-                                    ),
-                                  ],
-                                  onChanged: (value) {
-                                    if (value == null) {
-                                      return;
-                                    }
-                                    setState(() {
-                                      _enteredRelationshipType = value;
-                                    });
-                                  },
-                                  validator: (value) {
-                                    if (value == null) {
-                                      return "Vui lòng chọn mối quan hệ.";
-                                    }
-                                    return null;
-                                  },
                                 ),
-                              ),
-                              SizedBox(
-                                width: 10.sp,
-                              ),
-                            ],
+                                SizedBox(
+                                  width: 10.sp,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                   SizedBox(

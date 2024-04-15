@@ -8,6 +8,8 @@ import 'package:networking/apis/apis_auth.dart';
 import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
 import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/helpers/helpers.dart';
+import 'package:networking/models/user_model.dart';
+import 'package:networking/screens/relationships/edit/list_reltionship_edit.dart';
 import 'package:networking/widgets/contacts_card.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
@@ -82,6 +84,48 @@ class _ImportContactsState extends State<ImportContacts> {
     });
   }
 
+  void _onUpdateContact(Contact contact) async {
+    String imageUrl = '';
+    final userId = _uuid.v4();
+    final phone = contact.phones.isNotEmpty ? contact.phones.first.number : '';
+    final email = contact.emails.isNotEmpty ? contact.emails.first.address : '';
+    Map<String, dynamic> otherInfo = contact.organizations.isNotEmpty
+        ? {"Công ty": contact.organizations.first.company}
+        : {};
+    if (contact.photo != null) {
+      final String path = (await getApplicationDocumentsDirectory()).path;
+      File convertedImg = await File('$path/$userId.jpg').create();
+      convertedImg.writeAsBytesSync(contact.photo!);
+      imageUrl = convertedImg.path;
+    }
+    Users newUser = Users(
+        userId: userId,
+        userName: contact.displayName,
+        email: email,
+        imageUrl: imageUrl,
+        gender: false,
+        birthday: null,
+        hobby: '',
+        phone: phone,
+        facebook: {'': ''},
+        zalo: {'': ''},
+        skype: {'': ''},
+        address: [],
+        otherInfo: otherInfo,
+        createdAt: null,
+        updateAt: null,
+        deleteAt: null,
+        isOnline: false,
+        blockUsers: [],
+        token: '');
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ListEditRelationship.fromPhonebook(
+              newUser: newUser, newRelationships: []),
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,7 +154,8 @@ class _ImportContactsState extends State<ImportContacts> {
       itemCount: _contacts!.length,
       itemBuilder: (context, i) => Column(
         children: [
-          ContactCard(_contacts![i].id, (contact) => _onAddContact(contact)),
+          ContactCard(_contacts![i].id, (contact) => _onAddContact(contact),
+              (contact) => _onUpdateContact(contact)),
           SizedBox(height: 10.sp),
         ],
       ),
