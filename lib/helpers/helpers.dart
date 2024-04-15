@@ -5,9 +5,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:networking/models/relationship_model.dart';
 
-Widget searchBar(Function filter) {
+Widget searchBar(Function filter, double width) {
   return Container(
-    width: ScreenUtil().screenWidth - 80,
+    width: width,
     decoration: BoxDecoration(boxShadow: [
       BoxShadow(
           offset: const Offset(12, 26),

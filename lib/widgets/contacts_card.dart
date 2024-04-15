@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ContactCard extends StatelessWidget {
-  ContactCard(this.contactId, this.onAddContact);
+  ContactCard(this.contactId, this.onAddContact, this.onUpdateContact);
   final String contactId;
   final Function(Contact contact) onAddContact;
+  final Function(Contact contact) onUpdateContact;
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -27,7 +29,15 @@ class ContactCard extends StatelessWidget {
           width: double.infinity,
           decoration: BoxDecoration(
               color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(5.sp)),
+              borderRadius: BorderRadius.circular(5.sp),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: Offset(0, 5),
+                ),
+              ]),
           padding: EdgeInsets.symmetric(vertical: 10.sp, horizontal: 5.sp),
           child: Row(
             children: [
@@ -78,15 +88,29 @@ class ContactCard extends StatelessWidget {
                 ),
               ),
               Spacer(),
-              IconButton(
-                onPressed: () {
-                  onAddContact(contact);
-                },
-                icon: Icon(
-                  Icons.person_add_alt_1,
-                  size: 30.sp,
-                  color: Colors.black,
-                ),
+              Column(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      onAddContact(contact);
+                    },
+                    icon: Icon(
+                      Icons.person_add_alt_1,
+                      size: 30.sp,
+                      color: Colors.green,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      onUpdateContact(contact);
+                    },
+                    icon: Icon(
+                      FontAwesomeIcons.userEdit,
+                      size: 23.sp,
+                      color: Colors.blue,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

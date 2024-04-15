@@ -8,17 +8,21 @@ import 'package:intl/intl.dart';
 import 'package:networking/apis/apis_auth.dart';
 import 'package:networking/apis/apis_relationships.dart';
 import 'package:networking/apis/apis_user.dart';
+import 'package:networking/apis/apis_user_relationship.dart';
 import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
 import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/helpers/helpers.dart';
 import 'package:networking/models/address_model.dart';
 import 'package:networking/models/relationship_model.dart';
+import 'package:networking/models/user_model.dart';
+import 'package:networking/models/user_relationship_model.dart';
 import 'package:networking/screens/relationships/new/change_address.dart';
 import 'package:networking/screens/relationships/new/change_relationship.dart';
 import 'package:networking/screens/relationships/new/import_contacts.dart';
 import 'package:networking/screens/relationships/new/qr_scan.dart';
 import 'package:networking/widgets/date_picker.dart';
 import 'package:networking/widgets/user_image_picker.dart';
+import 'package:tiengviet/tiengviet.dart';
 import 'package:uuid/uuid.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -57,7 +61,7 @@ class _NewRelationshipState extends State<NewRelationship> {
   var _numOfAddress = 0;
   List<Relationship> _listRelationship = [];
   List<Address> _listAddress = [];
-  Map<String, String> _otherInfo = {};
+  Map<String, dynamic> _otherInfo = {};
 
   void _createNewRelationship() async {
     final isValid = _formKey.currentState!.validate();
@@ -66,6 +70,8 @@ class _NewRelationshipState extends State<NewRelationship> {
       return;
     } else {
       if (_listRelationship.isNotEmpty) {
+        final checkNamesake = await checkContainsUserName(_enteredUserName);
+
         String imageUrl;
         Map<String, String> _enteredFacebook = {
           _enteredFBName.text.trim(): _enteredFBLink.text.trim()
@@ -77,31 +83,126 @@ class _NewRelationshipState extends State<NewRelationship> {
           _enteredZaloName.text.trim(): _enteredZaloPhone.text.trim()
         };
         String? meId = await APIsAuth.getCurrentUserId();
-        if (_enteredImageFile != null) {
-          imageUrl =
-              await APIsUser.saveUserImage(_enteredImageFile!, '$userId.jpg');
+        if (checkNamesake) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Icon(
+                Icons.warning_rounded,
+                size: 50.sp,
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      text: 'Có vẻ như ',
+                      style: TextStyle(
+                          color: Colors.black, fontSize: 14.sp, height: 1.3.sp),
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: _enteredUserName,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(
+                          text:
+                              ' đã có trong danh sách các mối quan hệ của bạn.',
+                        )
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 1.5.sp,
+                  ),
+                  Text(
+                    "Bạn vẫn muốn thêm mối quan hệ này?",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 14.sp),
+                  ),
+                ],
+              ),
+              actions: [
+                ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll(Colors.grey)),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text("Hủy"),
+                ),
+                ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll(Colors.green)),
+                  onPressed: () async {
+                    if (_enteredImageFile != null) {
+                      imageUrl = await APIsUser.saveUserImage(
+                          _enteredImageFile!, '$userId.jpg');
+                    } else {
+                      imageUrl = '';
+                    }
+                    context.read<UserListBloc>().add(AddUser(
+                        userId: userId,
+                        userName: _enteredUserName,
+                        email: _enteredEmail,
+                        imageUrl: imageUrl,
+                        gender: _enteredGender,
+                        birthday: _enteredBirthday,
+                        hobby: _enteredHobby,
+                        phone: _enteredPhone,
+                        facebook: _enteredFacebook,
+                        zalo: _enteredZalo,
+                        skype: _enteredSkype,
+                        address: _listAddress,
+                        otherInfo: _otherInfo));
+                    context.read<UsReListBloc>().add(AddUsRe(
+                        meId: meId!,
+                        myReId: userId,
+                        relationships: _listRelationship));
+                    showSnackbar(
+                        context,
+                        "Đã thêm mối quan hệ mới",
+                        Duration(seconds: 3),
+                        true,
+                        ScreenUtil().screenHeight - 120.sp);
+                    Navigator.of(context)
+                      ..pop()
+                      ..pop();
+                  },
+                  child: Text("Thêm"),
+                ),
+              ],
+            ),
+          );
         } else {
-          imageUrl = '';
+          if (_enteredImageFile != null) {
+            imageUrl =
+                await APIsUser.saveUserImage(_enteredImageFile!, '$userId.jpg');
+          } else {
+            imageUrl = '';
+          }
+          context.read<UserListBloc>().add(AddUser(
+              userId: userId,
+              userName: _enteredUserName,
+              email: _enteredEmail,
+              imageUrl: imageUrl,
+              gender: _enteredGender,
+              birthday: _enteredBirthday,
+              hobby: _enteredHobby,
+              phone: _enteredPhone,
+              facebook: _enteredFacebook,
+              zalo: _enteredZalo,
+              skype: _enteredSkype,
+              address: _listAddress,
+              otherInfo: _otherInfo));
+          context.read<UsReListBloc>().add(AddUsRe(
+              meId: meId!, myReId: userId, relationships: _listRelationship));
+          showSnackbar(context, "Đã thêm mối quan hệ mới", Duration(seconds: 3),
+              true, ScreenUtil().screenHeight - 120.sp);
+          Navigator.of(context).pop();
         }
-        context.read<UserListBloc>().add(AddUser(
-            userId: userId,
-            userName: _enteredUserName,
-            email: _enteredEmail,
-            imageUrl: imageUrl,
-            gender: _enteredGender,
-            birthday: _enteredBirthday,
-            hobby: _enteredHobby,
-            phone: _enteredPhone,
-            facebook: _enteredFacebook,
-            zalo: _enteredZalo,
-            skype: _enteredSkype,
-            address: _listAddress,
-            otherInfo: _otherInfo));
-        context.read<UsReListBloc>().add(AddUsRe(
-            meId: meId!, myReId: userId, relationships: _listRelationship));
-        showSnackbar(context, "Đã thêm mối quan hệ mới", Duration(seconds: 3),
-            true, ScreenUtil().screenHeight - 120.sp);
-        Navigator.of(context).pop();
       } else {
         showSnackbar(context, "Vui lòng thiết lập mối quan hệ",
             Duration(seconds: 3), false, ScreenUtil().screenHeight - 180);
@@ -212,6 +313,26 @@ class _NewRelationshipState extends State<NewRelationship> {
     return list;
   }
 
+  static Future<bool> checkContainsUserName(String userName) async {
+    List<UserRelationship> listUsRe = await APIsUsRe.getAllMyRelationship();
+    List<Users> listUser = [];
+    for (var usRe in listUsRe) {
+      Users? user = await APIsUser.getUserFromId(usRe.myRelationShipId!);
+      if (user != null) {
+        listUser.add(user);
+      }
+    }
+    for (var u in listUser) {
+      if ((TiengViet.parse(u.userName!).length ==
+              TiengViet.parse(userName).length) &&
+          (TiengViet.parse(u.userName!).toLowerCase() ==
+              TiengViet.parse(userName).toLowerCase())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   void _launchSocial(String url, String fallbackUrl) async {
     final Uri uri = Uri.parse(fallbackUrl);
     await launchUrl(uri);
@@ -314,20 +435,34 @@ class _NewRelationshipState extends State<NewRelationship> {
                       child: Padding(
                         padding: EdgeInsets.all(5.sp),
                         child: Column(children: [
-                          TextFormField(
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "Họ tên",
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Họ tên không được để trống.";
-                              }
-                              return null;
-                            },
-                            onSaved: (value) {
-                              _enteredUserName = value!.trim();
-                            },
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText: "Họ tên",
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "Họ tên không được để trống.";
+                                    }
+                                    return null;
+                                  },
+                                  onSaved: (value) {
+                                    _enteredUserName = value!.trim();
+                                  },
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(right: 5.sp),
+                                child: Text(
+                                  "*",
+                                  style: TextStyle(
+                                      fontSize: 18.sp, color: Colors.red),
+                                ),
+                              ),
+                            ],
                           ),
                           hr,
                           Column(
@@ -415,6 +550,18 @@ class _NewRelationshipState extends State<NewRelationship> {
                                       fontWeight: FontWeight.w400,
                                       fontSize: 16),
                                 ),
+                                Spacer(),
+                                _listRelationship.isEmpty
+                                    ? Padding(
+                                        padding: EdgeInsets.only(right: 5.sp),
+                                        child: Text(
+                                          "*",
+                                          style: TextStyle(
+                                              fontSize: 18.sp,
+                                              color: Colors.red),
+                                        ),
+                                      )
+                                    : SizedBox(),
                               ],
                             ),
                           ),

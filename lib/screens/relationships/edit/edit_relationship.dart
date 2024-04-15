@@ -25,9 +25,29 @@ final _uuid = Uuid();
 
 class EditRelationship extends StatefulWidget {
   const EditRelationship(
-      {super.key, required this.user, required this.userRelationship});
+      {super.key, required this.user, required this.userRelationship})
+      : newUser = null,
+        newRelationships = null,
+        type = 0;
+  const EditRelationship.update(
+      {super.key,
+      required this.user,
+      required this.userRelationship,
+      required this.newUser,
+      required this.newRelationships})
+      : type = 1;
+  const EditRelationship.updateFromPhonebook(
+      {super.key,
+      required this.user,
+      required this.userRelationship,
+      required this.newUser,
+      required this.newRelationships})
+      : type = 2;
   final Users user;
   final UserRelationship userRelationship;
+  final Users? newUser;
+  final List<Relationship>? newRelationships;
+  final int type;
   @override
   State<EditRelationship> createState() => _EditRelationshipState();
 }
@@ -42,8 +62,6 @@ class _EditRelationshipState extends State<EditRelationship> {
   var _enteredEmail;
   var _enteredHobby;
   var _enteredGender;
-  var _enteredSkype;
-  var _enteredZalo;
   var _enteredSpecial;
 
   TextEditingController _enteredTitle = TextEditingController();
@@ -67,40 +85,131 @@ class _EditRelationshipState extends State<EditRelationship> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    if (widget.user.imageUrl! != '') {
-      _enteredImageFile = File(widget.user.imageUrl!);
+    if (widget.type != 0) {
+      _enteredSpecial = widget.userRelationship.special;
+      if (widget.newUser != null) {
+        if (widget.newUser!.imageUrl != '') {
+          _enteredImageFile = File(widget.newUser!.imageUrl!);
+        } else {
+          if (widget.user.imageUrl! != '') {
+            _enteredImageFile = File(widget.user.imageUrl!);
+          }
+        }
+        _enteredUserName = widget.newUser!.userName;
+        widget.newUser!.phone != ''
+            ? _enteredPhone = widget.newUser!.phone
+            : _enteredPhone = widget.user.phone;
+        widget.newUser!.email != ''
+            ? _enteredEmail = widget.newUser!.email
+            : _enteredEmail = widget.user.email;
+        widget.newUser!.hobby != ''
+            ? _enteredHobby = widget.newUser!.hobby
+            : _enteredHobby = widget.user.hobby;
+
+        _enteredGender = widget.newUser!.gender;
+
+        if (widget.newUser!.facebook!.keys.first.isNotEmpty) {
+          _enteredFBName.text = widget.newUser!.facebook!.keys.first;
+        } else {
+          if (widget.user.facebook!.keys.first.isNotEmpty)
+            _enteredFBName.text = widget.user.facebook!.keys.first;
+        }
+
+        if (widget.newUser!.facebook!.values.first.isNotEmpty) {
+          _enteredFBLink.text = widget.newUser!.facebook!.values.first;
+        } else {
+          if (widget.user.facebook!.values.first.isNotEmpty)
+            _enteredFBLink.text = widget.user.facebook!.values.first;
+        }
+
+        if (widget.newUser!.skype!.keys.first.isNotEmpty) {
+          _enteredSkypeName.text = widget.newUser!.skype!.keys.first;
+        } else {
+          if (widget.user.skype!.keys.first.isNotEmpty)
+            _enteredSkypeName.text = widget.user.skype!.keys.first;
+        }
+
+        if (widget.newUser!.skype!.values.first.isNotEmpty) {
+          _enteredSkypeId.text = widget.newUser!.skype!.values.first;
+        } else {
+          if (widget.user.skype!.values.first.isNotEmpty)
+            _enteredSkypeId.text = widget.user.skype!.values.first;
+        }
+
+        if (widget.newUser!.zalo!.keys.first.isNotEmpty) {
+          _enteredZaloName.text = widget.newUser!.zalo!.keys.first;
+        } else {
+          if (widget.user.zalo!.keys.first.isNotEmpty)
+            _enteredZaloName.text = widget.user.zalo!.keys.first;
+        }
+
+        if (widget.newUser!.zalo!.values.first.isNotEmpty) {
+          _enteredZaloPhone.text = widget.newUser!.zalo!.values.first;
+        } else {
+          if (widget.user.zalo!.values.first.isNotEmpty)
+            _enteredZaloPhone.text = widget.user.zalo!.values.first;
+        }
+
+        widget.newUser!.birthday != null
+            ? _enteredBirthday = widget.newUser!.birthday!
+            : _enteredBirthday = widget.user.birthday!;
+        if (widget.newUser!.otherInfo!.isNotEmpty) {
+          _otherInfo = widget.user.otherInfo!;
+          _otherInfo.addAll((widget.newUser!.otherInfo!));
+        } else {
+          _otherInfo = widget.user.otherInfo!;
+        }
+        if (widget.newUser!.address!.isNotEmpty) {
+          _listAddress = widget.user.address! + widget.newUser!.address!;
+          _numOfAddress = _listAddress.length;
+        } else {
+          _numOfAddress = widget.user.address!.length;
+          _listAddress = widget.user.address!;
+        }
+
+        if (widget.newRelationships!.isNotEmpty) {
+          _listRelationship =
+              widget.userRelationship.relationships! + widget.newRelationships!;
+          _numOfRelationship = _listRelationship.length;
+        } else {
+          _numOfRelationship = widget.userRelationship.relationships!.length;
+          _listRelationship = widget.userRelationship.relationships!;
+        }
+      }
+    } else {
+      if (widget.user.imageUrl! != '') {
+        _enteredImageFile = File(widget.user.imageUrl!);
+      }
+
+      _enteredUserName = widget.user.userName;
+      _enteredPhone = widget.user.phone;
+      _enteredEmail = widget.user.email;
+      _enteredHobby = widget.user.hobby;
+      _enteredGender = widget.user.gender!;
+
+      if (widget.user.facebook!.keys.first.isNotEmpty)
+        _enteredFBName.text = widget.user.facebook!.keys.first;
+      if (widget.user.facebook!.values.first.isNotEmpty)
+        _enteredFBLink.text = widget.user.facebook!.values.first;
+
+      if (widget.user.skype!.keys.first.isNotEmpty)
+        _enteredSkypeName.text = widget.user.skype!.keys.first;
+      if (widget.user.skype!.values.first.isNotEmpty)
+        _enteredSkypeId.text = widget.user.skype!.values.first;
+
+      if (widget.user.zalo!.keys.first.isNotEmpty)
+        _enteredZaloName.text = widget.user.zalo!.keys.first;
+      if (widget.user.zalo!.values.first.isNotEmpty)
+        _enteredZaloPhone.text = widget.user.zalo!.values.first;
+
+      _enteredBirthday = widget.user.birthday!;
+      _numOfRelationship = widget.userRelationship.relationships!.length;
+      _numOfAddress = widget.user.address!.length;
+      _listRelationship = widget.userRelationship.relationships!;
+      _enteredSpecial = widget.userRelationship.special;
+      _listAddress = widget.user.address!;
+      _otherInfo = widget.user.otherInfo!;
     }
-
-    _enteredUserName = widget.user.userName;
-    _enteredPhone = widget.user.phone;
-    _enteredEmail = widget.user.email;
-    _enteredHobby = widget.user.hobby;
-    _enteredGender = widget.user.gender!;
-
-    if (widget.user.facebook!.keys.first.isNotEmpty)
-      _enteredFBName.text = widget.user.facebook!.keys.first;
-    if (widget.user.facebook!.values.first.isNotEmpty)
-      _enteredFBLink.text = widget.user.facebook!.values.first;
-
-    if (widget.user.skype!.keys.first.isNotEmpty)
-      _enteredSkypeName.text = widget.user.skype!.keys.first;
-    if (widget.user.skype!.values.first.isNotEmpty)
-      _enteredSkypeId.text = widget.user.skype!.values.first;
-
-    if (widget.user.zalo!.keys.first.isNotEmpty)
-      _enteredZaloName.text = widget.user.zalo!.keys.first;
-    if (widget.user.zalo!.values.first.isNotEmpty)
-      _enteredZaloPhone.text = widget.user.zalo!.values.first;
-
-    _enteredSkype = widget.user.skype;
-    _enteredZalo = widget.user.zalo;
-    _enteredBirthday = widget.user.birthday!;
-    _numOfRelationship = widget.userRelationship.relationships!.length;
-    _numOfAddress = widget.user.address!.length;
-    _listRelationship = widget.userRelationship.relationships!;
-    _enteredSpecial = widget.userRelationship.special;
-    _listAddress = widget.user.address!;
-    _otherInfo = widget.user.otherInfo!;
   }
 
   void _updateRelationship() async {
@@ -122,10 +231,16 @@ class _EditRelationshipState extends State<EditRelationship> {
         String imageUrl;
         if (_enteredImageFile != null) {
           if (_enteredImageFile!.path != widget.user.imageUrl!) {
-            var time = DateTime.now().microsecondsSinceEpoch;
-            File(widget.user.imageUrl!).delete();
-            imageUrl = await APIsUser.saveUserImage(
-                _enteredImageFile!, '${userId + '-T' + time.toString()}.jpg');
+            if (_enteredImageFile!.path != widget.newUser!.imageUrl!) {
+              var time = DateTime.now().microsecondsSinceEpoch;
+              File(widget.user.imageUrl!).delete();
+              File(widget.newUser!.imageUrl!).delete();
+              imageUrl = await APIsUser.saveUserImage(
+                  _enteredImageFile!, '${userId + '-T' + time.toString()}.jpg');
+            } else {
+              File(widget.user.imageUrl!).delete();
+              imageUrl = widget.newUser!.imageUrl!;
+            }
           } else {
             imageUrl = widget.user.imageUrl!;
           }
@@ -152,7 +267,25 @@ class _EditRelationshipState extends State<EditRelationship> {
             usReId: widget.userRelationship.usReId!,
             special: _enteredSpecial,
             relationships: _listRelationship));
-        Navigator.of(context).pop();
+
+        if (widget.type == 1) {
+          Navigator.of(context)
+            ..pop()
+            ..pop()
+            ..pop()
+            ..pop()
+            ..pop();
+        }
+        if (widget.type == 2) {
+          Navigator.of(context)
+            ..pop()
+            ..pop()
+            ..pop()
+            ..pop();
+        }
+        if (widget.type == 0) {
+          Navigator.of(context).pop();
+        }
       } else {
         showSnackbar(context, "Vui lòng thiết lập mối quan hệ",
             Duration(seconds: 3), false, ScreenUtil().screenHeight - 120);
@@ -349,21 +482,35 @@ class _EditRelationshipState extends State<EditRelationship> {
                       child: Padding(
                         padding: EdgeInsets.all(5.sp),
                         child: Column(children: [
-                          TextFormField(
-                            initialValue: _enteredUserName,
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "Họ tên",
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Họ tên không được để trống.";
-                              }
-                              return null;
-                            },
-                            onSaved: (value) {
-                              _enteredUserName = value!.trim();
-                            },
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  initialValue: _enteredUserName,
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText: "Họ tên",
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "Họ tên không được để trống.";
+                                    }
+                                    return null;
+                                  },
+                                  onSaved: (value) {
+                                    _enteredUserName = value!.trim();
+                                  },
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(right: 5.sp),
+                                child: Text(
+                                  "*",
+                                  style: TextStyle(
+                                      fontSize: 18.sp, color: Colors.red),
+                                ),
+                              ),
+                            ],
                           ),
                           hr,
                           Row(
@@ -475,6 +622,18 @@ class _EditRelationshipState extends State<EditRelationship> {
                                       fontWeight: FontWeight.w400,
                                       fontSize: 16),
                                 ),
+                                Spacer(),
+                                _listRelationship.isEmpty
+                                    ? Padding(
+                                        padding: EdgeInsets.only(right: 5.sp),
+                                        child: Text(
+                                          "*",
+                                          style: TextStyle(
+                                              fontSize: 18.sp,
+                                              color: Colors.red),
+                                        ),
+                                      )
+                                    : SizedBox(),
                               ],
                             ),
                           ),

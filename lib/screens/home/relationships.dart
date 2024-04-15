@@ -119,7 +119,8 @@ class _RelationshipScreenState extends State<RelationshipScreen> {
                 ),
                 Row(
                   children: [
-                    searchBar(() => _runFilter("_enteredKeyword")),
+                    searchBar(() => _runFilter("_enteredKeyword"),
+                        ScreenUtil().screenWidth - 80),
                     IconButton(
                       onPressed: () {},
                       icon: Icon(
