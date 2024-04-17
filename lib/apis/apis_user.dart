@@ -4,10 +4,8 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:networking/apis/apis_user_relationship.dart';
 import 'package:networking/models/address_model.dart';
 import 'package:networking/models/user_model.dart';
-import 'package:networking/models/user_relationship_model.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -33,42 +31,8 @@ class APIsUser {
     return imageUrl;
   }
 
-  static Future<void> createNewUser(
-    String userId,
-    String userName,
-    String email,
-    String imageUrl,
-    bool gender,
-    DateTime? birthday,
-    String hobby,
-    String phone,
-    Map<String, dynamic> facebook,
-    Map<String, dynamic> zalo,
-    Map<String, dynamic> skype,
-    List<Address> address,
-    Map<String, dynamic> otherInfo,
-  ) async {
+  static Future<void> createNewUser(Users newUser) async {
     final SharedPreferences _prefs = await prefs;
-    final newUser = Users(
-        userId: userId,
-        userName: userName,
-        email: email,
-        imageUrl: imageUrl,
-        gender: gender,
-        birthday: birthday,
-        hobby: hobby,
-        phone: phone,
-        facebook: facebook,
-        zalo: zalo,
-        skype: skype,
-        address: address,
-        otherInfo: otherInfo,
-        createdAt: DateTime.now(),
-        updateAt: null,
-        deleteAt: null,
-        isOnline: true,
-        blockUsers: [],
-        token: '');
     List<String> listUserRead = await _prefs.getStringList('users') ?? [];
     listUserRead.add(jsonEncode(newUser.toMap()));
     await _prefs.setStringList('users', listUserRead);

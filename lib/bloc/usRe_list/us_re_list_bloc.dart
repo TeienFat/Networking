@@ -35,8 +35,7 @@ class UsReListBloc extends Bloc<UsReListEvent, UsReListState> {
         updateAt: null,
         deleteAt: null);
     state.usRes.add(newUsRe);
-    APIsUsRe.createNewUsRe(
-        userId, event.meId, event.myReId, event.relationships);
+    APIsUsRe.createNewUsRe(newUsRe);
     emit(UsReListUploaded(usRes: state.usRes));
   }
 

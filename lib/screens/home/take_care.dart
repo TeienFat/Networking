@@ -5,7 +5,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:networking/bloc/reCare_list/re_care_list_bloc.dart';
 import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
 import 'package:networking/models/relationship_care_model.dart';
-import 'package:networking/models/user_relationship_model.dart';
 import 'package:networking/widgets/take_care_card.dart';
 
 class TakeCareScreen extends StatefulWidget {

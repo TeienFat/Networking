@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:networking/apis/apis_auth.dart';
 import 'package:networking/apis/apis_user.dart';
 import 'package:networking/bloc/reCare_list/re_care_list_bloc.dart';
 import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
+import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/models/secuquestions_model.dart';
 import 'package:networking/screens/auth/forgot_password/forgot_password.dart';
 import 'package:uuid/uuid.dart';
@@ -79,26 +81,28 @@ class _AuthScreenState extends State<AuthScreen> {
       if (!already) {
         APIsAuth.createNewAccount(_enteredLoginName, _enteredPassword,
             _enteredQuestion, _enteredAnswer, _userId);
-        APIsUser.createNewUser(
-            _userId,
-            _enteredUserName,
-            '',
-            '',
-            false,
-            DateTime(2000, 01, 01),
-            '',
-            '',
-            {'': ''},
-            {'': ''},
-            {'': ''},
-            [],
-            {});
+        context.read<UserListBloc>().add(AddUser(
+            userId: _userId,
+            userName: _enteredUserName,
+            email: '',
+            imageUrl: '',
+            gender: false,
+            birthday: DateTime(2000, 01, 01),
+            hobby: '',
+            phone: '',
+            facebook: {'': ''},
+            zalo: {'': ''},
+            skype: {'': ''},
+            address: [],
+            otherInfo: {}));
 
         showSnackbar(context, "Đăng kí tài khoản thành công",
             Duration(seconds: 2), true, ScreenUtil().screenHeight - 120);
 
         Navigator.of(context)
             .pushNamedAndRemoveUntil("/Main", (route) => false);
+        context.read<UsReListBloc>().add(LoadUsReList());
+        context.read<ReCareListBloc>().add(LoadReCareList());
       } else {
         showSnackbar(context, "Tên đăng nhập đã được sử dụng",
             Duration(seconds: 2), false, ScreenUtil().screenHeight - 120);
@@ -147,6 +151,19 @@ class _AuthScreenState extends State<AuthScreen> {
                           if (value.length < 3 || value.length > 20) {
                             return "Tên đăng nhập phải có ít nhất 3 kí tự.";
                           }
+                          if (value.trim().contains(' ')) {
+                            return "Tên đăng nhập không được có khoảng trắng";
+                          }
+                          if (RegExp(r'[!@#$%^&*(),.?":{}|<>+_=/\\[\]-]|\p{L}')
+                              .hasMatch(value.trim())) {
+                            return 'Tên đăng nhập không chứa kí tự đặc biệt';
+                          }
+                          if (RegExp(
+                                  r'à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ|À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ|è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ|È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ|ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ|Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ|ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ|Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ|ì|í|ị|ỉ|ĩ|Ì|Í|Ị|Ỉ|Ĩ|đ|Đ|ỳ|ý|ỵ|ỷ|ỹ|Ỳ|Ý|Ỵ|Ỷ|Ỹ')
+                              .hasMatch(value.trim())) {
+                            return 'Tên đăng nhập không chứa Tiếng Việt';
+                          }
+
                           return null;
                         },
                         onSaved: (value) {

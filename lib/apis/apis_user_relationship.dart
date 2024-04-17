@@ -21,24 +21,9 @@ class APIsUsRe {
 
   static Future<SharedPreferences> prefs = SharedPreferences.getInstance();
 
-  static Future<void> createNewUsRe(
-    String usReId,
-    String meId,
-    String myReId,
-    List<Relationship> relationships,
-  ) async {
+  static Future<void> createNewUsRe(UserRelationship newUsRe) async {
     final SharedPreferences _prefs = await prefs;
-    final newUsRe = UserRelationship(
-        usReId: usReId,
-        meId: meId,
-        myRelationShipId: myReId,
-        special: false,
-        relationships: relationships,
-        notification: [],
-        time_of_care: 0,
-        createdAt: DateTime.now(),
-        updateAt: null,
-        deleteAt: null);
+
     List<String> listUsReRead = await _prefs.getStringList('usRes') ?? [];
     listUsReRead.add(jsonEncode(newUsRe.toMap()));
     await _prefs.setStringList('usRes', listUsReRead);
