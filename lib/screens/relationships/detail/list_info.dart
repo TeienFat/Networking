@@ -15,59 +15,59 @@ class ListInfo extends StatelessWidget {
   final Users user;
   final UserRelationship userRelationship;
   @override
-  List<Widget> _getAllOtherInfo() {
-    List<Widget> list = [];
-
-    user.otherInfo!.forEach((key, value) {
-      list.add(Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: ScreenUtil().screenWidth,
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 10.sp,
-                ),
-                FaIcon(FontAwesomeIcons.circleInfo),
-                SizedBox(
-                  width: 17.sp,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      key,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14.sp,
-                          overflow: TextOverflow.ellipsis),
-                    ),
-                    Text(
-                      value,
-                      style: TextStyle(
-                          fontSize: 14.sp, overflow: TextOverflow.ellipsis),
-                      maxLines: 2,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          key == user.otherInfo!.keys.last ? SizedBox() : hr,
-        ],
-      ));
-    });
-
-    return list;
-  }
-
   Widget build(BuildContext context) {
     final zaloWidgetkey = GlobalKey();
     final skypeWidgetkey = GlobalKey();
     final facebookWidgetkey = GlobalKey();
     List<Widget> listRowRelationship = getAllRowRelationship(
         userRelationship.relationships!, 14.sp, 20.sp, 20.sp);
+    List<Widget> _getAllOtherInfo() {
+      List<Widget> list = [];
+
+      user.otherInfo!.forEach((key, value) {
+        list.add(Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: ScreenUtil().screenWidth,
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 10.sp,
+                  ),
+                  FaIcon(FontAwesomeIcons.circleInfo),
+                  SizedBox(
+                    width: 17.sp,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        key,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14.sp,
+                            overflow: TextOverflow.ellipsis),
+                      ),
+                      Text(
+                        value,
+                        style: TextStyle(
+                            fontSize: 14.sp, overflow: TextOverflow.ellipsis),
+                        maxLines: 2,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            key == user.otherInfo!.keys.last ? SizedBox() : hr,
+          ],
+        ));
+      });
+
+      return list;
+    }
+
     return BlocBuilder<UserListBloc, UserListState>(
       builder: (context, state) {
         return Column(

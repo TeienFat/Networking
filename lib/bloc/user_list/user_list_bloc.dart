@@ -41,21 +41,7 @@ class UserListBloc extends Bloc<UserListEvent, UserListState> {
         blockUsers: [],
         token: '');
     state.users.add(newUser);
-    APIsUser.createNewUser(
-      event.userId,
-      event.userName,
-      event.email,
-      event.imageUrl,
-      event.gender,
-      event.birthday,
-      event.hobby,
-      event.phone,
-      event.facebook,
-      event.zalo,
-      event.skype,
-      event.address,
-      event.otherInfo,
-    );
+    APIsUser.createNewUser(newUser);
     emit(UserListUploaded(users: state.users));
   }
 
