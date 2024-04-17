@@ -681,9 +681,12 @@ class _EditRelationshipState extends State<EditRelationship> {
                                   width: 20.sp,
                                 ),
                                 DatePickerIcon(
-                                    onPickDate: (datePick) =>
-                                        _pickBirthday(datePick),
-                                    selectedDate: _enteredBirthday),
+                                  onPickDate: (datePick) =>
+                                      _pickBirthday(datePick),
+                                  selectedDate: _enteredBirthday,
+                                  firstDate: DateTime(1900),
+                                  lastDate: DateTime.now(),
+                                ),
                                 Spacer(),
                                 Icon(
                                   Icons.man_2_rounded,

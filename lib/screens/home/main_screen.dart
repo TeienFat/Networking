@@ -10,6 +10,7 @@ import 'package:networking/screens/home/my_profile.dart';
 import 'package:networking/screens/home/relationships.dart';
 import 'package:networking/screens/home/take_care.dart';
 import 'package:networking/screens/relationships/new/new_relationship.dart';
+import 'package:networking/screens/take_care/new_relationship_care.dart';
 import 'package:networking/widgets/bottom_navigartion_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -81,6 +82,9 @@ class _MainScreenState extends State<MainScreen> {
         //     DateTime(2024, 8, 30, 7, 00),
         //     DateTime(2024, 8, 30, 23, 59),
         //     'Dự lễ tốt nghiệp');
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => NewRelationshipCare(),
+        ));
         break;
       case 2:
         print("C");

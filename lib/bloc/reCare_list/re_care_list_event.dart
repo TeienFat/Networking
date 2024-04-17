@@ -6,18 +6,24 @@ abstract class ReCareListEvent {}
 class LoadReCareList extends ReCareListEvent {}
 
 class AddReCare extends ReCareListEvent {
-  // final String meId;
-  // final String myReId;
-  // final List<Relationship> relationships;
+  final String meId;
+  final String usReId;
+  final DateTime startTime;
+  final DateTime endTime;
+  final String title;
 
-  // AddReCare(
-  //     {required this.meId, required this.myReId, required this.relationships});
+  AddReCare(
+      {required this.meId,
+      required this.usReId,
+      required this.startTime,
+      required this.endTime,
+      required this.title});
 }
 
 class DeleteReCare extends ReCareListEvent {
-  // final String usReId;
+  final String reCareId;
 
-  // DeleteReCare({required this.usReId});
+  DeleteReCare({required this.reCareId});
 }
 
 class UpdateReCare extends ReCareListEvent {

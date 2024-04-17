@@ -104,7 +104,7 @@ Widget getRowDateTime(DateTime dateTime) {
       SizedBox(
         width: 3.sp,
       ),
-      Text(DateFormat("hh:mm").format(dateTime)),
+      Text(DateFormat("HH:mm").format(dateTime)),
       SizedBox(
         width: 10.sp,
       ),
