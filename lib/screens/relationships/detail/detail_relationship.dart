@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:networking/bloc/reCare_list/re_care_list_bloc.dart';
 import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
 import 'package:networking/models/user_model.dart';
 import 'package:networking/models/user_relationship_model.dart';
 import 'package:networking/screens/relationships/detail/custom_appbar.dart';
 import 'package:networking/screens/relationships/detail/custom_button_switch.dart';
 import 'package:networking/screens/relationships/detail/list_info.dart';
+import 'package:networking/screens/take_care/new_relationship_care.dart';
+import 'package:networking/widgets/take_care_card.dart';
 
 class DetailRelationship extends StatefulWidget {
   const DetailRelationship(
@@ -32,96 +35,97 @@ class _DetailRelationshipState extends State<DetailRelationship> {
   Widget build(BuildContext context) {
     return BlocBuilder<UsReListBloc, UsReListState>(
       builder: (context, state) {
-        return SafeArea(
-            child: Material(
-          child: CustomScrollView(
-            slivers: [
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: MySliverAppBar(
-                    expandedHeight: ScreenUtil().screenHeight / 2.4,
-                    user: widget.user,
-                    userRelationship: widget.userRelationship),
-              ),
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: MySliverButtonSwicth(
-                    user: widget.user,
-                    userRelationship: widget.userRelationship,
-                    onChangePage: _onChangePage),
-              ),
-              SliverList(
-                delegate: SliverChildListDelegate([
-                  _page
-                      ? Padding(
-                          padding: EdgeInsets.all(10.sp),
-                          child: ListInfo(
-                              user: widget.user,
-                              userRelationship: widget.userRelationship),
-                        )
-                      : Column(
-                          children: [
-                            listCardWidget(
-                                text1: 'ĐÂY LÀ MỤC CHĂM SÓC:', text2: 'SỐ 1'),
-                            listCardWidget(
-                                text1: 'ĐÂY LÀ MỤC CHĂM SÓC:', text2: 'SỐ 2'),
-                            listCardWidget(
-                                text1: 'ĐÂY LÀ MỤC CHĂM SÓC:', text2: 'SỐ 3'),
-                            listCardWidget(
-                                text1: 'ĐÂY LÀ MỤC CHĂM SÓC:', text2: 'SỐ 4'),
-                            listCardWidget(
-                                text1: 'ĐÂY LÀ MỤC CHĂM SÓC:', text2: 'SỐ 5'),
-                            listCardWidget(
-                                text1: 'ĐÂY LÀ MỤC CHĂM SÓC:', text2: 'SỐ 6'),
-                            listCardWidget(
-                                text1: 'ĐÂY LÀ MỤC CHĂM SÓC:', text2: 'SỐ 7'),
-                            listCardWidget(
-                                text1: 'ĐÂY LÀ MỤC CHĂM SÓC:', text2: 'SỐ 8'),
-                            listCardWidget(
-                                text1: 'ĐÂY LÀ MỤC CHĂM SÓC:', text2: 'SỐ 9'),
-                            listCardWidget(
-                                text1: 'ĐÂY LÀ MỤC CHĂM SÓC:', text2: 'SỐ 10'),
-                            listCardWidget(
-                                text1: 'ĐÂY LÀ MỤC CHĂM SÓC:', text2: 'SỐ 11'),
-                          ],
-                        ),
-                  SizedBox(height: 100.sp),
-                ]),
-              )
-            ],
-          ),
-        ));
-      },
-    );
-  }
+        return Scaffold(
+          body: SafeArea(
+              child: Material(
+            child: CustomScrollView(
+              slivers: [
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: MySliverAppBar(
+                      expandedHeight: ScreenUtil().screenHeight / 2.4,
+                      user: widget.user,
+                      userRelationship: widget.userRelationship),
+                ),
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: MySliverButtonSwicth(
+                      user: widget.user,
+                      userRelationship: widget.userRelationship,
+                      onChangePage: _onChangePage),
+                ),
+                SliverList(
+                  delegate: SliverChildListDelegate([
+                    _page
+                        ? Padding(
+                            padding: EdgeInsets.all(10.sp),
+                            child: ListInfo(
+                                user: widget.user,
+                                userRelationship: widget.userRelationship),
+                          )
+                        : BlocBuilder<ReCareListBloc, ReCareListState>(
+                            builder: (context, state) {
+                              if (state is ReCareListUploaded &&
+                                  state.reCares.isNotEmpty) {
+                                final reCares = state.reCares;
+                                reCares.sort(
+                                  (a, b) {
+                                    if (a.endTime!.isBefore(b.endTime!)) {
+                                      return 1;
+                                    }
 
-  Widget listCardWidget({required String text1, required text2}) {
-    return Card(
-      margin: const EdgeInsets.all(8.0),
-      elevation: 5.0,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Flexible(
-                fit: FlexFit.tight,
-                child: Text(
-                  text1,
-                  style: const TextStyle(fontSize: 18),
-                )),
-            Flexible(
-              flex: 2,
-              fit: FlexFit.tight,
-              child: Text(
-                text2,
-                style: const TextStyle(
-                    fontSize: 20.0, fontWeight: FontWeight.bold),
-              ),
+                                    if (a.endTime!.isAfter(b.endTime!)) {
+                                      return -1;
+                                    }
+                                    return 0;
+                                  },
+                                );
+                                List<Widget> listCard = [];
+                                for (var reca in reCares) {
+                                  if (reca.usReId ==
+                                      widget.userRelationship.usReId) {
+                                    listCard.add(Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 10.sp, vertical: 5.sp),
+                                      child: ReCareCard(
+                                          reCare: reca,
+                                          userRelationship:
+                                              widget.userRelationship,
+                                          listType: 5),
+                                    ));
+                                  }
+                                }
+                                return Column(
+                                  children: listCard,
+                                );
+                              }
+                              return Center(child: CircularProgressIndicator());
+                            },
+                          ),
+                    SizedBox(height: 100.sp),
+                  ]),
+                )
+              ],
             ),
-          ],
-        ),
-      ),
+          )),
+          floatingActionButton: _page
+              ? null
+              : FloatingActionButton(
+                  backgroundColor: Colors.orange[600],
+                  onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NewRelationshipCare.fromUsRe(
+                            userRelationship: widget.userRelationship),
+                      )),
+                  child: Icon(
+                    Icons.add,
+                    color: Colors.black,
+                    size: 35.sp,
+                  ),
+                ),
+        );
+      },
     );
   }
 }

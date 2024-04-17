@@ -4,7 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:networking/apis/apis_auth.dart';
 import 'package:networking/bloc/reCare_list/re_care_list_bloc.dart';
+import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/helpers/helpers.dart';
+import 'package:networking/models/user_relationship_model.dart';
 import 'package:networking/widgets/date_picker.dart';
 import 'package:networking/widgets/pick_relationship.dart';
 import 'package:networking/widgets/time_picker.dart';
@@ -13,8 +15,10 @@ import 'package:uuid/uuid.dart';
 final _uuid = Uuid();
 
 class NewRelationshipCare extends StatefulWidget {
-  const NewRelationshipCare({super.key});
-
+  const NewRelationshipCare({super.key}) : userRelationship = null;
+  const NewRelationshipCare.fromUsRe(
+      {super.key, required this.userRelationship});
+  final UserRelationship? userRelationship;
   @override
   State<NewRelationshipCare> createState() => _NewRelationshipCareState();
 }
@@ -23,6 +27,8 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
   final _formKey = GlobalKey<FormState>();
   var _enteredTitle;
   var _enteredUsReId;
+  // var _usReName;
+  // var _usReRelationship;
   var _enteredAllDay = false;
   TimeOfDay _enteredStartTime =
       TimeOfDay(hour: TimeOfDay.now().hour, minute: 0);
@@ -30,6 +36,15 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
       TimeOfDay(hour: TimeOfDay.now().hour + 1, minute: 0);
   DateTime _enteredStartDay = DateTime.now();
   DateTime _enteredEndDay = DateTime.now();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (widget.userRelationship != null) {
+      _enteredUsReId = widget.userRelationship!.usReId;
+    }
+  }
 
   void _createNewRelationshipCare() async {
     final isValid = _formKey.currentState!.validate();
@@ -56,8 +71,14 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
           startTime: startTime,
           endTime: endTime,
           title: _enteredTitle));
-      showSnackbar(context, "Đã thêm mục chăm sóc mới", Duration(seconds: 2),
-          true, ScreenUtil().screenHeight - 120.sp);
+      if (widget.userRelationship != null) {
+        showSnackbar(context, "Đã thêm mục chăm sóc mới", Duration(seconds: 2),
+            true, ScreenUtil().screenHeight - 150.sp);
+      } else {
+        showSnackbar(context, "Đã thêm mục chăm sóc mới", Duration(seconds: 2),
+            true, ScreenUtil().screenHeight - 100.sp);
+      }
+
       Navigator.of(context).pop();
     } else {
       showSnackbar(context, "Hãy chọn mối quan hệ cần chăm sóc",
@@ -172,9 +193,81 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
                   SizedBox(
                     height: 20.sp,
                   ),
-                  PickRelationship(
-                    onPickRelationship: (usReId) => onPickRelationship(usReId),
-                  ),
+                  widget.userRelationship != null
+                      ? Container(
+                          decoration: BoxDecoration(
+                              color: Colors.grey[100],
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(5.sp),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 2,
+                                  blurRadius: 5,
+                                  offset: Offset(0, 3),
+                                ),
+                              ]),
+                          child: Padding(
+                            padding: EdgeInsets.all(5.sp),
+                            child: BlocBuilder<UserListBloc, UserListState>(
+                              builder: (context, state) {
+                                if (state is UserListUploaded &&
+                                    state.users.isNotEmpty) {
+                                  final users = state.users;
+                                  for (var user in users) {
+                                    if ((user.userId!.length ==
+                                            widget.userRelationship!
+                                                .myRelationShipId!.length) &&
+                                        (user.userId ==
+                                            widget.userRelationship!
+                                                .myRelationShipId!)) {
+                                      return Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 10.sp),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  user.userName!,
+                                                  style: TextStyle(
+                                                      fontSize: 14.sp),
+                                                ),
+                                                SizedBox(
+                                                  height: 5.sp,
+                                                ),
+                                                Row(
+                                                  children: getRowRelationship(
+                                                      widget.userRelationship!
+                                                          .relationships!,
+                                                      2,
+                                                      12.sp,
+                                                      12.sp),
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      );
+                                    }
+                                  }
+                                }
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              },
+                            ),
+                          ),
+                        )
+                      : PickRelationship(
+                          onPickRelationship: (usReId) =>
+                              onPickRelationship(usReId),
+                        ),
                   SizedBox(
                     height: 20.sp,
                   ),

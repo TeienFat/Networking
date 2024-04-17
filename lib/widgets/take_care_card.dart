@@ -107,14 +107,23 @@ class _ReCareCardState extends State<ReCareCard> {
                       context
                           .read<ReCareListBloc>()
                           .add(DeleteReCare(reCareId: widget.reCare.reCareId!));
-
-                      showSnackbar(
-                          context,
-                          "Đã xóa mục chăm sóc",
-                          Duration(seconds: 2),
-                          true,
-                          ScreenUtil().screenHeight - 120);
-                      Navigator.of(context)..pop();
+                      if (widget.listType == 5) {
+                        showSnackbar(
+                            context,
+                            "Đã xóa mục chăm sóc",
+                            Duration(seconds: 2),
+                            true,
+                            ScreenUtil().screenHeight - 180);
+                        Navigator.of(context)..pop();
+                      } else {
+                        showSnackbar(
+                            context,
+                            "Đã xóa mục chăm sóc",
+                            Duration(seconds: 2),
+                            true,
+                            ScreenUtil().screenHeight - 120);
+                        Navigator.of(context)..pop();
+                      }
                     },
                     child: Text("Xóa"),
                   ),
@@ -223,7 +232,9 @@ class _ReCareCardState extends State<ReCareCard> {
                 ),
               ),
               Spacer(),
-              widget.listType == 0 ? _iconCard : SizedBox()
+              widget.listType == 0 || widget.listType == 5
+                  ? _iconCard
+                  : SizedBox()
             ],
           ),
         ),
