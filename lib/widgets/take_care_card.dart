@@ -1,20 +1,13 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
-import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
+import 'package:networking/bloc/reCare_list/re_care_list_bloc.dart';
 import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/helpers/helpers.dart';
 import 'package:networking/models/relationship_care_model.dart';
-import 'package:networking/models/user_model.dart';
 import 'package:networking/models/user_relationship_model.dart';
-import 'package:networking/screens/relationships/detail/detail_relationship.dart';
-import 'package:networking/screens/relationships/edit/edit_relationship.dart';
-import 'package:networking/screens/relationships/share/share_relationship.dart';
 
 class ReCareCard extends StatefulWidget {
   const ReCareCard(
@@ -87,52 +80,47 @@ class _ReCareCardState extends State<ReCareCard> {
         ),
         SlidableAction(
           onPressed: (context) {
-            // showDialog(
-            //   context: context,
-            //   builder: (context) => AlertDialog(
-            //     title: Text(
-            //       "Xóa mối quan hệ",
-            //       textAlign: TextAlign.center,
-            //     ),
-            //     content: Text(
-            //       "Bạn chắc chắn muốn xóa mối quan hệ này?",
-            //       textAlign: TextAlign.center,
-            //     ),
-            //     actions: [
-            //       ElevatedButton(
-            //         style: ButtonStyle(
-            //             backgroundColor: MaterialStatePropertyAll(Colors.grey)),
-            //         onPressed: () {
-            //           Navigator.pop(context);
-            //         },
-            //         child: Text("Hủy"),
-            //       ),
-            //       ElevatedButton(
-            //         style: ButtonStyle(
-            //             backgroundColor: MaterialStatePropertyAll(Colors.red)),
-            //         onPressed: () {
-            //           if (widget.user.imageUrl! != '') {
-            //             File(widget.user.imageUrl!).delete();
-            //           }
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text(
+                  "Xóa mục chăm sóc",
+                  textAlign: TextAlign.center,
+                ),
+                content: Text(
+                  "Bạn chắc chắn muốn xóa mục chăm sóc này?",
+                  textAlign: TextAlign.center,
+                ),
+                actions: [
+                  ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.grey)),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text("Hủy"),
+                  ),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.red)),
+                    onPressed: () {
+                      context
+                          .read<ReCareListBloc>()
+                          .add(DeleteReCare(reCareId: widget.reCare.reCareId!));
 
-            //           context.read<UsReListBloc>().add(
-            //               DeleteUsRe(usReId: widget.userRelationship.usReId!));
-            //           context
-            //               .read<UserListBloc>()
-            //               .add(DeleteUser(userId: widget.user.userId!));
-            //           showSnackbar(
-            //               context,
-            //               "Đã xóa mối quan hệ",
-            //               Duration(seconds: 3),
-            //               true,
-            //               ScreenUtil().screenHeight - 120);
-            //           Navigator.of(context)..pop();
-            //         },
-            //         child: Text("Xóa"),
-            //       ),
-            //     ],
-            //   ),
-            // );
+                      showSnackbar(
+                          context,
+                          "Đã xóa mục chăm sóc",
+                          Duration(seconds: 2),
+                          true,
+                          ScreenUtil().screenHeight - 120);
+                      Navigator.of(context)..pop();
+                    },
+                    child: Text("Xóa"),
+                  ),
+                ],
+              ),
+            );
           },
           backgroundColor: Color.fromARGB(255, 219, 38, 6),
           foregroundColor: Colors.white,
@@ -170,7 +158,7 @@ class _ReCareCardState extends State<ReCareCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.reCare.contentText!,
+                      widget.reCare.title!,
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,

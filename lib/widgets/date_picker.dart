@@ -3,9 +3,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class DatePickerIcon extends StatefulWidget {
   const DatePickerIcon(
-      {super.key, required this.onPickDate, required this.selectedDate});
+      {super.key,
+      required this.onPickDate,
+      required this.selectedDate,
+      required this.firstDate,
+      required this.lastDate});
   final DateTime selectedDate;
   final Function(DateTime datePick) onPickDate;
+  final DateTime firstDate;
+  final DateTime lastDate;
   @override
   State<DatePickerIcon> createState() => _DatePickerIconState();
 }
@@ -15,8 +21,8 @@ class _DatePickerIconState extends State<DatePickerIcon> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: widget.selectedDate,
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
+      firstDate: widget.firstDate,
+      lastDate: widget.lastDate,
       helpText: 'Chọn ngày sinh',
       cancelText: 'Đóng',
       errorFormatText: 'Nhập ngày hợp lệ (Tháng/Ngày/Năm)',

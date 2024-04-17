@@ -4,6 +4,7 @@ class RelationshipCare {
   String? usReId;
   DateTime? startTime;
   DateTime? endTime;
+  String? title;
   String? contentText;
   String? contentImage;
   int? isFinish;
@@ -17,6 +18,7 @@ class RelationshipCare {
     required this.usReId,
     required this.startTime,
     required this.endTime,
+    required this.title,
     required this.contentText,
     required this.contentImage,
     required this.isFinish,
@@ -31,6 +33,7 @@ class RelationshipCare {
     usReId = map['usReId'];
     startTime = DateTime.parse(map['startTime']);
     endTime = DateTime.parse(map['endTime']);
+    title = map['title'];
     contentText = map['contentText'];
     contentImage = map['contentImage'];
     isFinish = map['isFinish'];
@@ -45,6 +48,7 @@ class RelationshipCare {
       "usReId": usReId,
       "startTime": startTime!.toIso8601String(),
       "endTime": endTime!.toIso8601String(),
+      "title": title,
       "contentText": contentText,
       "contentImage": contentImage,
       "isFinish": isFinish,

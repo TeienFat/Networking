@@ -19,27 +19,9 @@ class APIsReCare {
 
   static Future<SharedPreferences> prefs = SharedPreferences.getInstance();
 
-  static Future<void> createNewReCare(
-    String reCareId,
-    String meId,
-    String usReId,
-    DateTime startTime,
-    DateTime endTime,
-    String contentText,
-  ) async {
+  static Future<void> createNewReCare(RelationshipCare newReCare) async {
     final SharedPreferences _prefs = await prefs;
-    final newReCare = RelationshipCare(
-        reCareId: reCareId,
-        meId: meId,
-        usReId: usReId,
-        startTime: startTime,
-        endTime: endTime,
-        contentText: contentText,
-        contentImage: '',
-        isFinish: 2,
-        createdAt: DateTime.now(),
-        updateAt: null,
-        deleteAt: null);
+
     List<String> listReCareRead = await _prefs.getStringList('reCares') ?? [];
     listReCareRead.add(jsonEncode(newReCare.toMap()));
     await _prefs.setStringList('reCares', listReCareRead);
