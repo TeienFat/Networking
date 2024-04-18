@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
 import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/helpers/helpers.dart';
@@ -118,14 +119,15 @@ class _RelationshipScreenState extends State<RelationshipScreen> {
                   height: 5.sp,
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     searchBar(() => _runFilter("_enteredKeyword"),
-                        ScreenUtil().screenWidth - 80),
+                        ScreenUtil().screenWidth - 70),
                     IconButton(
                       onPressed: () {},
                       icon: Icon(
-                        Icons.filter_list_outlined,
-                        size: 35.sp,
+                        FontAwesomeIcons.sliders,
+                        size: 30.sp,
                       ),
                     ),
                   ],
@@ -154,6 +156,7 @@ class _RelationshipScreenState extends State<RelationshipScreen> {
                   height: 10.sp,
                 ),
                 Container(
+                  padding: EdgeInsets.symmetric(horizontal: 5.sp),
                   height: ScreenUtil().screenHeight * 0.7,
                   child: ListView.builder(
                     itemBuilder: (context, index) {
@@ -182,7 +185,7 @@ class _RelationshipScreenState extends State<RelationshipScreen> {
                             );
                           }),
                           SizedBox(
-                            height: 10.sp,
+                            height: usRes[index] == usRes.last ? 50.sp : 10.sp,
                           ),
                         ],
                       );
