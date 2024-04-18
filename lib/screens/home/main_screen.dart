@@ -98,28 +98,35 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SafeArea(
-      child: Stack(children: [
-        Column(
-          children: [
-            SizedBox(height: 10.sp),
-            currentIndex == 3
-                ? SizedBox()
-                : Text(
-                    textAlign: TextAlign.center,
-                    title,
-                    style:
-                        TextStyle(fontSize: 23.sp, fontWeight: FontWeight.bold),
-                  ),
-            screens[currentIndex]
-          ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Stack(children: [
+            Column(
+              children: [
+                SizedBox(height: 10.sp),
+                currentIndex == 3
+                    ? SizedBox()
+                    : Text(
+                        textAlign: TextAlign.center,
+                        title,
+                        style: TextStyle(
+                            fontSize: 23.sp, fontWeight: FontWeight.bold),
+                      ),
+                screens[currentIndex]
+              ],
+            ),
+            // Align(
+            //   alignment: Alignment.bottomCenter,
+            //   child: MyBottomNavigartionBar(
+            //       currentIndex: currentIndex,
+            //       onTapIcon: onTab,
+            //       onTapAdd: onTapAdd),
+            // ),
+          ]),
         ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: MyBottomNavigartionBar(
-              currentIndex: currentIndex, onTapIcon: onTab, onTapAdd: onTapAdd),
-        ),
-      ]),
-    ));
+      ),
+      bottomNavigationBar: MyBottomNavigartionBar(
+          currentIndex: currentIndex, onTapIcon: onTab, onTapAdd: onTapAdd),
+    );
   }
 }

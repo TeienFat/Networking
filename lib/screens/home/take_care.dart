@@ -171,6 +171,7 @@ class _TakeCareScreenState extends State<TakeCareScreen> {
                   height: 20.sp,
                 ),
                 Container(
+                  padding: EdgeInsets.symmetric(horizontal: 5.sp),
                   height: ScreenUtil().screenHeight * 0.75,
                   child: ListView.builder(
                     itemBuilder: (context, index) {
@@ -200,7 +201,9 @@ class _TakeCareScreenState extends State<TakeCareScreen> {
                             },
                           ),
                           SizedBox(
-                            height: 10.sp,
+                            height: reCaresSort[index] == reCaresSort.last
+                                ? 70.sp
+                                : 10.sp,
                           ),
                         ],
                       );
