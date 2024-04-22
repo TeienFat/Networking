@@ -119,7 +119,7 @@ class _RelationShipCardState extends State<RelationShipCard> {
                           "Đã xóa mối quan hệ",
                           Duration(seconds: 3),
                           true,
-                          ScreenUtil().screenHeight - 120);
+                          ScreenUtil().screenHeight - 170);
                       Navigator.of(context)..pop();
                     },
                     child: Text("Xóa"),

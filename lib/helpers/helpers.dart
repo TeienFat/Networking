@@ -94,32 +94,41 @@ extension DateTimeExtension on DateTime {
   }
 }
 
-Widget getRowDateTime(DateTime dateTime) {
+Widget getRowDateTime(DateTime dateTime, double fontSize, double iconSize) {
   return Row(
     children: [
       Icon(
         FontAwesomeIcons.solidClock,
-        size: 12.sp,
+        size: iconSize,
       ),
       SizedBox(
         width: 3.sp,
       ),
-      Text(DateFormat("HH:mm").format(dateTime)),
+      Text(
+        DateFormat("HH:mm").format(dateTime),
+        style: TextStyle(fontSize: fontSize),
+      ),
       SizedBox(
         width: 10.sp,
       ),
       Icon(
         FontAwesomeIcons.calendar,
-        size: 12.sp,
+        size: iconSize,
       ),
       SizedBox(
         width: 3.sp,
       ),
-      Text(MyDateUtil.getFormattedWeekday(dateTime)),
+      Text(
+        MyDateUtil.getFormattedWeekday(dateTime),
+        style: TextStyle(fontSize: fontSize),
+      ),
       SizedBox(
         width: 3.sp,
       ),
-      Text(DateFormat("- d' thg 'M', 'yyyy'").format(dateTime)),
+      Text(
+        DateFormat("- d' thg 'M', 'yyyy'").format(dateTime),
+        style: TextStyle(fontSize: fontSize),
+      ),
     ],
   );
 }
@@ -214,7 +223,7 @@ void showSnackbar(BuildContext context, String content, Duration duration,
     ),
     duration: duration,
     behavior: SnackBarBehavior.floating,
-    backgroundColor: Color.fromARGB(170, 0, 0, 0),
+    backgroundColor: Color.fromARGB(255, 0, 0, 0),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10.sp),
     ),

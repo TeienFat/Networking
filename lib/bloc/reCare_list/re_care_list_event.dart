@@ -26,6 +26,30 @@ class DeleteReCare extends ReCareListEvent {
   DeleteReCare({required this.reCareId});
 }
 
+class AddContentText extends ReCareListEvent {
+  final String reCareId;
+
+  final String contentText;
+
+  AddContentText({required this.reCareId, required this.contentText});
+}
+
+class AddContentImage extends ReCareListEvent {
+  final String reCareId;
+
+  final String imageUrl;
+
+  AddContentImage({required this.reCareId, required this.imageUrl});
+}
+
+class RemoveContentImage extends ReCareListEvent {
+  final String reCareId;
+
+  final String imageUrl;
+
+  RemoveContentImage({required this.reCareId, required this.imageUrl});
+}
+
 class UpdateReCare extends ReCareListEvent {
   // final String usReId;
   // final bool special;

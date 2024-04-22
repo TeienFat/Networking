@@ -7,11 +7,15 @@ class DatePickerIcon extends StatefulWidget {
       required this.onPickDate,
       required this.selectedDate,
       required this.firstDate,
-      required this.lastDate});
+      required this.lastDate,
+      required this.fieldText,
+      required this.helpText});
   final DateTime selectedDate;
   final Function(DateTime datePick) onPickDate;
   final DateTime firstDate;
   final DateTime lastDate;
+  final String helpText;
+  final String fieldText;
   @override
   State<DatePickerIcon> createState() => _DatePickerIconState();
 }
@@ -23,11 +27,11 @@ class _DatePickerIconState extends State<DatePickerIcon> {
       initialDate: widget.selectedDate,
       firstDate: widget.firstDate,
       lastDate: widget.lastDate,
-      helpText: 'Chọn ngày sinh',
+      helpText: widget.helpText,
       cancelText: 'Đóng',
       errorFormatText: 'Nhập ngày hợp lệ (Tháng/Ngày/Năm)',
       errorInvalidText: 'Nhập ngày trong phạm vi hợp lệ',
-      fieldLabelText: 'Ngày sinh',
+      fieldLabelText: widget.fieldText,
       fieldHintText: 'Tháng/Ngày/Năm',
     );
 

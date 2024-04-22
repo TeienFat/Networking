@@ -10,7 +10,7 @@ import 'package:networking/screens/home/my_profile.dart';
 import 'package:networking/screens/home/relationships.dart';
 import 'package:networking/screens/home/take_care.dart';
 import 'package:networking/screens/relationships/new/new_relationship.dart';
-import 'package:networking/screens/take_care/new_relationship_care.dart';
+import 'package:networking/screens/take_care/new/new_relationship_care.dart';
 import 'package:networking/widgets/bottom_navigartion_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -70,7 +70,7 @@ class _MainScreenState extends State<MainScreen> {
         // APIsReCare.getAllMyRelationshipCare();
 
         // final meId = await APIsAuth.getCurrentUserId();
-        // APIsUsRe.removeTable('relationships');
+        // APIsUsRe.removeTable('reCares');
         // APIsRelationship.addListDefaut();
         // APIsUser.getAllUser();
         // APIsUsRe.getAllMyRelationship();

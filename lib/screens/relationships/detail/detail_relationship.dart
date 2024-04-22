@@ -8,7 +8,7 @@ import 'package:networking/models/user_relationship_model.dart';
 import 'package:networking/screens/relationships/detail/custom_appbar.dart';
 import 'package:networking/screens/relationships/detail/custom_button_switch.dart';
 import 'package:networking/screens/relationships/detail/list_info.dart';
-import 'package:networking/screens/take_care/new_relationship_care.dart';
+import 'package:networking/screens/take_care/new/new_relationship_care.dart';
 import 'package:networking/widgets/take_care_card.dart';
 
 class DetailRelationship extends StatefulWidget {

@@ -166,7 +166,7 @@ class _NewRelationshipState extends State<NewRelationship> {
                         "Đã thêm mối quan hệ mới",
                         Duration(seconds: 3),
                         true,
-                        ScreenUtil().screenHeight - 120.sp);
+                        ScreenUtil().screenHeight - 150.sp);
                     Navigator.of(context)
                       ..pop()
                       ..pop();
@@ -200,7 +200,7 @@ class _NewRelationshipState extends State<NewRelationship> {
           context.read<UsReListBloc>().add(AddUsRe(
               meId: meId!, myReId: userId, relationships: _listRelationship));
           showSnackbar(context, "Đã thêm mối quan hệ mới", Duration(seconds: 3),
-              true, ScreenUtil().screenHeight - 120.sp);
+              true, ScreenUtil().screenHeight - 150.sp);
           Navigator.of(context).pop();
         }
       } else {
@@ -614,6 +614,8 @@ class _NewRelationshipState extends State<NewRelationship> {
                                   selectedDate: _enteredBirthday,
                                   firstDate: DateTime(1900),
                                   lastDate: DateTime.now(),
+                                  helpText: "Chọn ngày sinh",
+                                  fieldText: "Ngày sinh",
                                 ),
                                 Spacer(),
                                 Icon(

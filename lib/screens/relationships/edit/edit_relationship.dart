@@ -230,19 +230,40 @@ class _EditRelationshipState extends State<EditRelationship> {
         };
         String imageUrl;
         if (_enteredImageFile != null) {
-          if (_enteredImageFile!.path != widget.user.imageUrl!) {
+          var time = DateTime.now().microsecondsSinceEpoch;
+          if (widget.type == 0) {
+            if (_enteredImageFile!.path != widget.user.imageUrl!) {
+              if (widget.user.imageUrl! != '') {
+                File(widget.user.imageUrl!).delete();
+              }
+              imageUrl = await APIsUser.saveUserImage(
+                  _enteredImageFile!, '${userId + '-T' + time.toString()}.jpg');
+              // if (_enteredImageFile!.path != widget.newUser!.imageUrl!) {
+              //   var time = DateTime.now().microsecondsSinceEpoch;
+              //   File(widget.user.imageUrl!).delete();
+              //   File(widget.newUser!.imageUrl!).delete();
+              //   imageUrl = await APIsUser.saveUserImage(
+              //       _enteredImageFile!, '${userId + '-T' + time.toString()}.jpg');
+              // } else {
+              //   File(widget.user.imageUrl!).delete();
+              //   imageUrl = widget.newUser!.imageUrl!;
+              // }
+            } else {
+              imageUrl = widget.user.imageUrl!;
+            }
+          } else {
             if (_enteredImageFile!.path != widget.newUser!.imageUrl!) {
-              var time = DateTime.now().microsecondsSinceEpoch;
-              File(widget.user.imageUrl!).delete();
-              File(widget.newUser!.imageUrl!).delete();
+              if (widget.user.imageUrl! != '') {
+                File(widget.user.imageUrl!).delete();
+              }
+              if (widget.newUser!.imageUrl! != '') {
+                File(widget.newUser!.imageUrl!).delete();
+              }
               imageUrl = await APIsUser.saveUserImage(
                   _enteredImageFile!, '${userId + '-T' + time.toString()}.jpg');
             } else {
-              File(widget.user.imageUrl!).delete();
-              imageUrl = widget.newUser!.imageUrl!;
+              imageUrl = _enteredImageFile!.path;
             }
-          } else {
-            imageUrl = widget.user.imageUrl!;
           }
         } else {
           imageUrl = '';
@@ -686,6 +707,8 @@ class _EditRelationshipState extends State<EditRelationship> {
                                   selectedDate: _enteredBirthday,
                                   firstDate: DateTime(1900),
                                   lastDate: DateTime.now(),
+                                  helpText: "Chọn ngày sinh",
+                                  fieldText: "Ngày sinh",
                                 ),
                                 Spacer(),
                                 Icon(
