@@ -76,7 +76,7 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
             true, ScreenUtil().screenHeight - 150.sp);
       } else {
         showSnackbar(context, "Đã thêm mục chăm sóc mới", Duration(seconds: 2),
-            true, ScreenUtil().screenHeight - 100.sp);
+            true, ScreenUtil().screenHeight - 150.sp);
       }
 
       Navigator.of(context).pop();
@@ -350,18 +350,21 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
                                       style: TextStyle(fontSize: 14.sp),
                                     ),
                                     DatePickerIcon(
-                                        onPickDate: (datePick) {
-                                          setState(() {
-                                            _enteredStartDay = datePick;
-                                            if (datePick
-                                                .isAfter(_enteredEndDay)) {
-                                              _enteredEndDay = datePick;
-                                            }
-                                          });
-                                        },
-                                        selectedDate: _enteredStartDay,
-                                        firstDate: DateTime.now(),
-                                        lastDate: DateTime(2124)),
+                                      onPickDate: (datePick) {
+                                        setState(() {
+                                          _enteredStartDay = datePick;
+                                          if (datePick
+                                              .isAfter(_enteredEndDay)) {
+                                            _enteredEndDay = datePick;
+                                          }
+                                        });
+                                      },
+                                      selectedDate: _enteredStartDay,
+                                      firstDate: DateTime.now(),
+                                      lastDate: DateTime(2124),
+                                      helpText: "Chọn ngày bắt đầu",
+                                      fieldText: "Ngày bắt đầu",
+                                    ),
                                   ],
                                 ),
                               ],
@@ -408,14 +411,17 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
                                           fontSize: 16),
                                     ),
                                     DatePickerIcon(
-                                        onPickDate: (datePick) {
-                                          setState(() {
-                                            _enteredEndDay = datePick;
-                                          });
-                                        },
-                                        selectedDate: _enteredEndDay,
-                                        firstDate: _enteredStartDay,
-                                        lastDate: DateTime(2124)),
+                                      onPickDate: (datePick) {
+                                        setState(() {
+                                          _enteredEndDay = datePick;
+                                        });
+                                      },
+                                      selectedDate: _enteredEndDay,
+                                      firstDate: _enteredStartDay,
+                                      lastDate: DateTime(2124),
+                                      helpText: "Chọn ngày kết thúc",
+                                      fieldText: "Ngày kết thúc",
+                                    ),
                                   ],
                                 ),
                               ],

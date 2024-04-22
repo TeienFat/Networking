@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,6 +10,7 @@ import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/helpers/helpers.dart';
 import 'package:networking/models/relationship_care_model.dart';
 import 'package:networking/models/user_relationship_model.dart';
+import 'package:networking/screens/take_care/detail/detail_relationship_care.dart';
 
 class ReCareCard extends StatefulWidget {
   const ReCareCard(
@@ -104,6 +107,11 @@ class _ReCareCardState extends State<ReCareCard> {
                     style: ButtonStyle(
                         backgroundColor: MaterialStatePropertyAll(Colors.red)),
                     onPressed: () {
+                      if (widget.reCare.contentImage!.isNotEmpty) {
+                        for (var image in widget.reCare.contentImage!) {
+                          File(image).delete();
+                        }
+                      }
                       context
                           .read<ReCareListBloc>()
                           .add(DeleteReCare(reCareId: widget.reCare.reCareId!));
@@ -121,7 +129,7 @@ class _ReCareCardState extends State<ReCareCard> {
                             "Đã xóa mục chăm sóc",
                             Duration(seconds: 2),
                             true,
-                            ScreenUtil().screenHeight - 120);
+                            ScreenUtil().screenHeight - 180);
                         Navigator.of(context)..pop();
                       }
                     },
@@ -140,12 +148,13 @@ class _ReCareCardState extends State<ReCareCard> {
         ),
       ]),
       child: InkWell(
-        // onTap: () => Navigator.of(context).push(
-        //   MaterialPageRoute(
-        //     builder: (context) => DetailRelationship(
-        //         user: widget.user, userRelationship: widget.userRelationship),
-        //   ),
-        // ),
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => DetailRelationshipCare(
+                reCare: widget.reCare,
+                userRelationship: widget.userRelationship),
+          ),
+        ),
         child: Container(
           decoration: BoxDecoration(
               color: _bgCardColor,
@@ -172,7 +181,6 @@ class _ReCareCardState extends State<ReCareCard> {
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
                       ),
-                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                     Row(
@@ -222,8 +230,10 @@ class _ReCareCardState extends State<ReCareCard> {
                         ),
                         Column(
                           children: [
-                            getRowDateTime(widget.reCare.startTime!),
-                            getRowDateTime(widget.reCare.endTime!),
+                            getRowDateTime(
+                                widget.reCare.startTime!, 11.sp, 12.sp),
+                            getRowDateTime(
+                                widget.reCare.endTime!, 11.sp, 12.sp),
                           ],
                         ),
                       ],

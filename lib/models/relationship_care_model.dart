@@ -6,7 +6,7 @@ class RelationshipCare {
   DateTime? endTime;
   String? title;
   String? contentText;
-  String? contentImage;
+  List<dynamic>? contentImage;
   int? isFinish;
   DateTime? createdAt;
   DateTime? updateAt;
