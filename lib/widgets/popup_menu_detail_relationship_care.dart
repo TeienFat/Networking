@@ -2,11 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:networking/bloc/reCare_list/re_care_list_bloc.dart';
 import 'package:networking/helpers/helpers.dart';
 import 'package:networking/models/relationship_care_model.dart';
 import 'package:networking/models/user_relationship_model.dart';
+import 'package:networking/screens/take_care/edit/edit_relationship_care.dart';
 
 enum Menu { edit, remove }
 
@@ -32,13 +32,13 @@ class _PopupMenuDetailRelationshipCareState
       onSelected: (Menu item) {
         switch (item) {
           case Menu.edit:
-            // Navigator.of(context).push(
-            //   MaterialPageRoute(
-            //     builder: (context) => EditRelationship(
-            //         user: widget.user,
-            //         userRelationship: widget.userRelationship),
-            //   ),
-            // );
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => EditRelationshipCare(
+                    reCare: widget.reCare,
+                    userRelationship: widget.userRelationship),
+              ),
+            );
             break;
 
           default:
@@ -46,7 +46,7 @@ class _PopupMenuDetailRelationshipCareState
               context: context,
               builder: (context) => AlertDialog(
                 title: Text(
-                  "Xóa mối mục chăm sóc",
+                  "Xóa mục chăm sóc",
                   textAlign: TextAlign.center,
                 ),
                 content: Text(
@@ -77,11 +77,11 @@ class _PopupMenuDetailRelationshipCareState
                           .add(DeleteReCare(reCareId: widget.reCare.reCareId!));
 
                       showSnackbar(
-                          context,
-                          "Đã xóa mục chăm sóc",
-                          Duration(seconds: 3),
-                          true,
-                          ScreenUtil().screenHeight - 180);
+                        context,
+                        "Đã xóa mục chăm sóc",
+                        Duration(seconds: 3),
+                        true,
+                      );
                       Navigator.of(context)
                         ..pop()
                         ..pop();

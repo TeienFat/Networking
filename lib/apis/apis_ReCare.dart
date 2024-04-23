@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:networking/apis/apis_auth.dart';
-import 'package:networking/bloc/reCare_list/re_care_list_bloc.dart';
 import 'package:networking/models/relationship_care_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -104,6 +103,33 @@ class APIsReCare {
       if (listReCare[i].reCareId!.length == reCareId.length &&
           listReCare[i].reCareId! == reCareId) {
         listReCare[i].contentImage!.remove(imageUrl);
+        listReCare[i].updateAt = DateTime.now();
+      }
+    }
+    listReCareRead = listReCare.map((e) => jsonEncode(e.toMap())).toList();
+    await _prefs.setStringList('reCares', listReCareRead);
+  }
+
+  static Future<void> updateReCare(
+    String reCareId,
+    String title,
+    String usReId,
+    DateTime startTime,
+    DateTime endTime,
+  ) async {
+    final SharedPreferences _prefs = await prefs;
+    List<String> listReCareRead = await _prefs.getStringList('reCares') ?? [];
+    List<RelationshipCare> listReCare = listReCareRead
+        .map((e) => RelationshipCare.fromMap(jsonDecode(e)))
+        .toList();
+
+    for (int i = 0; i < listReCare.length; i++) {
+      if (listReCare[i].reCareId!.length == reCareId.length &&
+          listReCare[i].reCareId! == reCareId) {
+        listReCare[i].title = title;
+        listReCare[i].usReId = usReId;
+        listReCare[i].startTime = startTime;
+        listReCare[i].endTime = endTime;
         listReCare[i].updateAt = DateTime.now();
       }
     }

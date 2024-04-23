@@ -72,8 +72,8 @@ class _ChangeAddressState extends State<ChangeAddress> {
         widget.onChangeAddress(address);
         Navigator.of(context).pop();
       } else {
-        showSnackbar(context, 'Vui lòng chọn địa chỉ', Duration(seconds: 3),
-            false, ScreenUtil().screenHeight - 120);
+        showSnackbar(
+            context, 'Vui lòng chọn địa chỉ', Duration(seconds: 3), false);
       }
     }
   }

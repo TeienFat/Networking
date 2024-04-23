@@ -22,7 +22,7 @@ class ReCareListBloc extends Bloc<ReCareListEvent, ReCareListState> {
     on<AddContentImage>(_addContentImage);
     on<RemoveContentImage>(_deleteContentImage);
     on<DeleteReCare>(_deleteReCare);
-    // on<UpdateUsRe>(_updateUsRe);
+    on<UpdateReCare>(_updateReCare);
   }
   void _addReCare(AddReCare event, Emitter<ReCareListState> emit) {
     final reCareId = uuid.v4();
@@ -89,14 +89,17 @@ class ReCareListBloc extends Bloc<ReCareListEvent, ReCareListState> {
     emit(ReCareListUploaded(reCares: state.reCares));
   }
 
-  // void _updateUsRe(UpdateUsRe event, Emitter<UsReListState> emit) {
-  //   for (int i = 0; i < state.usRes.length; i++) {
-  //     if (event.usReId == state.usRes[i].usReId) {
-  //       state.usRes[i].relationships = event.relationships;
-  //       state.usRes[i].special = event.special;
-  //     }
-  //   }
-  //   APIsUsRe.updateUsRe(event.usReId, event.special, event.relationships);
-  //   emit(UsReListUploaded(usRes: state.usRes));
-  // }
+  void _updateReCare(UpdateReCare event, Emitter<ReCareListState> emit) {
+    for (int i = 0; i < state.reCares.length; i++) {
+      if (event.reCareId == state.reCares[i].reCareId) {
+        state.reCares[i].usReId = event.usReId;
+        state.reCares[i].title = event.title;
+        state.reCares[i].startTime = event.startTime;
+        state.reCares[i].endTime = event.endTime;
+      }
+    }
+    APIsReCare.updateReCare(event.reCareId, event.title, event.usReId,
+        event.startTime, event.endTime);
+    emit(ReCareListUploaded(reCares: state.reCares));
+  }
 }

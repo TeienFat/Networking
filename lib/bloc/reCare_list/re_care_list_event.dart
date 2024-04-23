@@ -51,12 +51,16 @@ class RemoveContentImage extends ReCareListEvent {
 }
 
 class UpdateReCare extends ReCareListEvent {
-  // final String usReId;
-  // final bool special;
-  // final List<Relationship> relationships;
+  final String reCareId;
+  final String usReId;
+  final DateTime startTime;
+  final DateTime endTime;
+  final String title;
 
-  // UpdateReCare(
-  //     {required this.usReId,
-  //     required this.special,
-  //     required this.relationships});
+  UpdateReCare(
+      {required this.reCareId,
+      required this.usReId,
+      required this.startTime,
+      required this.endTime,
+      required this.title});
 }

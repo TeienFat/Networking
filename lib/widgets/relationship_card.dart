@@ -115,11 +115,11 @@ class _RelationShipCardState extends State<RelationShipCard> {
                           .read<UserListBloc>()
                           .add(DeleteUser(userId: widget.user.userId!));
                       showSnackbar(
-                          context,
-                          "Đã xóa mối quan hệ",
-                          Duration(seconds: 3),
-                          true,
-                          ScreenUtil().screenHeight - 170);
+                        context,
+                        "Đã xóa mối quan hệ",
+                        Duration(seconds: 3),
+                        true,
+                      );
                       Navigator.of(context)..pop();
                     },
                     child: Text("Xóa"),

@@ -18,10 +18,7 @@ import 'package:networking/screens/relationships/new/change_address.dart';
 import 'package:networking/screens/relationships/new/change_relationship.dart';
 import 'package:networking/widgets/date_picker.dart';
 import 'package:networking/widgets/user_image_picker.dart';
-import 'package:uuid/uuid.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-final _uuid = Uuid();
 
 class EditRelationship extends StatefulWidget {
   const EditRelationship(
@@ -309,7 +306,7 @@ class _EditRelationshipState extends State<EditRelationship> {
         }
       } else {
         showSnackbar(context, "Vui lòng thiết lập mối quan hệ",
-            Duration(seconds: 3), false, ScreenUtil().screenHeight - 120);
+            Duration(seconds: 3), false);
         return;
       }
     }
@@ -433,7 +430,7 @@ class _EditRelationshipState extends State<EditRelationship> {
     if (_enteredFBName.text.trim().isEmpty &&
         _enteredFBLink.text.trim().isEmpty) {
       showSnackbar(context, 'Hãy nhập tên tài khoản hoặc link',
-          Duration(seconds: 3), false, ScreenUtil().screenHeight - 120);
+          Duration(seconds: 3), false);
     } else {
       if (_enteredFBLink.text.trim().isNotEmpty) {
         _launchSocial('fb://page/', _enteredFBLink.text.trim());

@@ -166,15 +166,10 @@ void toast(String content) {
       fontSize: 16.0);
 }
 
-void showSnackbar(BuildContext context, String content, Duration duration,
-    bool type, double top,
+void showSnackbar(
+    BuildContext context, String content, Duration duration, bool type,
     {String? subtitle, ElevatedButton? button}) {
   final snackBar = SnackBar(
-    margin: EdgeInsets.only(
-      bottom: top,
-      left: 70.sp,
-      right: 10.sp,
-    ),
     content: Row(
       children: [
         type
@@ -184,37 +179,39 @@ void showSnackbar(BuildContext context, String content, Duration duration,
               )
             : Icon(
                 Icons.error_outlined,
-                color: Colors.red,
+                color: Colors.redAccent,
               ),
         SizedBox(width: 10.sp),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              content,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 12.sp,
-              ),
-            ),
+            type
+                ? Text(
+                    content,
+                    style: TextStyle(
+                        color: Colors.green,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.bold),
+                  )
+                : Text(
+                    content,
+                    style: TextStyle(
+                        color: Colors.redAccent,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.bold),
+                  ),
             SizedBox(height: subtitle != null ? 5.sp : 0),
-            subtitle != null
-                ? type
-                    ? Text(
-                        subtitle,
-                        style: TextStyle(
-                          color: Colors.green,
-                          fontSize: 11.sp,
-                        ),
-                      )
-                    : Text(
-                        subtitle,
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 11.sp,
-                        ),
-                      )
-                : SizedBox(),
+            if (subtitle != null)
+              Container(
+                width: ScreenUtil().screenWidth * 0.7,
+                child: Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                  ),
+                  maxLines: 2,
+                ),
+              )
           ],
         ),
         Spacer(),
@@ -223,7 +220,7 @@ void showSnackbar(BuildContext context, String content, Duration duration,
     ),
     duration: duration,
     behavior: SnackBarBehavior.floating,
-    backgroundColor: Color.fromARGB(255, 0, 0, 0),
+    backgroundColor: Colors.grey[700],
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10.sp),
     ),

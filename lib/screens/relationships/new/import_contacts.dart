@@ -75,8 +75,12 @@ class _ImportContactsState extends State<ImportContacts> {
     context
         .read<UsReListBloc>()
         .add(AddUsRe(meId: meId!, myReId: userId, relationships: []));
-    showSnackbar(context, "Đã thêm mối quan hệ mới", Duration(seconds: 3), true,
-        ScreenUtil().screenHeight - 120.sp);
+    showSnackbar(
+      context,
+      "Đã thêm mối quan hệ mới",
+      Duration(seconds: 3),
+      true,
+    );
     setState(() {
       _contacts!.removeWhere(
         (element) => element.id == contact.id,

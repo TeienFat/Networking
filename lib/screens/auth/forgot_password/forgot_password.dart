@@ -89,11 +89,11 @@ class ForgotPassword extends StatelessWidget {
                           );
                         } else {
                           showSnackbar(
-                              context,
-                              'Vui lòng kiểm tra lại tên đăng nhập',
-                              Duration(seconds: 2),
-                              false,
-                              ScreenUtil().screenHeight - 120);
+                            context,
+                            'Vui lòng kiểm tra lại tên đăng nhập',
+                            Duration(seconds: 2),
+                            false,
+                          );
                         }
                       },
                       icon: Icon(

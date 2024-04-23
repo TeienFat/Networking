@@ -122,9 +122,67 @@ class _DetailRelationshipCareState extends State<DetailRelationshipCare> {
             title: Text("Chi tiết mục chăm sóc"),
             centerTitle: true,
             actions: [
-              PopupMenuDetailRelationshipCare(
-                  reCare: widget.reCare,
-                  userRelationship: widget.userRelationship)
+              widget.reCare.isFinish == 2
+                  ? PopupMenuDetailRelationshipCare(
+                      reCare: widget.reCare,
+                      userRelationship: widget.userRelationship)
+                  : IconButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text(
+                              "Xóa mục chăm sóc",
+                              textAlign: TextAlign.center,
+                            ),
+                            content: Text(
+                              "Bạn chắc chắn muốn xóa mục chăm sóc này?",
+                              textAlign: TextAlign.center,
+                            ),
+                            actions: [
+                              ElevatedButton(
+                                style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStatePropertyAll(Colors.grey)),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text("Hủy"),
+                              ),
+                              ElevatedButton(
+                                style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStatePropertyAll(Colors.red)),
+                                onPressed: () {
+                                  if (widget.reCare.contentImage!.isNotEmpty) {
+                                    for (var image
+                                        in widget.reCare.contentImage!) {
+                                      File(image).delete();
+                                    }
+                                  }
+
+                                  context.read<ReCareListBloc>().add(
+                                      DeleteReCare(
+                                          reCareId: widget.reCare.reCareId!));
+
+                                  showSnackbar(
+                                    context,
+                                    "Đã xóa mục chăm sóc",
+                                    Duration(seconds: 3),
+                                    true,
+                                  );
+                                  Navigator.of(context)
+                                    ..pop()
+                                    ..pop();
+                                },
+                                child: Text("Xóa"),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      icon: Icon(Icons.delete),
+                    ),
             ],
           ),
           body: SafeArea(
@@ -245,222 +303,224 @@ class _DetailRelationshipCareState extends State<DetailRelationshipCare> {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 20.sp,
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: BorderRadius.circular(5.sp),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 2,
-                              blurRadius: 5,
-                              offset: Offset(0, 5),
-                            ),
-                          ]),
-                      padding: EdgeInsets.all(10.sp),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Ghi chép chăm sóc',
-                                style: TextStyle(
-                                    color: Colors.grey, fontSize: 14.sp),
-                              ),
-                              IconButton(
-                                  onPressed: _isChangeText
-                                      ? _addContentText
-                                      : () {
-                                          setState(() {
-                                            _isShowNote = true;
-                                          });
-                                        },
-                                  icon: Icon(
-                                    _isChangeText
-                                        ? Icons.save
-                                        : _isShowNote
-                                            ? Icons.edit_document
-                                            : Icons.note_add_rounded,
-                                    color: Colors.grey,
-                                  ))
-                            ],
-                          ),
-                          widget.reCare.contentText != '' || _isChangeText
-                              ? hr
-                              : SizedBox(),
-                          _isShowNote
-                              ? TextField(
-                                  maxLines: null,
-                                  textInputAction: TextInputAction.newline,
-                                  maxLength: 2000,
-                                  controller: _contentTextController,
-                                  style: TextStyle(fontSize: 14.sp),
-                                  textCapitalization:
-                                      TextCapitalization.sentences,
-                                  autocorrect: true,
-                                  enableSuggestions: true,
-                                  onTap: () {
-                                    setState(() {
-                                      _isChangeText = true;
-                                    });
-                                  },
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _isChangeText = true;
-                                    });
-                                  },
-                                  onTapOutside: (event) {
-                                    FocusScope.of(context).unfocus();
-                                  },
-                                  decoration: InputDecoration(
-                                    counterText: '',
-                                    hintStyle: TextStyle(
-                                      color: Colors.grey[400],
-                                      fontSize: 12.sp,
-                                    ),
-                                    hintText: "Ghi chép vào đây",
-                                    contentPadding: EdgeInsets.symmetric(
-                                        vertical: 10.0, horizontal: 20.0),
-                                    border: InputBorder.none,
-                                  ),
-                                )
-                              : SizedBox(),
-                        ],
+                    if (widget.reCare.isFinish != 2)
+                      SizedBox(
+                        height: 20.sp,
                       ),
-                    ),
-                    SizedBox(
-                      height: 20.sp,
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: BorderRadius.circular(5.sp),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 2,
-                              blurRadius: 5,
-                              offset: Offset(0, 5),
-                            ),
-                          ]),
-                      padding: EdgeInsets.all(10.sp),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Ảnh chăm sóc',
-                                style: TextStyle(
-                                    color: Colors.grey, fontSize: 14.sp),
+                    if (widget.reCare.isFinish != 2)
+                      Container(
+                        decoration: BoxDecoration(
+                            color: Colors.grey[100],
+                            borderRadius: BorderRadius.circular(5.sp),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: Offset(0, 5),
                               ),
-                              IconButton(
-                                  onPressed: () {
-                                    showModalBottomSheet(
-                                      useSafeArea: true,
-                                      isScrollControlled: true,
-                                      context: context,
-                                      builder: (context) => MenuPickImage(
-                                        onPickImage: (type) => _pickImage(type),
-                                      ),
-                                    );
-                                  },
-                                  icon: Icon(
-                                    Icons.add_a_photo_rounded,
-                                    color: Colors.grey,
-                                  )),
-                            ],
-                          ),
-                          _listFileImage.isNotEmpty ? hr : SizedBox(),
-                          _listFileImage.isEmpty
-                              ? Column(
-                                  children: [
-                                    Icon(
-                                      Icons.photo_size_select_actual_outlined,
-                                      size: 60.sp,
-                                      color: Colors.grey[300],
-                                    ),
-                                    Text(
-                                      "Hãy lưu trữ những khoảng khắc chăm sóc",
-                                      style: (TextStyle(
-                                        color: Colors.grey[400],
-                                      )),
-                                    )
-                                  ],
-                                )
-                              : Container(
-                                  height: _listFileImage.length > 4
-                                      ? 160.sp
-                                      : 80.sp,
-                                  child: GridView(
-                                    gridDelegate:
-                                        const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 4,
-                                      crossAxisSpacing: 2,
-                                      mainAxisSpacing: 2,
-                                    ),
-                                    children: [
-                                      for (int i = 0;
-                                          _listFileImage.length <= 8
-                                              ? i < _listFileImage.length
-                                              : i < 7;
-                                          i++)
-                                        InkWell(
-                                          onTap: () => Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ScaleImage(
-                                                  imageUrl:
-                                                      _listFileImage[i].path,
-                                                  onDelete: (imageUrl) =>
-                                                      _removeImage(imageUrl),
-                                                ),
-                                              )),
-                                          child: Image.file(
-                                            _listFileImage[i],
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      _listFileImage.length > 8
-                                          ? InkWell(
-                                              onTap: () => Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ListContentImage(
-                                                      listImage: widget
-                                                          .reCare.contentImage!,
-                                                      onDelete: (imageUrl) =>
-                                                          _removeImage(
-                                                              imageUrl),
-                                                    ),
-                                                  )),
-                                              child: Container(
-                                                color: Colors.grey[300],
-                                                alignment: Alignment.center,
-                                                child: Text(
-                                                  '+' +
-                                                      (_listFileImage.length -
-                                                              7)
-                                                          .toString(),
-                                                  style: TextStyle(
-                                                      fontSize: 20.sp,
-                                                      color: Colors.blue[800]),
-                                                ),
-                                              ),
-                                            )
-                                          : SizedBox()
-                                    ],
-                                  ),
+                            ]),
+                        padding: EdgeInsets.all(10.sp),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Ghi chép chăm sóc',
+                                  style: TextStyle(
+                                      color: Colors.grey, fontSize: 14.sp),
                                 ),
-                        ],
+                                IconButton(
+                                    onPressed: _isChangeText
+                                        ? _addContentText
+                                        : () {
+                                            setState(() {
+                                              _isShowNote = true;
+                                            });
+                                          },
+                                    icon: Icon(
+                                      _isChangeText
+                                          ? Icons.save
+                                          : _isShowNote
+                                              ? Icons.edit_document
+                                              : Icons.note_add_rounded,
+                                      color: Colors.grey,
+                                    ))
+                              ],
+                            ),
+                            widget.reCare.contentText != '' || _isChangeText
+                                ? hr
+                                : SizedBox(),
+                            _isShowNote
+                                ? TextField(
+                                    maxLines: null,
+                                    textInputAction: TextInputAction.newline,
+                                    maxLength: 2000,
+                                    controller: _contentTextController,
+                                    style: TextStyle(fontSize: 14.sp),
+                                    textCapitalization:
+                                        TextCapitalization.sentences,
+                                    autocorrect: true,
+                                    enableSuggestions: true,
+                                    onTap: () {
+                                      setState(() {
+                                        _isChangeText = true;
+                                      });
+                                    },
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _isChangeText = true;
+                                      });
+                                    },
+                                    onTapOutside: (event) {
+                                      FocusScope.of(context).unfocus();
+                                    },
+                                    decoration: InputDecoration(
+                                      counterText: '',
+                                      hintStyle: TextStyle(
+                                        color: Colors.grey[400],
+                                        fontSize: 12.sp,
+                                      ),
+                                      hintText: "Ghi chép vào đây",
+                                      contentPadding: EdgeInsets.symmetric(
+                                          vertical: 10.0, horizontal: 20.0),
+                                      border: InputBorder.none,
+                                    ),
+                                  )
+                                : SizedBox(),
+                          ],
+                        ),
                       ),
-                    ),
+                    if (widget.reCare.isFinish != 2)
+                      SizedBox(
+                        height: 20.sp,
+                      ),
+                    if (widget.reCare.isFinish != 2)
+                      Container(
+                        decoration: BoxDecoration(
+                            color: Colors.grey[100],
+                            borderRadius: BorderRadius.circular(5.sp),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: Offset(0, 5),
+                              ),
+                            ]),
+                        padding: EdgeInsets.all(10.sp),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Ảnh chăm sóc',
+                                  style: TextStyle(
+                                      color: Colors.grey, fontSize: 14.sp),
+                                ),
+                                IconButton(
+                                    onPressed: () {
+                                      showModalBottomSheet(
+                                        useSafeArea: true,
+                                        isScrollControlled: true,
+                                        context: context,
+                                        builder: (context) => MenuPickImage(
+                                          onPickImage: (type) =>
+                                              _pickImage(type),
+                                        ),
+                                      );
+                                    },
+                                    icon: Icon(
+                                      Icons.add_a_photo_rounded,
+                                      color: Colors.grey,
+                                    )),
+                              ],
+                            ),
+                            _listFileImage.isNotEmpty ? hr : SizedBox(),
+                            _listFileImage.isEmpty
+                                ? Column(
+                                    children: [
+                                      Icon(
+                                        Icons.photo_size_select_actual_outlined,
+                                        size: 60.sp,
+                                        color: Colors.grey[300],
+                                      ),
+                                      Text(
+                                        "Hãy lưu trữ những khoảng khắc chăm sóc",
+                                        style: (TextStyle(
+                                          color: Colors.grey[400],
+                                        )),
+                                      )
+                                    ],
+                                  )
+                                : Container(
+                                    height: _listFileImage.length > 4
+                                        ? 160.sp
+                                        : 80.sp,
+                                    child: GridView(
+                                      gridDelegate:
+                                          const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 4,
+                                        crossAxisSpacing: 2,
+                                        mainAxisSpacing: 2,
+                                      ),
+                                      children: [
+                                        for (int i = 0;
+                                            _listFileImage.length <= 8
+                                                ? i < _listFileImage.length
+                                                : i < 7;
+                                            i++)
+                                          InkWell(
+                                            onTap: () => Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ScaleImage(
+                                                    imageUrl:
+                                                        _listFileImage[i].path,
+                                                    onDelete: (imageUrl) =>
+                                                        _removeImage(imageUrl),
+                                                  ),
+                                                )),
+                                            child: Image.file(
+                                              _listFileImage[i],
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        if (_listFileImage.length > 8)
+                                          InkWell(
+                                            onTap: () => Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ListContentImage(
+                                                    listImage: widget
+                                                        .reCare.contentImage!,
+                                                    onDelete: (imageUrl) =>
+                                                        _removeImage(imageUrl),
+                                                  ),
+                                                )),
+                                            child: Container(
+                                              color: Colors.grey[300],
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                '+' +
+                                                    (_listFileImage.length - 7)
+                                                        .toString(),
+                                                style: TextStyle(
+                                                    fontSize: 20.sp,
+                                                    color: Colors.blue[800]),
+                                              ),
+                                            ),
+                                          )
+                                      ],
+                                    ),
+                                  ),
+                          ],
+                        ),
+                      ),
                   ],
                 ),
               ),
