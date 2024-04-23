@@ -162,11 +162,11 @@ class _NewRelationshipState extends State<NewRelationship> {
                         myReId: userId,
                         relationships: _listRelationship));
                     showSnackbar(
-                        context,
-                        "Đã thêm mối quan hệ mới",
-                        Duration(seconds: 3),
-                        true,
-                        ScreenUtil().screenHeight - 150.sp);
+                      context,
+                      "Đã thêm mối quan hệ mới",
+                      Duration(seconds: 3),
+                      true,
+                    );
                     Navigator.of(context)
                       ..pop()
                       ..pop();
@@ -199,13 +199,13 @@ class _NewRelationshipState extends State<NewRelationship> {
               otherInfo: _otherInfo));
           context.read<UsReListBloc>().add(AddUsRe(
               meId: meId!, myReId: userId, relationships: _listRelationship));
-          showSnackbar(context, "Đã thêm mối quan hệ mới", Duration(seconds: 3),
-              true, ScreenUtil().screenHeight - 150.sp);
+          showSnackbar(
+              context, "Đã thêm mối quan hệ mới", Duration(seconds: 2), true);
           Navigator.of(context).pop();
         }
       } else {
         showSnackbar(context, "Vui lòng thiết lập mối quan hệ",
-            Duration(seconds: 3), false, ScreenUtil().screenHeight - 180);
+            Duration(seconds: 2), false);
         return;
       }
     }
@@ -349,7 +349,7 @@ class _NewRelationshipState extends State<NewRelationship> {
     if (_enteredFBName.text.trim().isEmpty &&
         _enteredFBLink.text.trim().isEmpty) {
       showSnackbar(context, 'Hãy nhập tên tài khoản hoặc link',
-          Duration(seconds: 3), false, ScreenUtil().screenHeight - 180);
+          Duration(seconds: 2), false);
     } else {
       if (_enteredFBLink.text.trim().isNotEmpty) {
         _launchSocial('fb://page/', _enteredFBLink.text.trim());

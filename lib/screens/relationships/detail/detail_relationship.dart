@@ -99,7 +99,8 @@ class _DetailRelationshipState extends State<DetailRelationship> {
                                   children: listCard,
                                 );
                               }
-                              return Center(child: CircularProgressIndicator());
+                              return Center(
+                                  child: Text("Hãy thiết lập chăm sóc mới!"));
                             },
                           ),
                     SizedBox(height: 100.sp),

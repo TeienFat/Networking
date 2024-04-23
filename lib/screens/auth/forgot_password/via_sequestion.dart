@@ -28,7 +28,6 @@ class _ViaSeQuestionState extends State<ViaSeQuestion> {
         (_enteredAnswerParse.toLowerCase() ==
             _accountAnswerParse.toLowerCase())) {
       showSnackbar(context, 'Câu trả lời chính xác', Duration(seconds: 3), true,
-          ScreenUtil().screenHeight - 120,
           subtitle: 'Hãy đặt lại mật khẩu');
       Navigator.of(context).push(
         MaterialPageRoute(
@@ -37,8 +36,8 @@ class _ViaSeQuestionState extends State<ViaSeQuestion> {
         ),
       );
     } else {
-      showSnackbar(context, 'Câu trả lời chưa đúng', Duration(seconds: 2),
-          false, ScreenUtil().screenHeight - 120);
+      showSnackbar(
+          context, 'Câu trả lời chưa đúng', Duration(seconds: 2), false);
     }
   }
 

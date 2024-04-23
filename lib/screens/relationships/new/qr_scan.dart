@@ -301,11 +301,11 @@ class QRScan extends StatelessWidget {
                               myReId: userId,
                               relationships: relationships));
                           showSnackbar(
-                              context,
-                              "Đã thêm mối quan hệ mới",
-                              Duration(seconds: 3),
-                              true,
-                              ScreenUtil().screenHeight - 120.sp);
+                            context,
+                            "Đã thêm mối quan hệ mới",
+                            Duration(seconds: 2),
+                            true,
+                          );
                           Navigator.of(context)
                             ..pop()
                             ..pop()

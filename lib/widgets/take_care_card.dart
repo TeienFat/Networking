@@ -11,6 +11,7 @@ import 'package:networking/helpers/helpers.dart';
 import 'package:networking/models/relationship_care_model.dart';
 import 'package:networking/models/user_relationship_model.dart';
 import 'package:networking/screens/take_care/detail/detail_relationship_care.dart';
+import 'package:networking/screens/take_care/edit/edit_relationship_care.dart';
 
 class ReCareCard extends StatefulWidget {
   const ReCareCard(
@@ -67,20 +68,21 @@ class _ReCareCardState extends State<ReCareCard> {
     }
     return Slidable(
       endActionPane: ActionPane(motion: DrawerMotion(), children: [
-        SlidableAction(
-          onPressed: (context) {
-            // Navigator.of(context).push(
-            //   MaterialPageRoute(
-            //     builder: (context) => EditRelationship(
-            //         user: widget.user,
-            //         userRelationship: widget.userRelationship),
-            //   ),
-            // );
-          },
-          backgroundColor: Color.fromARGB(255, 238, 184, 6),
-          foregroundColor: Colors.white,
-          icon: FontAwesomeIcons.edit,
-        ),
+        if (widget.reCare.isFinish == 2)
+          SlidableAction(
+            onPressed: (context) {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => EditRelationshipCare(
+                      reCare: widget.reCare,
+                      userRelationship: widget.userRelationship),
+                ),
+              );
+            },
+            backgroundColor: Color.fromARGB(255, 238, 184, 6),
+            foregroundColor: Colors.white,
+            icon: FontAwesomeIcons.edit,
+          ),
         SlidableAction(
           onPressed: (context) {
             showDialog(
@@ -115,23 +117,14 @@ class _ReCareCardState extends State<ReCareCard> {
                       context
                           .read<ReCareListBloc>()
                           .add(DeleteReCare(reCareId: widget.reCare.reCareId!));
-                      if (widget.listType == 5) {
-                        showSnackbar(
-                            context,
-                            "Đã xóa mục chăm sóc",
-                            Duration(seconds: 2),
-                            true,
-                            ScreenUtil().screenHeight - 180);
-                        Navigator.of(context)..pop();
-                      } else {
-                        showSnackbar(
-                            context,
-                            "Đã xóa mục chăm sóc",
-                            Duration(seconds: 2),
-                            true,
-                            ScreenUtil().screenHeight - 180);
-                        Navigator.of(context)..pop();
-                      }
+
+                      showSnackbar(
+                        context,
+                        "Đã xóa mục chăm sóc",
+                        Duration(seconds: 2),
+                        true,
+                      );
+                      Navigator.of(context)..pop();
                     },
                     child: Text("Xóa"),
                   ),
@@ -155,6 +148,11 @@ class _ReCareCardState extends State<ReCareCard> {
                 userRelationship: widget.userRelationship),
           ),
         ),
+        onLongPress: widget.reCare.isFinish == -1
+            ? () {
+                print("Đang đè dô nè");
+              }
+            : null,
         child: Container(
           decoration: BoxDecoration(
               color: _bgCardColor,

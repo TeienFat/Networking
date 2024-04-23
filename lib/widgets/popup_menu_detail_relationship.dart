@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
 import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/helpers/helpers.dart';
@@ -87,11 +86,11 @@ class _PopupMenuDetailRelationshipState
                           .read<UserListBloc>()
                           .add(DeleteUser(userId: widget.user.userId!));
                       showSnackbar(
-                          context,
-                          "Đã xóa mối quan hệ",
-                          Duration(seconds: 3),
-                          true,
-                          ScreenUtil().screenHeight - 170);
+                        context,
+                        "Đã xóa mối quan hệ",
+                        Duration(seconds: 3),
+                        true,
+                      );
                       Navigator.of(context)
                         ..pop()
                         ..pop();

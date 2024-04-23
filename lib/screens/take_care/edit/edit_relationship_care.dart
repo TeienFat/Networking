@@ -2,45 +2,52 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import 'package:networking/apis/apis_auth.dart';
 import 'package:networking/bloc/reCare_list/re_care_list_bloc.dart';
 import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/helpers/helpers.dart';
+import 'package:networking/models/relationship_care_model.dart';
 import 'package:networking/models/user_relationship_model.dart';
 import 'package:networking/widgets/date_picker.dart';
 import 'package:networking/widgets/pick_relationship.dart';
 import 'package:networking/widgets/time_picker.dart';
 
-class NewRelationshipCare extends StatefulWidget {
-  const NewRelationshipCare({super.key}) : userRelationship = null;
-  const NewRelationshipCare.fromUsRe(
-      {super.key, required this.userRelationship});
-  final UserRelationship? userRelationship;
+class EditRelationshipCare extends StatefulWidget {
+  const EditRelationshipCare(
+      {super.key, required this.reCare, required this.userRelationship});
+  // const EditRelationshipCare.fromUsRe(
+  //     {super.key, required this.userRelationship});
+  final RelationshipCare reCare;
+  final UserRelationship userRelationship;
   @override
-  State<NewRelationshipCare> createState() => _NewRelationshipCareState();
+  State<EditRelationshipCare> createState() => _EditRelationshipCareState();
 }
 
-class _NewRelationshipCareState extends State<NewRelationshipCare> {
+class _EditRelationshipCareState extends State<EditRelationshipCare> {
   final _formKey = GlobalKey<FormState>();
   var _enteredTitle;
   var _enteredUsReId;
-  // var _usReName;
-  // var _usReRelationship;
   var _enteredAllDay = false;
-  TimeOfDay _enteredStartTime =
-      TimeOfDay(hour: TimeOfDay.now().hour, minute: 0);
-  TimeOfDay _enteredEndTime =
-      TimeOfDay(hour: TimeOfDay.now().hour + 1, minute: 0);
-  DateTime _enteredStartDay = DateTime.now();
-  DateTime _enteredEndDay = DateTime.now();
+  var _selected;
+  late TimeOfDay _enteredStartTime;
+  late TimeOfDay _enteredEndTime;
+  late DateTime _enteredStartDay;
+  late DateTime _enteredEndDay;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    if (widget.userRelationship != null) {
-      _enteredUsReId = widget.userRelationship!.usReId;
-    }
+    _enteredTitle = widget.reCare.title;
+    _enteredUsReId = widget.userRelationship.usReId;
+    _enteredStartTime = TimeOfDay(
+        hour: widget.reCare.startTime!.hour,
+        minute: widget.reCare.startTime!.minute);
+    _enteredEndTime = TimeOfDay(
+        hour: widget.reCare.endTime!.hour,
+        minute: widget.reCare.endTime!.minute);
+    _enteredStartDay = widget.reCare.startTime!;
+    _enteredEndDay = widget.reCare.endTime!;
+    _selected = true;
   }
 
   bool _checkvalidTime(TimeOfDay time1, TimeOfDay time2) {
@@ -53,7 +60,7 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
     return true;
   }
 
-  void _createNewRelationshipCare() async {
+  void _updateRelationshipCare() async {
     final isValid = _formKey.currentState!.validate();
     if (!isValid) {
       return;
@@ -83,26 +90,17 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
             second: 0,
             millisecond: 0,
             microsecond: 0);
-        String? meId = await APIsAuth.getCurrentUserId();
-        context.read<ReCareListBloc>().add(AddReCare(
-            meId: meId!,
+        context.read<ReCareListBloc>().add(UpdateReCare(
+            reCareId: widget.reCare.reCareId!,
             usReId: _enteredUsReId,
             startTime: startTime,
             endTime: endTime,
             title: _enteredTitle));
-
-        showSnackbar(
-            context, "Đã thêm mục chăm sóc mới", Duration(seconds: 2), true);
-
         Navigator.of(context).pop();
       }
     } else {
-      showSnackbar(
-        context,
-        "Hãy chọn mối quan hệ cần chăm sóc",
-        Duration(seconds: 2),
-        false,
-      );
+      showSnackbar(context, "Hãy chọn mối quan hệ cần chăm sóc",
+          Duration(seconds: 2), false);
       return;
     }
   }
@@ -136,18 +134,18 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Thêm chăm sóc"),
+        title: Text("Chỉnh sửa chăm sóc"),
         centerTitle: true,
         actions: [
           TextButton(
             onPressed: () {
               _formKey.currentState!.save();
-              _createNewRelationshipCare();
+              _updateRelationshipCare();
             },
             child: Padding(
               padding: EdgeInsets.only(right: 10.sp),
               child: Text(
-                "Thêm",
+                "Xong",
                 style: TextStyle(color: Colors.blue[800]),
               ),
             ),
@@ -183,6 +181,7 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
                         children: [
                           Expanded(
                             child: TextFormField(
+                              initialValue: _enteredTitle,
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: "Tiêu đề",
@@ -213,7 +212,7 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
                   SizedBox(
                     height: 20.sp,
                   ),
-                  widget.userRelationship != null
+                  _selected
                       ? Container(
                           decoration: BoxDecoration(
                               color: Colors.grey[100],
@@ -237,10 +236,10 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
                                   final users = state.users;
                                   for (var user in users) {
                                     if ((user.userId!.length ==
-                                            widget.userRelationship!
+                                            widget.userRelationship
                                                 .myRelationShipId!.length) &&
                                         (user.userId ==
-                                            widget.userRelationship!
+                                            widget.userRelationship
                                                 .myRelationShipId!)) {
                                       return Row(
                                         mainAxisAlignment:
@@ -263,7 +262,7 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
                                                 ),
                                                 Row(
                                                   children: getRowRelationship(
-                                                      widget.userRelationship!
+                                                      widget.userRelationship
                                                           .relationships!,
                                                       2,
                                                       12.sp,
@@ -271,7 +270,17 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
                                                 ),
                                               ],
                                             ),
-                                          )
+                                          ),
+                                          Spacer(),
+                                          IconButton(
+                                              color: Colors.black,
+                                              onPressed: () {
+                                                setState(() {
+                                                  _selected = false;
+                                                  _enteredUsReId = null;
+                                                });
+                                              },
+                                              icon: Icon(Icons.cancel)),
                                         ],
                                       );
                                     }
@@ -455,15 +464,6 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
               ),
             ),
           ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.grey[400],
-        onPressed: () {},
-        child: Icon(
-          Icons.calendar_month_outlined,
-          color: Colors.black,
-          size: 35.sp,
         ),
       ),
     );
