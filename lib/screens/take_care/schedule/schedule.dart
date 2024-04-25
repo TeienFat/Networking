@@ -6,6 +6,7 @@ import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
 import 'package:networking/helpers/helpers.dart';
 import 'package:networking/models/relationship_care_model.dart';
 import 'package:networking/screens/take_care/new/new_relationship_care.dart';
+import 'package:networking/screens/take_care/schedule/search_day.dart';
 import 'package:networking/widgets/take_care_card.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -42,7 +43,6 @@ class _ScheduleState extends State<Schedule> {
 
   @override
   Widget build(BuildContext context) {
-    print(_selectedEvents.length);
     return BlocBuilder<ReCareListBloc, ReCareListState>(
       builder: (context, state) {
         List<RelationshipCare> reCares;
@@ -168,7 +168,6 @@ class _ScheduleState extends State<Schedule> {
             padding: EdgeInsets.all(10.sp),
             child: Column(
               children: [
-                IconButton(onPressed: _reload, icon: Icon(Icons.cabin)),
                 Container(
                   padding: EdgeInsets.only(bottom: 5.sp, right: 5.sp),
                   decoration: BoxDecoration(
@@ -258,6 +257,15 @@ class _ScheduleState extends State<Schedule> {
                               Icons.calendar_today,
                             ),
                             visualDensity: VisualDensity.compact,
+                          ),
+                          SearchDay(
+                            onSearch: (dayReturn) {
+                              setState(() {
+                                _focusedDay.value = dayReturn;
+                                _selectedDay = dayReturn;
+                                _reload();
+                              });
+                            },
                           ),
                         ],
                       );
