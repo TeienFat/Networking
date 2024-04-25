@@ -5,7 +5,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:networking/bloc/reCare_list/re_care_list_bloc.dart';
 import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
 import 'package:networking/models/relationship_care_model.dart';
+import 'package:networking/screens/take_care/schedule/schedule.dart';
 import 'package:networking/widgets/take_care_card.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class TakeCareScreen extends StatefulWidget {
   const TakeCareScreen({super.key});
@@ -34,6 +36,9 @@ class _TakeCareScreenState extends State<TakeCareScreen> {
               return 0;
             },
           );
+          List<RelationshipCare> eventsToday = reCares
+              .where((element) => isSameDay(element.startTime!, DateTime.now()))
+              .toList();
           List<RelationshipCare> reCaresSort;
           switch (_currentButtonNum) {
             case 1:
@@ -159,12 +164,20 @@ class _TakeCareScreenState extends State<TakeCareScreen> {
                           )),
                     ),
                     IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          FontAwesomeIcons.sliders,
-                          size: 28.sp,
-                          color: Colors.black,
-                        )),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  Schedule(listEventsToday: eventsToday),
+                            ));
+                      },
+                      icon: Icon(
+                        Icons.calendar_month_outlined,
+                        color: Colors.black,
+                        size: 35.sp,
+                      ),
+                    ),
                   ],
                 ),
                 SizedBox(
@@ -215,8 +228,37 @@ class _TakeCareScreenState extends State<TakeCareScreen> {
             ),
           );
         }
-        return Center(
-          child: Text("Hãy thiết lập các mục chăm sóc mới."),
+        final reCares = state.reCares;
+        List<RelationshipCare> eventsToday = reCares
+            .where((element) => isSameDay(element.startTime!, DateTime.now()))
+            .toList();
+        return Padding(
+          padding: EdgeInsets.all(5.sp),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                Schedule(listEventsToday: eventsToday),
+                          ));
+                    },
+                    icon: Icon(
+                      Icons.calendar_month_outlined,
+                      color: Colors.black,
+                      size: 35.sp,
+                    ),
+                  ),
+                ],
+              ),
+              Text("Chưa có mục chăm sóc nào"),
+            ],
+          ),
         );
       },
     );

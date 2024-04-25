@@ -12,10 +12,17 @@ import 'package:networking/widgets/pick_relationship.dart';
 import 'package:networking/widgets/time_picker.dart';
 
 class NewRelationshipCare extends StatefulWidget {
-  const NewRelationshipCare({super.key}) : userRelationship = null;
+  const NewRelationshipCare(
+      {super.key, required this.initStartDay, required this.initEndDay})
+      : userRelationship = null;
   const NewRelationshipCare.fromUsRe(
-      {super.key, required this.userRelationship});
+      {super.key,
+      required this.userRelationship,
+      required this.initStartDay,
+      required this.initEndDay});
   final UserRelationship? userRelationship;
+  final DateTime initStartDay;
+  final DateTime initEndDay;
   @override
   State<NewRelationshipCare> createState() => _NewRelationshipCareState();
 }
@@ -24,15 +31,14 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
   final _formKey = GlobalKey<FormState>();
   var _enteredTitle;
   var _enteredUsReId;
-  // var _usReName;
-  // var _usReRelationship;
+
   var _enteredAllDay = false;
   TimeOfDay _enteredStartTime =
       TimeOfDay(hour: TimeOfDay.now().hour, minute: 0);
   TimeOfDay _enteredEndTime =
       TimeOfDay(hour: TimeOfDay.now().hour + 1, minute: 0);
-  DateTime _enteredStartDay = DateTime.now();
-  DateTime _enteredEndDay = DateTime.now();
+  late DateTime _enteredStartDay;
+  late DateTime _enteredEndDay;
 
   @override
   void initState() {
@@ -41,6 +47,8 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
     if (widget.userRelationship != null) {
       _enteredUsReId = widget.userRelationship!.usReId;
     }
+    _enteredStartDay = widget.initStartDay;
+    _enteredEndDay = widget.initEndDay;
   }
 
   bool _checkvalidTime(TimeOfDay time1, TimeOfDay time2) {
@@ -94,7 +102,7 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
         showSnackbar(
             context, "Đã thêm mục chăm sóc mới", Duration(seconds: 2), true);
 
-        Navigator.of(context).pop();
+        Navigator.of(context).pop(true);
       }
     } else {
       showSnackbar(
@@ -344,24 +352,25 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
                                     style: TextStyle(fontSize: 14.sp),
                                   ),
                                 ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      _enteredStartTime.format(context),
-                                      style: TextStyle(
-                                          fontSize: 14.sp,
-                                          color: _enteredAllDay
-                                              ? Colors.grey
-                                              : null),
-                                    ),
-                                    TimePickerIcon(
-                                        onPickTime: (timePick) =>
-                                            _pickStartTime(timePick),
-                                        selectedTime: _enteredStartTime,
-                                        helpText: 'Chọn giờ bắt đầu',
-                                        disabled: _enteredAllDay),
-                                  ],
-                                ),
+                                if (!_enteredAllDay)
+                                  Row(
+                                    children: [
+                                      Text(
+                                        _enteredStartTime.format(context),
+                                        style: TextStyle(
+                                            fontSize: 14.sp,
+                                            color: _enteredAllDay
+                                                ? Colors.grey
+                                                : null),
+                                      ),
+                                      TimePickerIcon(
+                                          onPickTime: (timePick) =>
+                                              _pickStartTime(timePick),
+                                          selectedTime: _enteredStartTime,
+                                          helpText: 'Chọn giờ bắt đầu',
+                                          disabled: _enteredAllDay),
+                                    ],
+                                  ),
                                 Row(
                                   children: [
                                     Text(
@@ -403,24 +412,25 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
                                     style: TextStyle(fontSize: 14.sp),
                                   ),
                                 ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      _enteredEndTime.format(context),
-                                      style: TextStyle(
-                                          fontSize: 14.sp,
-                                          color: _enteredAllDay
-                                              ? Colors.grey
-                                              : null),
-                                    ),
-                                    TimePickerIcon(
-                                        onPickTime: (timePick) =>
-                                            _pickEndTime(timePick),
-                                        selectedTime: _enteredEndTime,
-                                        helpText: 'Chọn giờ kết thúc',
-                                        disabled: _enteredAllDay),
-                                  ],
-                                ),
+                                if (!_enteredAllDay)
+                                  Row(
+                                    children: [
+                                      Text(
+                                        _enteredEndTime.format(context),
+                                        style: TextStyle(
+                                            fontSize: 14.sp,
+                                            color: _enteredAllDay
+                                                ? Colors.grey
+                                                : null),
+                                      ),
+                                      TimePickerIcon(
+                                          onPickTime: (timePick) =>
+                                              _pickEndTime(timePick),
+                                          selectedTime: _enteredEndTime,
+                                          helpText: 'Chọn giờ kết thúc',
+                                          disabled: _enteredAllDay),
+                                    ],
+                                  ),
                                 Row(
                                   children: [
                                     Text(
@@ -455,15 +465,6 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
               ),
             ),
           ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.grey[400],
-        onPressed: () {},
-        child: Icon(
-          Icons.calendar_month_outlined,
-          color: Colors.black,
-          size: 35.sp,
         ),
       ),
     );

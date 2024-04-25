@@ -12,16 +12,25 @@ import 'package:networking/models/relationship_care_model.dart';
 import 'package:networking/models/user_relationship_model.dart';
 import 'package:networking/screens/take_care/detail/detail_relationship_care.dart';
 import 'package:networking/screens/take_care/edit/edit_relationship_care.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class ReCareCard extends StatefulWidget {
-  const ReCareCard(
+  const ReCareCard({
+    super.key,
+    required this.reCare,
+    required this.userRelationship,
+    required this.listType,
+  }) : load = null;
+  const ReCareCard.schedule(
       {super.key,
       required this.reCare,
       required this.userRelationship,
-      required this.listType});
+      required this.listType,
+      required this.load});
   final RelationshipCare reCare;
   final UserRelationship userRelationship;
   final int listType;
+  final void Function()? load;
 
   @override
   State<ReCareCard> createState() => _ReCareCardState();
@@ -70,14 +79,33 @@ class _ReCareCardState extends State<ReCareCard> {
       endActionPane: ActionPane(motion: DrawerMotion(), children: [
         if (widget.reCare.isFinish == 2)
           SlidableAction(
-            onPressed: (context) {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => EditRelationshipCare(
+            onPressed: (context) async {
+              if (widget.load != null) {
+                await Navigator.of(context)
+                    .push(
+                  MaterialPageRoute(
+                    builder: (context) => EditRelationshipCare(
                       reCare: widget.reCare,
-                      userRelationship: widget.userRelationship),
-                ),
-              );
+                      userRelationship: widget.userRelationship,
+                    ),
+                  ),
+                )
+                    .then(
+                  (value) {
+                    if (value != null && value) {
+                      widget.load!.call();
+                    }
+                  },
+                );
+              } else {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => EditRelationshipCare(
+                        reCare: widget.reCare,
+                        userRelationship: widget.userRelationship),
+                  ),
+                );
+              }
             },
             backgroundColor: Color.fromARGB(255, 238, 184, 6),
             foregroundColor: Colors.white,
@@ -124,13 +152,18 @@ class _ReCareCardState extends State<ReCareCard> {
                         Duration(seconds: 2),
                         true,
                       );
-                      Navigator.of(context)..pop();
+
+                      Navigator.of(context).pop(true);
                     },
                     child: Text("Xóa"),
                   ),
                 ],
               ),
-            );
+            ).then((value) {
+              if (value != null && value && widget.load != null) {
+                widget.load!.call();
+              }
+            });
           },
           backgroundColor: Color.fromARGB(255, 219, 38, 6),
           foregroundColor: Colors.white,
@@ -141,13 +174,21 @@ class _ReCareCardState extends State<ReCareCard> {
         ),
       ]),
       child: InkWell(
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => DetailRelationshipCare(
-                reCare: widget.reCare,
-                userRelationship: widget.userRelationship),
-          ),
-        ),
+        onTap: () async {
+          await Navigator.of(context)
+              .push(
+            MaterialPageRoute(
+              builder: (context) => DetailRelationshipCare(
+                  reCare: widget.reCare,
+                  userRelationship: widget.userRelationship),
+            ),
+          )
+              .then((value) {
+            if (value != null && value) {
+              widget.load!.call();
+            }
+          });
+        },
         onLongPress: widget.reCare.isFinish == -1
             ? () {
                 print("Đang đè dô nè");
@@ -219,21 +260,48 @@ class _ReCareCardState extends State<ReCareCard> {
                     ),
                     Row(
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [Text("Bắt đầu:"), Text("Kết thúc:")],
-                        ),
+                        checkAllDay(widget.reCare.startTime!,
+                                widget.reCare.endTime!)
+                            ? Text("Cả ngày")
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [Text("Bắt đầu:"), Text("Kết thúc:")],
+                              ),
                         SizedBox(
                           width: 3.sp,
                         ),
-                        Column(
-                          children: [
-                            getRowDateTime(
-                                widget.reCare.startTime!, 11.sp, 12.sp),
-                            getRowDateTime(
-                                widget.reCare.endTime!, 11.sp, 12.sp),
-                          ],
-                        ),
+                        isSameDay(widget.reCare.startTime!,
+                                    widget.reCare.endTime!) &&
+                                checkAllDay(widget.reCare.startTime!,
+                                    widget.reCare.endTime!)
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  getRowDateTime(
+                                      widget.reCare.startTime!,
+                                      11.sp,
+                                      12.sp,
+                                      checkAllDay(widget.reCare.startTime!,
+                                          widget.reCare.endTime!)),
+                                ],
+                              )
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  getRowDateTime(
+                                      widget.reCare.startTime!,
+                                      11.sp,
+                                      12.sp,
+                                      checkAllDay(widget.reCare.startTime!,
+                                          widget.reCare.endTime!)),
+                                  getRowDateTime(
+                                      widget.reCare.endTime!,
+                                      11.sp,
+                                      12.sp,
+                                      checkAllDay(widget.reCare.startTime!,
+                                          widget.reCare.endTime!)),
+                                ],
+                              ),
                       ],
                     ),
                   ],
@@ -242,7 +310,7 @@ class _ReCareCardState extends State<ReCareCard> {
               Spacer(),
               widget.listType == 0 || widget.listType == 5
                   ? _iconCard
-                  : SizedBox()
+                  : SizedBox(),
             ],
           ),
         ),

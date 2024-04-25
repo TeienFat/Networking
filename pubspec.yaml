@@ -78,6 +78,8 @@ dependencies:
   flutter_bloc: ^8.1.5
   # vuốt widget
   flutter_slidable: ^3.1.0
+  # lập lịch
+  table_calendar: ^3.1.1
 
 
 dev_dependencies:

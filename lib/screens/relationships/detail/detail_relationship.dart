@@ -29,8 +29,6 @@ class _DetailRelationshipState extends State<DetailRelationship> {
     });
   }
 
-  void _onRemoveRelationship() {}
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<UsReListBloc, UsReListState>(
@@ -88,10 +86,11 @@ class _DetailRelationshipState extends State<DetailRelationship> {
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 10.sp, vertical: 5.sp),
                                       child: ReCareCard(
-                                          reCare: reca,
-                                          userRelationship:
-                                              widget.userRelationship,
-                                          listType: 5),
+                                        reCare: reca,
+                                        userRelationship:
+                                            widget.userRelationship,
+                                        listType: 5,
+                                      ),
                                     ));
                                   }
                                 }
@@ -117,7 +116,10 @@ class _DetailRelationshipState extends State<DetailRelationship> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => NewRelationshipCare.fromUsRe(
-                            userRelationship: widget.userRelationship),
+                          userRelationship: widget.userRelationship,
+                          initStartDay: DateTime.now(),
+                          initEndDay: DateTime.now(),
+                        ),
                       )),
                   child: Icon(
                     Icons.add,

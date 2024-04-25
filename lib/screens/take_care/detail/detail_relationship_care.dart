@@ -173,7 +173,7 @@ class _DetailRelationshipCareState extends State<DetailRelationshipCare> {
                                   );
                                   Navigator.of(context)
                                     ..pop()
-                                    ..pop();
+                                    ..pop(true);
                                 },
                                 child: Text("Xóa"),
                               ),
@@ -289,12 +289,33 @@ class _DetailRelationshipCareState extends State<DetailRelationshipCare> {
                                 SizedBox(
                                   width: 5.sp,
                                 ),
+                                if (checkAllDay(widget.reCare.startTime!,
+                                    widget.reCare.endTime!))
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "Cả ngày",
+                                        style: TextStyle(fontSize: 14.sp),
+                                      ),
+                                      SizedBox(
+                                        width: 5.sp,
+                                      ),
+                                    ],
+                                  ),
                                 Column(
                                   children: [
                                     getRowDateTime(
-                                        widget.reCare.startTime!, 14.sp, 14.sp),
+                                        widget.reCare.startTime!,
+                                        14.sp,
+                                        14.sp,
+                                        checkAllDay(widget.reCare.startTime!,
+                                            widget.reCare.endTime!)),
                                     getRowDateTime(
-                                        widget.reCare.endTime!, 14.sp, 14.sp),
+                                        widget.reCare.endTime!,
+                                        14.sp,
+                                        14.sp,
+                                        checkAllDay(widget.reCare.startTime!,
+                                            widget.reCare.endTime!)),
                                   ],
                                 ),
                               ],
