@@ -83,7 +83,8 @@ class _MainScreenState extends State<MainScreen> {
         //     DateTime(2024, 8, 30, 23, 59),
         //     'Dự lễ tốt nghiệp');
         Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => NewRelationshipCare(),
+          builder: (context) => NewRelationshipCare(
+              initStartDay: DateTime.now(), initEndDay: DateTime.now()),
         ));
         break;
       case 2:

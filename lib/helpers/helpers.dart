@@ -79,6 +79,75 @@ class MyDateUtil {
     }
     return 'NA';
   }
+
+  static String getFormattedWeekday2(DateTime dateTime) {
+    switch (dateTime.weekday) {
+      case 1:
+        return 'H';
+      case 2:
+        return 'B';
+      case 3:
+        return 'T';
+      case 4:
+        return 'N';
+      case 5:
+        return 'S';
+      case 6:
+        return 'B';
+      case 7:
+        return 'CN';
+    }
+    return 'NA';
+  }
+
+  static String getFormattedMonth(DateTime dateTime) {
+    switch (dateTime.month) {
+      case 1:
+        return 'Thg 1';
+      case 2:
+        return 'Thg 2';
+      case 3:
+        return 'Thg 3';
+      case 4:
+        return 'Thg 4';
+      case 5:
+        return 'Thg 5';
+      case 6:
+        return 'Thg 6';
+      case 7:
+        return 'Thg 7';
+      case 8:
+        return 'Thg 8';
+      case 9:
+        return 'Thg 9';
+      case 10:
+        return 'Thg 10';
+      case 11:
+        return 'Thg 11';
+      case 12:
+        return 'Thg 12';
+    }
+    return 'NA';
+  }
+}
+
+bool checkAllDay(DateTime time1, DateTime time2) {
+  if (time1.hour == 0 &&
+      time1.minute == 00 &&
+      time2.hour == 23 &&
+      time2.minute == 59) {
+    return true;
+  }
+  return false;
+}
+
+bool checkDayAfter(DateTime day1, DateTime day2) {
+  if (day1.year >= day2.year &&
+      day1.month >= day2.month &&
+      day1.day >= day2.day) {
+    return true;
+  }
+  return false;
 }
 
 extension DateTimeExtension on DateTime {
@@ -94,23 +163,32 @@ extension DateTimeExtension on DateTime {
   }
 }
 
-Widget getRowDateTime(DateTime dateTime, double fontSize, double iconSize) {
+Widget getRowDateTime(
+    DateTime dateTime, double fontSize, double iconSize, bool isAllDay) {
   return Row(
     children: [
-      Icon(
-        FontAwesomeIcons.solidClock,
-        size: iconSize,
-      ),
-      SizedBox(
-        width: 3.sp,
-      ),
-      Text(
-        DateFormat("HH:mm").format(dateTime),
-        style: TextStyle(fontSize: fontSize),
-      ),
-      SizedBox(
-        width: 10.sp,
-      ),
+      isAllDay
+          ? SizedBox(
+              width: 5.sp,
+            )
+          : Row(
+              children: [
+                Icon(
+                  FontAwesomeIcons.solidClock,
+                  size: iconSize,
+                ),
+                SizedBox(
+                  width: 3.sp,
+                ),
+                Text(
+                  DateFormat("HH:mm").format(dateTime),
+                  style: TextStyle(fontSize: fontSize),
+                ),
+                SizedBox(
+                  width: 10.sp,
+                ),
+              ],
+            ),
       Icon(
         FontAwesomeIcons.calendar,
         size: iconSize,

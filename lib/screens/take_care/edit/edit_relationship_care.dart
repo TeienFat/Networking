@@ -14,10 +14,10 @@ import 'package:networking/widgets/time_picker.dart';
 class EditRelationshipCare extends StatefulWidget {
   const EditRelationshipCare(
       {super.key, required this.reCare, required this.userRelationship});
-  // const EditRelationshipCare.fromUsRe(
-  //     {super.key, required this.userRelationship});
+
   final RelationshipCare reCare;
   final UserRelationship userRelationship;
+
   @override
   State<EditRelationshipCare> createState() => _EditRelationshipCareState();
 }
@@ -26,7 +26,7 @@ class _EditRelationshipCareState extends State<EditRelationshipCare> {
   final _formKey = GlobalKey<FormState>();
   var _enteredTitle;
   var _enteredUsReId;
-  var _enteredAllDay = false;
+  var _enteredAllDay;
   var _selected;
   late TimeOfDay _enteredStartTime;
   late TimeOfDay _enteredEndTime;
@@ -48,6 +48,8 @@ class _EditRelationshipCareState extends State<EditRelationshipCare> {
     _enteredStartDay = widget.reCare.startTime!;
     _enteredEndDay = widget.reCare.endTime!;
     _selected = true;
+    _enteredAllDay =
+        checkAllDay(widget.reCare.startTime!, widget.reCare.endTime!);
   }
 
   bool _checkvalidTime(TimeOfDay time1, TimeOfDay time2) {
@@ -96,7 +98,7 @@ class _EditRelationshipCareState extends State<EditRelationshipCare> {
             startTime: startTime,
             endTime: endTime,
             title: _enteredTitle));
-        Navigator.of(context).pop();
+        Navigator.of(context).pop(true);
       }
     } else {
       showSnackbar(context, "Hãy chọn mối quan hệ cần chăm sóc",
@@ -353,24 +355,25 @@ class _EditRelationshipCareState extends State<EditRelationshipCare> {
                                     style: TextStyle(fontSize: 14.sp),
                                   ),
                                 ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      _enteredStartTime.format(context),
-                                      style: TextStyle(
-                                          fontSize: 14.sp,
-                                          color: _enteredAllDay
-                                              ? Colors.grey
-                                              : null),
-                                    ),
-                                    TimePickerIcon(
-                                        onPickTime: (timePick) =>
-                                            _pickStartTime(timePick),
-                                        selectedTime: _enteredStartTime,
-                                        helpText: 'Chọn giờ bắt đầu',
-                                        disabled: _enteredAllDay),
-                                  ],
-                                ),
+                                if (!_enteredAllDay)
+                                  Row(
+                                    children: [
+                                      Text(
+                                        _enteredStartTime.format(context),
+                                        style: TextStyle(
+                                            fontSize: 14.sp,
+                                            color: _enteredAllDay
+                                                ? Colors.grey
+                                                : null),
+                                      ),
+                                      TimePickerIcon(
+                                          onPickTime: (timePick) =>
+                                              _pickStartTime(timePick),
+                                          selectedTime: _enteredStartTime,
+                                          helpText: 'Chọn giờ bắt đầu',
+                                          disabled: _enteredAllDay),
+                                    ],
+                                  ),
                                 Row(
                                   children: [
                                     Text(
@@ -412,24 +415,25 @@ class _EditRelationshipCareState extends State<EditRelationshipCare> {
                                     style: TextStyle(fontSize: 14.sp),
                                   ),
                                 ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      _enteredEndTime.format(context),
-                                      style: TextStyle(
-                                          fontSize: 14.sp,
-                                          color: _enteredAllDay
-                                              ? Colors.grey
-                                              : null),
-                                    ),
-                                    TimePickerIcon(
-                                        onPickTime: (timePick) =>
-                                            _pickEndTime(timePick),
-                                        selectedTime: _enteredEndTime,
-                                        helpText: 'Chọn giờ kết thúc',
-                                        disabled: _enteredAllDay),
-                                  ],
-                                ),
+                                if (!_enteredAllDay)
+                                  Row(
+                                    children: [
+                                      Text(
+                                        _enteredEndTime.format(context),
+                                        style: TextStyle(
+                                            fontSize: 14.sp,
+                                            color: _enteredAllDay
+                                                ? Colors.grey
+                                                : null),
+                                      ),
+                                      TimePickerIcon(
+                                          onPickTime: (timePick) =>
+                                              _pickEndTime(timePick),
+                                          selectedTime: _enteredEndTime,
+                                          helpText: 'Chọn giờ kết thúc',
+                                          disabled: _enteredAllDay),
+                                    ],
+                                  ),
                                 Row(
                                   children: [
                                     Text(
