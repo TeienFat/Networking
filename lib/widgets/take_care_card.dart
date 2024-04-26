@@ -12,6 +12,7 @@ import 'package:networking/models/relationship_care_model.dart';
 import 'package:networking/models/user_relationship_model.dart';
 import 'package:networking/screens/take_care/detail/detail_relationship_care.dart';
 import 'package:networking/screens/take_care/edit/edit_relationship_care.dart';
+import 'package:networking/screens/take_care/edit/evaluate.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class ReCareCard extends StatefulWidget {
@@ -37,6 +38,11 @@ class ReCareCard extends StatefulWidget {
 }
 
 class _ReCareCardState extends State<ReCareCard> {
+  void _onEvaluate(bool isSuccess) {
+    context.read<ReCareListBloc>().add(UpdateIsFinish(
+        reCareId: widget.reCare.reCareId!, isFinish: isSuccess ? 1 : 0));
+  }
+
   @override
   Widget build(BuildContext context) {
     Color _bgCardColor;
@@ -189,9 +195,17 @@ class _ReCareCardState extends State<ReCareCard> {
             }
           });
         },
-        onLongPress: widget.reCare.isFinish == -1
+        onLongPress: widget.reCare.isFinish != 2
             ? () {
-                print("Đang đè dô nè");
+                showModalBottomSheet(
+                  useSafeArea: true,
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (context) => EvaluateReCare(
+                    onEvaluate: (isSuccess) => _onEvaluate(isSuccess),
+                    initIsSuccess: widget.reCare.isFinish == 0 ? false : true,
+                  ),
+                );
               }
             : null,
         child: Container(

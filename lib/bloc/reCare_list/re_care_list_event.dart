@@ -50,6 +50,12 @@ class RemoveContentImage extends ReCareListEvent {
   RemoveContentImage({required this.reCareId, required this.imageUrl});
 }
 
+class UpdateIsFinish extends ReCareListEvent {
+  final String reCareId;
+  final int isFinish;
+  UpdateIsFinish({required this.reCareId, required this.isFinish});
+}
+
 class UpdateReCare extends ReCareListEvent {
   final String reCareId;
   final String usReId;

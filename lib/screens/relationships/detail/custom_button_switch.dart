@@ -25,7 +25,8 @@ class MySliverButtonSwicth extends SliverPersistentHeaderDelegate {
         onToggleCallback: (value) {
           onChangePage(value);
         },
-        buttonColor: Colors.orange[600]!,
+        buttonColorLeft: Colors.orange[600]!,
+        buttonColorRight: Colors.orange[600]!,
         backgroundColor: Colors.grey[400]!,
         textColor: Colors.black,
         buttonHeight: 60.sp,
