@@ -5,26 +5,36 @@ class MyAnimatedToggle extends StatefulWidget {
   final List<String> values;
   final ValueChanged onToggleCallback;
   final Color backgroundColor;
-  final Color buttonColor;
+  final Color buttonColorLeft;
+  final Color buttonColorRight;
   final Color textColor;
   final double buttonHeight;
   final double buttonWidth;
+  final bool initValue;
 
-  MyAnimatedToggle({
-    required this.values,
-    required this.onToggleCallback,
-    this.backgroundColor = const Color(0xFFe7e7e8),
-    this.buttonColor = const Color(0xFFFFFFFF),
-    this.textColor = const Color(0xFF000000),
-    this.buttonHeight = 80,
-    this.buttonWidth = 300,
-  });
+  MyAnimatedToggle(
+      {required this.values,
+      required this.onToggleCallback,
+      this.backgroundColor = const Color(0xFFe7e7e8),
+      this.buttonColorLeft = const Color(0xFFFFFFFF),
+      this.buttonColorRight = const Color(0xFFFFFFFF),
+      this.textColor = const Color(0xFF000000),
+      this.buttonHeight = 80,
+      this.buttonWidth = 300,
+      this.initValue = true});
   @override
   _MyAnimatedToggleState createState() => _MyAnimatedToggleState();
 }
 
 class _MyAnimatedToggleState extends State<MyAnimatedToggle> {
-  bool initialPosition = true;
+  var _enteredValue;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _enteredValue = widget.initValue;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -37,8 +47,8 @@ class _MyAnimatedToggleState extends State<MyAnimatedToggle> {
         children: <Widget>[
           GestureDetector(
             onTap: () {
-              initialPosition = !initialPosition;
-              widget.onToggleCallback(initialPosition);
+              _enteredValue = !_enteredValue;
+              widget.onToggleCallback(_enteredValue);
               setState(() {});
             },
             child: Container(
@@ -73,18 +83,20 @@ class _MyAnimatedToggleState extends State<MyAnimatedToggle> {
             duration: const Duration(milliseconds: 250),
             curve: Curves.decelerate,
             alignment:
-                initialPosition ? Alignment.centerLeft : Alignment.centerRight,
+                _enteredValue ? Alignment.centerLeft : Alignment.centerRight,
             child: Container(
               width: widget.buttonWidth * 0.5,
               height: widget.buttonHeight,
               decoration: ShapeDecoration(
-                color: widget.buttonColor,
+                color: _enteredValue
+                    ? widget.buttonColorLeft
+                    : widget.buttonColorRight,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
               child: Text(
-                initialPosition ? widget.values[0] : widget.values[1],
+                _enteredValue ? widget.values[0] : widget.values[1],
                 style: TextStyle(
                   fontSize: 14.sp,
                   color: widget.textColor,

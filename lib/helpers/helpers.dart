@@ -142,11 +142,18 @@ bool checkAllDay(DateTime time1, DateTime time2) {
 }
 
 bool checkDayAfter(DateTime day1, DateTime day2) {
+  if (day1.year > day2.year) {
+    return true;
+  }
+  if (day1.month > day2.month && day1.year >= day2.year) {
+    return true;
+  }
   if (day1.year >= day2.year &&
       day1.month >= day2.month &&
       day1.day >= day2.day) {
     return true;
   }
+
   return false;
 }
 

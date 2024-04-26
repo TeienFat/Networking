@@ -22,6 +22,7 @@ class ReCareListBloc extends Bloc<ReCareListEvent, ReCareListState> {
     on<AddContentImage>(_addContentImage);
     on<RemoveContentImage>(_deleteContentImage);
     on<DeleteReCare>(_deleteReCare);
+    on<UpdateIsFinish>(_updateIsFinish);
     on<UpdateReCare>(_updateReCare);
   }
   void _addReCare(AddReCare event, Emitter<ReCareListState> emit) {
@@ -86,6 +87,16 @@ class ReCareListBloc extends Bloc<ReCareListEvent, ReCareListState> {
       }
     }
     APIsReCare.removeReCare(event.reCareId);
+    emit(ReCareListUploaded(reCares: state.reCares));
+  }
+
+  void _updateIsFinish(UpdateIsFinish event, Emitter<ReCareListState> emit) {
+    for (int i = 0; i < state.reCares.length; i++) {
+      if (event.reCareId == state.reCares[i].reCareId) {
+        state.reCares[i].isFinish = event.isFinish;
+      }
+    }
+    APIsReCare.updateIsFinish(event.reCareId, event.isFinish);
     emit(ReCareListUploaded(reCares: state.reCares));
   }
 
