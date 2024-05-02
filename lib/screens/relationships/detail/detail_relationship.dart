@@ -117,6 +117,7 @@ class _DetailRelationshipState extends State<DetailRelationship> {
                       MaterialPageRoute(
                         builder: (context) => NewRelationshipCare.fromUsRe(
                           userRelationship: widget.userRelationship,
+                          users: widget.user,
                           initStartDay: DateTime.now(),
                           initEndDay: DateTime.now(),
                         ),

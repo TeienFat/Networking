@@ -80,7 +80,11 @@ dependencies:
   flutter_slidable: ^3.1.0
   # lập lịch
   table_calendar: ^3.1.1
-
+  # đẩy thông báo
+  flutter_local_notifications: ^17.1.1
+  flutter_timezone: ^1.0.7
+  rxdart: ^0.27.7
+  get: ^4.6.6
 
 dev_dependencies:
   flutter_test:
@@ -93,6 +97,7 @@ flutter_icons:
   ios: true
   image_path: "assets/images/logo.png"
   min_sdk_android: 21 # android min sdk min:16, default 21
+  
 
 
   # The "flutter_lints" package below contains a set of recommended lints to

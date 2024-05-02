@@ -7,14 +7,16 @@ class LoadReCareList extends ReCareListEvent {}
 
 class AddReCare extends ReCareListEvent {
   final String meId;
-  final String usReId;
+  final UserRelationship usRe;
+  final Users users;
   final DateTime startTime;
   final DateTime endTime;
   final String title;
 
   AddReCare(
       {required this.meId,
-      required this.usReId,
+      required this.usRe,
+      required this.users,
       required this.startTime,
       required this.endTime,
       required this.title});
@@ -58,15 +60,18 @@ class UpdateIsFinish extends ReCareListEvent {
 
 class UpdateReCare extends ReCareListEvent {
   final String reCareId;
-  final String usReId;
+  final UserRelationship usRe;
+  final Users users;
   final DateTime startTime;
   final DateTime endTime;
   final String title;
 
-  UpdateReCare(
-      {required this.reCareId,
-      required this.usReId,
-      required this.startTime,
-      required this.endTime,
-      required this.title});
+  UpdateReCare({
+    required this.reCareId,
+    required this.usRe,
+    required this.users,
+    required this.startTime,
+    required this.endTime,
+    required this.title,
+  });
 }

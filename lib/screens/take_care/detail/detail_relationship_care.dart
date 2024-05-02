@@ -13,6 +13,7 @@ import 'package:networking/models/relationship_care_model.dart';
 import 'package:networking/models/user_relationship_model.dart';
 import 'package:networking/screens/take_care/detail/list_Image.dart';
 import 'package:networking/screens/take_care/detail/scale_image.dart';
+import 'package:networking/screens/take_care/edit/evaluate.dart';
 import 'package:networking/widgets/menu_pick_image.dart';
 import 'package:networking/widgets/popup_menu_detail_relationship_care.dart';
 
@@ -21,9 +22,15 @@ class DetailRelationshipCare extends StatefulWidget {
     super.key,
     required this.reCare,
     required this.userRelationship,
-  });
+  }) : fromNotification = false;
+  const DetailRelationshipCare.fromNotification({
+    super.key,
+    required this.reCare,
+    required this.userRelationship,
+  }) : fromNotification = true;
   final RelationshipCare reCare;
   final UserRelationship userRelationship;
+  final bool fromNotification;
 
   @override
   State<DetailRelationshipCare> createState() => _DetailRelationshipCareState();
@@ -43,6 +50,11 @@ class _DetailRelationshipCareState extends State<DetailRelationshipCare> {
       _isShowNote = true;
     } else {
       _isShowNote = false;
+    }
+
+    if (widget.fromNotification) {
+      widget.reCare.isFinish = -1;
+      _listFileImage = widget.reCare.contentImage!.map((e) => File(e)).toList();
     }
   }
 
@@ -68,6 +80,11 @@ class _DetailRelationshipCareState extends State<DetailRelationshipCare> {
           '${widget.reCare.reCareId! + '-T' + time.toString()}.jpg');
       context.read<ReCareListBloc>().add(AddContentImage(
           reCareId: widget.reCare.reCareId!, imageUrl: imageUrl));
+      if (widget.fromNotification) {
+        setState(() {
+          _listFileImage.add(File(imageUrl));
+        });
+      }
     } else {
       pickedImage = await ImagePicker().pickMultiImage(
         imageQuality: 100,
@@ -80,6 +97,11 @@ class _DetailRelationshipCareState extends State<DetailRelationshipCare> {
             '${widget.reCare.reCareId! + '-T' + i.toString() + time.toString()}.jpg');
         context.read<ReCareListBloc>().add(AddContentImage(
             reCareId: widget.reCare.reCareId!, imageUrl: imageUrl));
+        if (widget.fromNotification) {
+          setState(() {
+            _listFileImage.add(File(imageUrl));
+          });
+        }
       }
     }
   }
@@ -88,6 +110,14 @@ class _DetailRelationshipCareState extends State<DetailRelationshipCare> {
     File(imageUrl).delete();
     context.read<ReCareListBloc>().add(RemoveContentImage(
         reCareId: widget.reCare.reCareId!, imageUrl: imageUrl));
+  }
+
+  void _onEvaluate(bool isSuccess) {
+    setState(() {
+      widget.reCare.isFinish = isSuccess ? 1 : 0;
+      context.read<ReCareListBloc>().add(UpdateIsFinish(
+          reCareId: widget.reCare.reCareId!, isFinish: isSuccess ? 1 : 0));
+    });
   }
 
   Widget build(BuildContext context) {
@@ -114,13 +144,22 @@ class _DetailRelationshipCareState extends State<DetailRelationshipCare> {
     }
     return BlocBuilder<ReCareListBloc, ReCareListState>(
       builder: (context, state) {
-        _listFileImage =
-            widget.reCare.contentImage!.map((e) => File(e)).toList();
+        if (!widget.fromNotification) {
+          _listFileImage =
+              widget.reCare.contentImage!.map((e) => File(e)).toList();
+        }
 
         return Scaffold(
           appBar: AppBar(
             title: Text("Chi tiết mục chăm sóc"),
             centerTitle: true,
+            leading: widget.fromNotification
+                ? IconButton(
+                    onPressed: () {
+                      Navigator.of(context).pushReplacementNamed("/MainRecare");
+                    },
+                    icon: Icon(Icons.arrow_back))
+                : null,
             actions: [
               widget.reCare.isFinish == 2
                   ? PopupMenuDetailRelationshipCare(
@@ -221,11 +260,38 @@ class _DetailRelationshipCareState extends State<DetailRelationshipCare> {
                             SizedBox(
                               height: 5.sp,
                             ),
-                            Text(
-                              "($_status)",
-                              style: TextStyle(
-                                fontSize: 14.sp,
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "($_status)",
+                                  style: TextStyle(
+                                    fontSize: 14.sp,
+                                  ),
+                                ),
+                                if (widget.reCare.isFinish != 2)
+                                  IconButton(
+                                      onPressed: () {
+                                        showModalBottomSheet(
+                                          useSafeArea: true,
+                                          isScrollControlled: true,
+                                          context: context,
+                                          builder: (context) => EvaluateReCare(
+                                            onEvaluate: (isSuccess) =>
+                                                _onEvaluate(isSuccess),
+                                            initIsSuccess:
+                                                widget.reCare.isFinish == 0
+                                                    ? false
+                                                    : true,
+                                          ),
+                                        );
+                                      },
+                                      icon: Icon(
+                                        FontAwesomeIcons.flagCheckered,
+                                        color: Colors.black,
+                                        size: 20.sp,
+                                      )),
+                              ],
                             ),
                             SizedBox(
                               height: 5.sp,

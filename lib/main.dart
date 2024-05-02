@@ -1,10 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:networking/bloc/reCare_list/re_care_list_bloc.dart';
 import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
 import 'package:networking/bloc/user/user_bloc.dart';
 import 'package:networking/bloc/user_list/user_list_bloc.dart';
+import 'package:networking/notification/local_notifications.dart';
 import 'package:networking/screens/auth/auth.dart';
 import 'package:networking/screens/home/main_screen.dart';
 import 'package:networking/screens/splash/splash_screen.dart';
@@ -22,6 +24,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await LocalNotifications.init();
 
   runApp(const MyApp());
 }
@@ -45,7 +48,7 @@ class MyApp extends StatelessWidget {
         child: ScreenUtilInit(
           designSize: ScreenUtil.defaultSize,
           builder: (context, child) {
-            return MaterialApp(
+            return GetMaterialApp(
               title: 'Flutter Demo',
               debugShowCheckedModeBanner: false,
               // darkTheme: ThemeData.dark().copyWith(
@@ -134,6 +137,9 @@ class MyApp extends StatelessWidget {
                 '/Auth': (BuildContext context) => new AuthScreen(),
                 '/Welcome': (BuildContext context) => new WelcomeScreen(),
                 '/Main': (BuildContext context) => new MainScreen(),
+                '/MainRecare': (BuildContext context) => new MainScreen(
+                      index: 1,
+                    ),
               },
             );
           },

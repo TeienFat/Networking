@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:networking/apis/apis_user.dart';
 import 'package:networking/bloc/reCare_list/re_care_list_bloc.dart';
 import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/helpers/helpers.dart';
 import 'package:networking/models/relationship_care_model.dart';
+import 'package:networking/models/user_model.dart';
 import 'package:networking/models/user_relationship_model.dart';
 import 'package:networking/widgets/date_picker.dart';
 import 'package:networking/widgets/pick_relationship.dart';
@@ -25,7 +27,8 @@ class EditRelationshipCare extends StatefulWidget {
 class _EditRelationshipCareState extends State<EditRelationshipCare> {
   final _formKey = GlobalKey<FormState>();
   var _enteredTitle;
-  var _enteredUsReId;
+  UserRelationship? _enteredUsRe;
+  Users? _enteredUser;
   var _enteredAllDay;
   var _selected;
   late TimeOfDay _enteredStartTime;
@@ -38,7 +41,7 @@ class _EditRelationshipCareState extends State<EditRelationshipCare> {
     // TODO: implement initState
     super.initState();
     _enteredTitle = widget.reCare.title;
-    _enteredUsReId = widget.userRelationship.usReId;
+    _enteredUsRe = widget.userRelationship;
     _enteredStartTime = TimeOfDay(
         hour: widget.reCare.startTime!.hour,
         minute: widget.reCare.startTime!.minute);
@@ -67,7 +70,7 @@ class _EditRelationshipCareState extends State<EditRelationshipCare> {
     if (!isValid) {
       return;
     }
-    if (_enteredUsReId != null && _enteredUsReId != '') {
+    if (_enteredUsRe != null) {
       if (!_checkvalidTime(_enteredStartTime, _enteredEndTime) &&
           (_enteredStartDay.year == _enteredEndDay.year &&
               _enteredStartDay.month == _enteredEndDay.month &&
@@ -80,6 +83,10 @@ class _EditRelationshipCareState extends State<EditRelationshipCare> {
           false,
         );
       } else {
+        if (_enteredUser == null) {
+          _enteredUser =
+              await APIsUser.getUserFromId(_enteredUsRe!.myRelationShipId!);
+        }
         final startTime = _enteredStartDay.copyWith(
             hour: _enteredStartTime.hour,
             minute: _enteredStartTime.minute,
@@ -94,10 +101,13 @@ class _EditRelationshipCareState extends State<EditRelationshipCare> {
             microsecond: 0);
         context.read<ReCareListBloc>().add(UpdateReCare(
             reCareId: widget.reCare.reCareId!,
-            usReId: _enteredUsReId,
+            usRe: _enteredUsRe!,
+            users: _enteredUser!,
             startTime: startTime,
             endTime: endTime,
             title: _enteredTitle));
+        showSnackbar(context, "Đã chỉnh sửa thông tin mục chăm sóc",
+            Duration(seconds: 2), true);
         Navigator.of(context).pop(true);
       }
     } else {
@@ -128,8 +138,9 @@ class _EditRelationshipCareState extends State<EditRelationshipCare> {
     }
   }
 
-  void onPickRelationship(String usReId) {
-    _enteredUsReId = usReId;
+  void onPickRelationship(UserRelationship? usRe, Users? user) {
+    _enteredUsRe = usRe;
+    _enteredUser = user;
   }
 
   @override
@@ -279,7 +290,7 @@ class _EditRelationshipCareState extends State<EditRelationshipCare> {
                                               onPressed: () {
                                                 setState(() {
                                                   _selected = false;
-                                                  _enteredUsReId = null;
+                                                  _enteredUsRe = null;
                                                 });
                                               },
                                               icon: Icon(Icons.cancel)),
@@ -296,8 +307,8 @@ class _EditRelationshipCareState extends State<EditRelationshipCare> {
                           ),
                         )
                       : PickRelationship(
-                          onPickRelationship: (usReId) =>
-                              onPickRelationship(usReId),
+                          onPickRelationship: (usRe, user) =>
+                              onPickRelationship(usRe, user),
                         ),
                   SizedBox(
                     height: 20.sp,
