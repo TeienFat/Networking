@@ -1,8 +1,14 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:networking/apis/apis_relationships.dart';
+import 'package:networking/models/relationship_care_model.dart';
+import 'package:networking/models/user_relationship_model.dart';
+import 'package:networking/screens/take_care/detail/detail_relationship_care.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -40,13 +46,32 @@ class _SplashScreenState extends State<SplashScreen>
 
     bool logged = prefs.getBool('logged') ?? false;
 
-    if (firstTime) {
-      Navigator.of(context).pushReplacementNamed("/Welcome");
+    final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+    final NotificationAppLaunchDetails? notificationAppLaunchDetails =
+        await _flutterLocalNotificationsPlugin
+            .getNotificationAppLaunchDetails();
+
+    if (notificationAppLaunchDetails!.didNotificationLaunchApp) {
+      final payload =
+          notificationAppLaunchDetails.notificationResponse!.payload;
+      List<String> datas = List<String>.from(jsonDecode(payload!));
+      RelationshipCare reCare = RelationshipCare.fromMap(jsonDecode(datas[0]));
+      UserRelationship userRelationship =
+          UserRelationship.fromMap(jsonDecode(datas[1]));
+      Get.to(
+        () => DetailRelationshipCare.fromNotification(
+            reCare: reCare, userRelationship: userRelationship),
+      );
     } else {
-      if (logged) {
-        Navigator.of(context).pushReplacementNamed("/Main");
+      if (firstTime) {
+        Navigator.of(context).pushReplacementNamed("/Welcome");
       } else {
-        Navigator.of(context).pushReplacementNamed("/Auth");
+        if (logged) {
+          Navigator.of(context).pushReplacementNamed("/Main");
+        } else {
+          Navigator.of(context).pushReplacementNamed("/Auth");
+        }
       }
     }
   }

@@ -285,7 +285,8 @@ class _EditRelationshipState extends State<EditRelationship> {
             usReId: widget.userRelationship.usReId!,
             special: _enteredSpecial,
             relationships: _listRelationship));
-
+        showSnackbar(context, "Đã chỉnh sửa thông tin mối quan hệ",
+            Duration(seconds: 2), true);
         if (widget.type == 1) {
           Navigator.of(context)
             ..pop()

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:networking/apis/apis_ReCare.dart';
 import 'package:networking/apis/apis_auth.dart';
 import 'package:networking/apis/apis_relationships.dart';
 import 'package:networking/apis/apis_user.dart';
 import 'package:networking/apis/apis_user_relationship.dart';
+import 'package:networking/notification/home.dart';
 import 'package:networking/screens/home/chat_home.dart';
 import 'package:networking/screens/home/my_profile.dart';
 import 'package:networking/screens/home/relationships.dart';
@@ -18,14 +20,21 @@ import 'package:uuid/uuid.dart';
 var uuid = Uuid();
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
-
+  const MainScreen({super.key, this.index = 0});
+  final int index;
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
   int currentIndex = 0;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    currentIndex = widget.index;
+  }
+
   List screens = const [
     RelationshipScreen(),
     TakeCareScreen(),
@@ -88,7 +97,8 @@ class _MainScreenState extends State<MainScreen> {
         ));
         break;
       case 2:
-        print("C");
+        // Get.to(() => HomePage());
+        // APIsUsRe.removeTable('payload');
         break;
       case 3:
         print("D");

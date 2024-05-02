@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -45,6 +46,22 @@ class _ReCareCardState extends State<ReCareCard> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.reCare.isFinish == 2) {
+      if (DateTime.now().isAfter(widget.reCare.startTime!)) {
+        context.read<ReCareListBloc>().add(
+            UpdateIsFinish(reCareId: widget.reCare.reCareId!, isFinish: -1));
+      } else {
+        if (isSameDay(widget.reCare.startTime!, DateTime.now()) &&
+            widget.reCare.startTime!.hour == DateTime.now().hour) {
+          Timer(
+            widget.reCare.startTime!.difference(DateTime.now()),
+            () {
+              setState(() {});
+            },
+          );
+        }
+      }
+    }
     Color _bgCardColor;
 
     Icon _iconCard;
@@ -181,19 +198,21 @@ class _ReCareCardState extends State<ReCareCard> {
       ]),
       child: InkWell(
         onTap: () async {
-          await Navigator.of(context)
-              .push(
-            MaterialPageRoute(
-              builder: (context) => DetailRelationshipCare(
-                  reCare: widget.reCare,
-                  userRelationship: widget.userRelationship),
-            ),
-          )
-              .then((value) {
-            if (value != null && value) {
-              widget.load!.call();
-            }
-          });
+          if (widget.reCare.isFinish != 2) {
+            await Navigator.of(context)
+                .push(
+              MaterialPageRoute(
+                builder: (context) => DetailRelationshipCare(
+                    reCare: widget.reCare,
+                    userRelationship: widget.userRelationship),
+              ),
+            )
+                .then((value) {
+              if (value != null && value) {
+                widget.load!.call();
+              }
+            });
+          }
         },
         onLongPress: widget.reCare.isFinish != 2
             ? () {
@@ -236,42 +255,44 @@ class _ReCareCardState extends State<ReCareCard> {
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
-                    Row(
-                      children: [
-                        BlocBuilder<UserListBloc, UserListState>(
-                          builder: (context, state) {
-                            if (state is UserListUploaded &&
-                                state.users.isNotEmpty) {
-                              final users = state.users;
-                              for (var user in users) {
-                                if ((user.userId!.length ==
-                                        widget.userRelationship
-                                            .myRelationShipId!.length) &&
-                                    (user.userId ==
-                                        widget.userRelationship
-                                            .myRelationShipId!)) {
-                                  return Text(user.userName!);
+                    if (widget.listType != 5)
+                      Row(
+                        children: [
+                          BlocBuilder<UserListBloc, UserListState>(
+                            builder: (context, state) {
+                              if (state is UserListUploaded &&
+                                  state.users.isNotEmpty) {
+                                final users = state.users;
+                                for (var user in users) {
+                                  if ((user.userId!.length ==
+                                          widget.userRelationship
+                                              .myRelationShipId!.length) &&
+                                      (user.userId ==
+                                          widget.userRelationship
+                                              .myRelationShipId!)) {
+                                    return Text(user.userName!);
+                                  }
                                 }
                               }
-                            }
-                            return Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          },
-                        ),
-                        SizedBox(
-                          width: 5.sp,
-                        ),
-                        showRelationshipTypeIcon(
-                            widget.userRelationship.relationships!.first.type!,
-                            12.sp),
-                        SizedBox(
-                          width: 5.sp,
-                        ),
-                        Text(
-                            widget.userRelationship.relationships!.first.name!),
-                      ],
-                    ),
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            },
+                          ),
+                          SizedBox(
+                            width: 5.sp,
+                          ),
+                          showRelationshipTypeIcon(
+                              widget
+                                  .userRelationship.relationships!.first.type!,
+                              12.sp),
+                          SizedBox(
+                            width: 5.sp,
+                          ),
+                          Text(widget
+                              .userRelationship.relationships!.first.name!),
+                        ],
+                      ),
                     Row(
                       children: [
                         checkAllDay(widget.reCare.startTime!,

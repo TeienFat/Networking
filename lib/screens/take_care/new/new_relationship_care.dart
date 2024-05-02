@@ -6,21 +6,26 @@ import 'package:networking/apis/apis_auth.dart';
 import 'package:networking/bloc/reCare_list/re_care_list_bloc.dart';
 import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/helpers/helpers.dart';
+import 'package:networking/models/user_model.dart';
 import 'package:networking/models/user_relationship_model.dart';
 import 'package:networking/widgets/date_picker.dart';
 import 'package:networking/widgets/pick_relationship.dart';
 import 'package:networking/widgets/time_picker.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class NewRelationshipCare extends StatefulWidget {
   const NewRelationshipCare(
       {super.key, required this.initStartDay, required this.initEndDay})
-      : userRelationship = null;
+      : userRelationship = null,
+        users = null;
   const NewRelationshipCare.fromUsRe(
       {super.key,
       required this.userRelationship,
+      required this.users,
       required this.initStartDay,
       required this.initEndDay});
   final UserRelationship? userRelationship;
+  final Users? users;
   final DateTime initStartDay;
   final DateTime initEndDay;
   @override
@@ -30,7 +35,8 @@ class NewRelationshipCare extends StatefulWidget {
 class _NewRelationshipCareState extends State<NewRelationshipCare> {
   final _formKey = GlobalKey<FormState>();
   var _enteredTitle;
-  var _enteredUsReId;
+  UserRelationship? _enteredUsRe;
+  Users? _enteredUser;
 
   var _enteredAllDay = false;
   TimeOfDay _enteredStartTime =
@@ -45,7 +51,8 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
     // TODO: implement initState
     super.initState();
     if (widget.userRelationship != null) {
-      _enteredUsReId = widget.userRelationship!.usReId;
+      _enteredUsRe = widget.userRelationship!;
+      _enteredUser = widget.users!;
     }
     _enteredStartDay = widget.initStartDay;
     _enteredEndDay = widget.initEndDay;
@@ -66,11 +73,9 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
     if (!isValid) {
       return;
     }
-    if (_enteredUsReId != null && _enteredUsReId != '') {
+    if (_enteredUsRe != null) {
       if (!_checkvalidTime(_enteredStartTime, _enteredEndTime) &&
-          (_enteredStartDay.year == _enteredEndDay.year &&
-              _enteredStartDay.month == _enteredEndDay.month &&
-              _enteredStartDay.day == _enteredEndDay.day)) {
+          (isSameDay(_enteredStartDay, _enteredEndDay))) {
         showSnackbar(
           context,
           "Giờ không hợp lệ",
@@ -94,7 +99,8 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
         String? meId = await APIsAuth.getCurrentUserId();
         context.read<ReCareListBloc>().add(AddReCare(
             meId: meId!,
-            usReId: _enteredUsReId,
+            usRe: _enteredUsRe!,
+            users: _enteredUser!,
             startTime: startTime,
             endTime: endTime,
             title: _enteredTitle));
@@ -136,8 +142,9 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
     }
   }
 
-  void onPickRelationship(String usReId) {
-    _enteredUsReId = usReId;
+  void onPickRelationship(UserRelationship? usRe, Users? user) {
+    _enteredUsRe = usRe;
+    _enteredUser = user;
   }
 
   @override
@@ -293,8 +300,8 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
                           ),
                         )
                       : PickRelationship(
-                          onPickRelationship: (usReId) =>
-                              onPickRelationship(usReId),
+                          onPickRelationship: (usRe, user) =>
+                              onPickRelationship(usRe, user),
                         ),
                   SizedBox(
                     height: 20.sp,

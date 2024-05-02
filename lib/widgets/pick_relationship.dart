@@ -4,12 +4,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
 import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/helpers/helpers.dart';
+import 'package:networking/models/user_model.dart';
 import 'package:networking/models/user_relationship_model.dart';
 import 'package:tiengviet/tiengviet.dart';
 
 class PickRelationship extends StatefulWidget {
   const PickRelationship({super.key, required this.onPickRelationship});
-  final Function(String usReId) onPickRelationship;
+  final Function(UserRelationship? usRe, Users? user) onPickRelationship;
   @override
   State<PickRelationship> createState() => _PickRelationshipState();
 }
@@ -127,7 +128,7 @@ class _PickRelationshipState extends State<PickRelationship> {
                                           _selected = false;
                                           _selectedUserName = null;
                                           _selectedRelationships = null;
-                                          widget.onPickRelationship('');
+                                          widget.onPickRelationship(null, null);
                                           _showList = true;
                                         });
                                       }
@@ -182,7 +183,7 @@ class _PickRelationshipState extends State<PickRelationship> {
                                               _selectedRelationships =
                                                   listUsRe[index].relationships;
                                               widget.onPickRelationship(
-                                                  listUsRe[index].usReId!);
+                                                  listUsRe[index], user);
                                             });
                                           },
                                           child: Padding(
