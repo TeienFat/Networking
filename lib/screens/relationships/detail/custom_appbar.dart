@@ -8,8 +8,6 @@ import 'package:networking/models/user_model.dart';
 import 'package:networking/models/user_relationship_model.dart';
 import 'package:networking/widgets/popup_menu_detail_relationship.dart';
 
-enum Menu { preview, share, getLink, remove, download }
-
 class MySliverAppBar extends SliverPersistentHeaderDelegate {
   final double expandedHeight;
   final Users user;
@@ -112,21 +110,20 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                     ],
                   ),
                 ),
-                userRelationship.special!
-                    ? Icon(
-                        shadows: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.3),
-                            spreadRadius: 2,
-                            blurRadius: 5,
-                            offset: Offset(3, 3),
-                          ),
-                        ],
-                        Icons.star,
-                        color: Colors.yellow[700],
-                        size: 35.sp,
-                      )
-                    : SizedBox(),
+                if (userRelationship.special!)
+                  Icon(
+                    shadows: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: Offset(3, 3),
+                      ),
+                    ],
+                    Icons.star,
+                    color: Colors.yellow[700],
+                    size: 35.sp,
+                  ),
               ]),
             ),
           ),
@@ -154,28 +151,27 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                             : AssetImage('assets/images/user.png'),
                         radius: 70.sp,
                       ),
-                      userRelationship.special!
-                          ? Positioned.fill(
-                              top: -3.sp,
-                              right: -0.5.sp,
-                              child: Align(
-                                alignment: Alignment.topRight,
-                                child: Icon(
-                                  shadows: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.3),
-                                      spreadRadius: 2,
-                                      blurRadius: 5,
-                                      offset: Offset(3, 5),
-                                    ),
-                                  ],
-                                  Icons.star,
-                                  color: Colors.yellow[700],
-                                  size: 45.sp,
+                      if (userRelationship.special!)
+                        Positioned.fill(
+                          top: -3.sp,
+                          right: -0.5.sp,
+                          child: Align(
+                            alignment: Alignment.topRight,
+                            child: Icon(
+                              shadows: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.3),
+                                  spreadRadius: 2,
+                                  blurRadius: 5,
+                                  offset: Offset(3, 5),
                                 ),
-                              ),
-                            )
-                          : SizedBox(),
+                              ],
+                              Icons.star,
+                              color: Colors.yellow[700],
+                              size: 45.sp,
+                            ),
+                          ),
+                        ),
                     ]),
                   ),
                   SizedBox(
@@ -206,19 +202,6 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                             style: TextStyle(
                                 fontSize: 18.sp, fontWeight: FontWeight.bold),
                           ),
-                          SizedBox(
-                            height: 5.sp,
-                          ),
-                          userRelationship.time_of_care! > 0
-                              ? Text(
-                                  "Đã chăm sóc " +
-                                      userRelationship.time_of_care.toString() +
-                                      ' lần',
-                                  style: TextStyle(
-                                    fontSize: 14.sp,
-                                  ),
-                                )
-                              : SizedBox(),
                           SizedBox(
                             height: 5.sp,
                           ),

@@ -5,51 +5,24 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:networking/apis/apis_relationships.dart';
 import 'package:networking/apis/apis_user.dart';
-import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
 import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/helpers/helpers.dart';
 import 'package:networking/models/address_model.dart';
-import 'package:networking/models/relationship_model.dart';
 import 'package:networking/models/user_model.dart';
-import 'package:networking/models/user_relationship_model.dart';
 import 'package:networking/screens/relationships/new/change_address.dart';
-import 'package:networking/screens/relationships/new/change_relationship.dart';
 import 'package:networking/widgets/date_picker.dart';
 import 'package:networking/widgets/user_image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class EditRelationship extends StatefulWidget {
-  const EditRelationship(
-      {super.key, required this.user, required this.userRelationship})
-      : newUser = null,
-        newRelationships = null,
-        type = 0;
-  const EditRelationship.update(
-      {super.key,
-      required this.user,
-      required this.userRelationship,
-      required this.newUser,
-      required this.newRelationships})
-      : type = 1;
-  const EditRelationship.updateFromPhonebook(
-      {super.key,
-      required this.user,
-      required this.userRelationship,
-      required this.newUser,
-      required this.newRelationships})
-      : type = 2;
+class EditMyProfile extends StatefulWidget {
+  const EditMyProfile({super.key, required this.user});
   final Users user;
-  final UserRelationship userRelationship;
-  final Users? newUser;
-  final List<Relationship>? newRelationships;
-  final int type;
   @override
-  State<EditRelationship> createState() => _EditRelationshipState();
+  State<EditMyProfile> createState() => _EditMyProfileState();
 }
 
-class _EditRelationshipState extends State<EditRelationship> {
+class _EditMyProfileState extends State<EditMyProfile> {
   final _formKey = GlobalKey<FormState>();
 
   File? _enteredImageFile;
@@ -59,7 +32,6 @@ class _EditRelationshipState extends State<EditRelationship> {
   var _enteredEmail;
   var _enteredHobby;
   var _enteredGender;
-  var _enteredSpecial;
 
   TextEditingController _enteredTitle = TextEditingController();
   TextEditingController _enteredContent = TextEditingController();
@@ -72,9 +44,7 @@ class _EditRelationshipState extends State<EditRelationship> {
 
   late DateTime _enteredBirthday;
   var _isNewOtherInfo = false;
-  var _numOfRelationship;
   var _numOfAddress;
-  late List<Relationship> _listRelationship;
   late List<Address> _listAddress;
   late Map<String, dynamic> _otherInfo;
 
@@ -82,131 +52,34 @@ class _EditRelationshipState extends State<EditRelationship> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    if (widget.type != 0) {
-      _enteredSpecial = widget.userRelationship.special;
-      if (widget.newUser != null) {
-        if (widget.newUser!.imageUrl != '') {
-          _enteredImageFile = File(widget.newUser!.imageUrl!);
-        } else {
-          if (widget.user.imageUrl! != '') {
-            _enteredImageFile = File(widget.user.imageUrl!);
-          }
-        }
-        _enteredUserName = widget.newUser!.userName;
-        widget.newUser!.phone != ''
-            ? _enteredPhone = widget.newUser!.phone
-            : _enteredPhone = widget.user.phone;
-        widget.newUser!.email != ''
-            ? _enteredEmail = widget.newUser!.email
-            : _enteredEmail = widget.user.email;
-        widget.newUser!.hobby != ''
-            ? _enteredHobby = widget.newUser!.hobby
-            : _enteredHobby = widget.user.hobby;
-
-        _enteredGender = widget.newUser!.gender;
-
-        if (widget.newUser!.facebook!.keys.first.isNotEmpty) {
-          _enteredFBName.text = widget.newUser!.facebook!.keys.first;
-        } else {
-          if (widget.user.facebook!.keys.first.isNotEmpty)
-            _enteredFBName.text = widget.user.facebook!.keys.first;
-        }
-
-        if (widget.newUser!.facebook!.values.first.isNotEmpty) {
-          _enteredFBLink.text = widget.newUser!.facebook!.values.first;
-        } else {
-          if (widget.user.facebook!.values.first.isNotEmpty)
-            _enteredFBLink.text = widget.user.facebook!.values.first;
-        }
-
-        if (widget.newUser!.skype!.keys.first.isNotEmpty) {
-          _enteredSkypeName.text = widget.newUser!.skype!.keys.first;
-        } else {
-          if (widget.user.skype!.keys.first.isNotEmpty)
-            _enteredSkypeName.text = widget.user.skype!.keys.first;
-        }
-
-        if (widget.newUser!.skype!.values.first.isNotEmpty) {
-          _enteredSkypeId.text = widget.newUser!.skype!.values.first;
-        } else {
-          if (widget.user.skype!.values.first.isNotEmpty)
-            _enteredSkypeId.text = widget.user.skype!.values.first;
-        }
-
-        if (widget.newUser!.zalo!.keys.first.isNotEmpty) {
-          _enteredZaloName.text = widget.newUser!.zalo!.keys.first;
-        } else {
-          if (widget.user.zalo!.keys.first.isNotEmpty)
-            _enteredZaloName.text = widget.user.zalo!.keys.first;
-        }
-
-        if (widget.newUser!.zalo!.values.first.isNotEmpty) {
-          _enteredZaloPhone.text = widget.newUser!.zalo!.values.first;
-        } else {
-          if (widget.user.zalo!.values.first.isNotEmpty)
-            _enteredZaloPhone.text = widget.user.zalo!.values.first;
-        }
-
-        widget.newUser!.birthday != null
-            ? _enteredBirthday = widget.newUser!.birthday!
-            : _enteredBirthday = widget.user.birthday!;
-        if (widget.newUser!.otherInfo!.isNotEmpty) {
-          _otherInfo = widget.user.otherInfo!;
-          _otherInfo.addAll((widget.newUser!.otherInfo!));
-        } else {
-          _otherInfo = widget.user.otherInfo!;
-        }
-        if (widget.newUser!.address!.isNotEmpty) {
-          _listAddress = widget.user.address! + widget.newUser!.address!;
-          _numOfAddress = _listAddress.length;
-        } else {
-          _numOfAddress = widget.user.address!.length;
-          _listAddress = widget.user.address!;
-        }
-
-        if (widget.newRelationships!.isNotEmpty) {
-          _listRelationship =
-              widget.userRelationship.relationships! + widget.newRelationships!;
-          _numOfRelationship = _listRelationship.length;
-        } else {
-          _numOfRelationship = widget.userRelationship.relationships!.length;
-          _listRelationship = widget.userRelationship.relationships!;
-        }
-      }
-    } else {
-      if (widget.user.imageUrl! != '') {
-        _enteredImageFile = File(widget.user.imageUrl!);
-      }
-
-      _enteredUserName = widget.user.userName;
-      _enteredPhone = widget.user.phone;
-      _enteredEmail = widget.user.email;
-      _enteredHobby = widget.user.hobby;
-      _enteredGender = widget.user.gender!;
-
-      if (widget.user.facebook!.keys.first.isNotEmpty)
-        _enteredFBName.text = widget.user.facebook!.keys.first;
-      if (widget.user.facebook!.values.first.isNotEmpty)
-        _enteredFBLink.text = widget.user.facebook!.values.first;
-
-      if (widget.user.skype!.keys.first.isNotEmpty)
-        _enteredSkypeName.text = widget.user.skype!.keys.first;
-      if (widget.user.skype!.values.first.isNotEmpty)
-        _enteredSkypeId.text = widget.user.skype!.values.first;
-
-      if (widget.user.zalo!.keys.first.isNotEmpty)
-        _enteredZaloName.text = widget.user.zalo!.keys.first;
-      if (widget.user.zalo!.values.first.isNotEmpty)
-        _enteredZaloPhone.text = widget.user.zalo!.values.first;
-
-      _enteredBirthday = widget.user.birthday!;
-      _numOfRelationship = widget.userRelationship.relationships!.length;
-      _numOfAddress = widget.user.address!.length;
-      _listRelationship = widget.userRelationship.relationships!;
-      _enteredSpecial = widget.userRelationship.special;
-      _listAddress = widget.user.address!;
-      _otherInfo = widget.user.otherInfo!;
+    if (widget.user.imageUrl! != '') {
+      _enteredImageFile = File(widget.user.imageUrl!);
     }
+
+    _enteredUserName = widget.user.userName;
+    _enteredPhone = widget.user.phone;
+    _enteredEmail = widget.user.email;
+    _enteredHobby = widget.user.hobby;
+    _enteredGender = widget.user.gender!;
+
+    if (widget.user.facebook!.keys.first.isNotEmpty)
+      _enteredFBName.text = widget.user.facebook!.keys.first;
+    if (widget.user.facebook!.values.first.isNotEmpty)
+      _enteredFBLink.text = widget.user.facebook!.values.first;
+
+    if (widget.user.skype!.keys.first.isNotEmpty)
+      _enteredSkypeName.text = widget.user.skype!.keys.first;
+    if (widget.user.skype!.values.first.isNotEmpty)
+      _enteredSkypeId.text = widget.user.skype!.values.first;
+
+    if (widget.user.zalo!.keys.first.isNotEmpty)
+      _enteredZaloName.text = widget.user.zalo!.keys.first;
+    if (widget.user.zalo!.values.first.isNotEmpty)
+      _enteredZaloPhone.text = widget.user.zalo!.values.first;
+    _enteredBirthday = widget.user.birthday!;
+    _numOfAddress = widget.user.address!.length;
+    _listAddress = widget.user.address!;
+    _otherInfo = widget.user.otherInfo!;
   }
 
   void _updateRelationship() async {
@@ -215,99 +88,49 @@ class _EditRelationshipState extends State<EditRelationship> {
     if (!isValid) {
       return;
     } else {
-      if (_listRelationship.isNotEmpty) {
-        Map<String, String> _enteredFacebook = {
-          _enteredFBName.text.trim(): _enteredFBLink.text.trim()
-        };
-        Map<String, String> _enteredSkype = {
-          _enteredSkypeName.text.trim(): _enteredSkypeId.text.trim()
-        };
-        Map<String, String> _enteredZalo = {
-          _enteredZaloName.text.trim(): _enteredZaloPhone.text.trim()
-        };
-        String imageUrl;
-        if (_enteredImageFile != null) {
-          var time = DateTime.now().microsecondsSinceEpoch;
-          if (widget.type == 0) {
-            if (_enteredImageFile!.path != widget.user.imageUrl!) {
-              if (widget.user.imageUrl! != '') {
-                File(widget.user.imageUrl!).delete();
-              }
-              imageUrl = await APIsUser.saveUserImage(
-                  _enteredImageFile!, '${userId + '-T' + time.toString()}.jpg');
-            } else {
-              imageUrl = widget.user.imageUrl!;
-            }
-          } else {
-            if (_enteredImageFile!.path != widget.newUser!.imageUrl!) {
-              if (widget.user.imageUrl! != '') {
-                File(widget.user.imageUrl!).delete();
-              }
-              if (widget.newUser!.imageUrl! != '') {
-                File(widget.newUser!.imageUrl!).delete();
-              }
-              imageUrl = await APIsUser.saveUserImage(
-                  _enteredImageFile!, '${userId + '-T' + time.toString()}.jpg');
-            } else {
-              imageUrl = _enteredImageFile!.path;
-            }
+      Map<String, String> _enteredFacebook = {
+        _enteredFBName.text.trim(): _enteredFBLink.text.trim()
+      };
+      Map<String, String> _enteredSkype = {
+        _enteredSkypeName.text.trim(): _enteredSkypeId.text.trim()
+      };
+      Map<String, String> _enteredZalo = {
+        _enteredZaloName.text.trim(): _enteredZaloPhone.text.trim()
+      };
+      String imageUrl;
+      if (_enteredImageFile != null) {
+        var time = DateTime.now().microsecondsSinceEpoch;
+        if (_enteredImageFile!.path != widget.user.imageUrl!) {
+          if (widget.user.imageUrl! != '') {
+            File(widget.user.imageUrl!).delete();
           }
+          imageUrl = await APIsUser.saveUserImage(
+              _enteredImageFile!, '${userId + '-T' + time.toString()}.jpg');
         } else {
-          imageUrl = '';
-        }
-
-        context.read<UserListBloc>().add(UpdateUser(
-            userId: userId,
-            userName: _enteredUserName,
-            email: _enteredEmail,
-            imageUrl: imageUrl,
-            gender: _enteredGender,
-            birthday: _enteredBirthday,
-            hobby: _enteredHobby,
-            phone: _enteredPhone,
-            facebook: _enteredFacebook,
-            zalo: _enteredZalo,
-            skype: _enteredSkype,
-            address: _listAddress,
-            otherInfo: _otherInfo));
-
-        context.read<UsReListBloc>().add(UpdateUsRe(
-            usReId: widget.userRelationship.usReId!,
-            special: _enteredSpecial,
-            relationships: _listRelationship));
-        showSnackbar(context, "Đã chỉnh sửa thông tin mối quan hệ",
-            Duration(seconds: 2), true);
-        if (widget.type == 1) {
-          Navigator.of(context)
-            ..pop()
-            ..pop()
-            ..pop()
-            ..pop()
-            ..pop();
-        }
-        if (widget.type == 2) {
-          Navigator.of(context)
-            ..pop()
-            ..pop()
-            ..pop()
-            ..pop();
-        }
-        if (widget.type == 0) {
-          Navigator.of(context).pop();
+          imageUrl = widget.user.imageUrl!;
         }
       } else {
-        showSnackbar(context, "Vui lòng thiết lập mối quan hệ",
-            Duration(seconds: 3), false);
-        return;
+        imageUrl = '';
       }
-    }
-  }
 
-  void _addRelationship(int num) async {
-    final relationships = await APIsRelationship.getAllRelationship();
-    setState(() {
-      _listRelationship.add(relationships[num]);
-    });
+      context.read<UserListBloc>().add(UpdateUser(
+          userId: userId,
+          userName: _enteredUserName,
+          email: _enteredEmail,
+          imageUrl: imageUrl,
+          gender: _enteredGender,
+          birthday: _enteredBirthday,
+          hobby: _enteredHobby,
+          phone: _enteredPhone,
+          facebook: _enteredFacebook,
+          zalo: _enteredZalo,
+          skype: _enteredSkype,
+          address: _listAddress,
+          otherInfo: _otherInfo));
+      showSnackbar(
+          context, "Đã chỉnh sửa thông của bạn", Duration(seconds: 2), true);
+      Navigator.of(context).pop();
+    }
   }
 
   void _addAddress(int num, String name) async {
@@ -330,14 +153,6 @@ class _EditRelationshipState extends State<EditRelationship> {
         _otherInfo[title] = content;
       });
     }
-  }
-
-  void _changeRelationship(Relationship oldRe, Relationship newRe) {
-    var index = _listRelationship.indexOf(oldRe);
-    setState(() {
-      _listRelationship.remove(oldRe);
-      _listRelationship.insert(index, newRe);
-    });
   }
 
   void _changeAddress(Address oldAddress, Address newAddress) {
@@ -520,131 +335,6 @@ class _EditRelationshipState extends State<EditRelationship> {
                                 ),
                               ),
                             ],
-                          ),
-                          hr,
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: 10.sp,
-                              ),
-                              Text(
-                                "Chăm sóc đặc biệt",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w400, fontSize: 16),
-                              ),
-                              Spacer(),
-                              Switch(
-                                value: _enteredSpecial,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _enteredSpecial = value;
-                                  });
-                                },
-                                activeColor: Colors.yellow[900],
-                                inactiveTrackColor: Colors.grey[400],
-                              ),
-                            ],
-                          ),
-                          hr,
-                          Column(
-                            children: _listRelationship.map((e) {
-                              return Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            _listRelationship.remove(e);
-                                          });
-                                        },
-                                        icon: Icon(
-                                          Icons.remove_circle,
-                                          color: Colors.red,
-                                        ),
-                                      ),
-                                      Text(
-                                        e.name!,
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 16),
-                                      ),
-                                      Spacer(),
-                                      showRelationshipTypeIcon(e.type!, 20.sp),
-                                      SizedBox(width: 10.sp),
-                                      IconButton(
-                                        onPressed: () => Navigator.of(context)
-                                            .push(MaterialPageRoute(
-                                          builder: (context) =>
-                                              ChangeRelationship(
-                                            relationshipID: e.relationshipId!,
-                                            onChangeRelationship:
-                                                (relationship) {
-                                              _changeRelationship(
-                                                  e, relationship);
-                                            },
-                                          ),
-                                        )),
-                                        icon: Icon(
-                                          Icons.arrow_right_outlined,
-                                          color: Colors.grey,
-                                          size: 25.sp,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  hr,
-                                ],
-                              );
-                            }).toList(),
-                          ),
-                          TextButton(
-                            style: ButtonStyle(
-                              padding: MaterialStatePropertyAll(
-                                EdgeInsets.only(left: 8.sp),
-                              ),
-                            ),
-                            onPressed: () {
-                              if (_numOfRelationship >= 27) {
-                                _numOfRelationship = 0;
-                              }
-                              setState(() {
-                                if (_numOfRelationship < 27) {
-                                  _addRelationship(_numOfRelationship);
-                                  _numOfRelationship++;
-                                }
-                              });
-                            },
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.add_circle,
-                                  color: Colors.green,
-                                ),
-                                SizedBox(
-                                  width: 10.sp,
-                                ),
-                                Text(
-                                  "Thêm mối quan hệ",
-                                  style: TextStyle(
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 16),
-                                ),
-                                Spacer(),
-                                _listRelationship.isEmpty
-                                    ? Padding(
-                                        padding: EdgeInsets.only(right: 5.sp),
-                                        child: Text(
-                                          "*",
-                                          style: TextStyle(
-                                              fontSize: 18.sp,
-                                              color: Colors.red),
-                                        ),
-                                      )
-                                    : SizedBox(),
-                              ],
-                            ),
                           ),
                         ]),
                       ),

@@ -12,15 +12,21 @@ import 'package:networking/models/user_relationship_model.dart';
 class ListInfo extends StatelessWidget {
   const ListInfo(
       {super.key, required this.user, required this.userRelationship});
+  const ListInfo.myProfile({super.key, required this.user})
+      : this.userRelationship = null;
   final Users user;
-  final UserRelationship userRelationship;
+  final UserRelationship? userRelationship;
   @override
   Widget build(BuildContext context) {
     final zaloWidgetkey = GlobalKey();
     final skypeWidgetkey = GlobalKey();
     final facebookWidgetkey = GlobalKey();
-    List<Widget> listRowRelationship = getAllRowRelationship(
-        userRelationship.relationships!, 14.sp, 20.sp, 20.sp);
+    List<Widget>? listRowRelationship;
+    if (userRelationship != null) {
+      listRowRelationship = getAllRowRelationship(
+          userRelationship!.relationships!, 14.sp, 20.sp, 20.sp);
+    }
+
     List<Widget> _getAllOtherInfo() {
       List<Widget> list = [];
 
@@ -72,63 +78,64 @@ class ListInfo extends StatelessWidget {
       builder: (context, state) {
         return Column(
           children: [
-            Container(
-              decoration: BoxDecoration(
-                  color: Colors.grey[100],
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(5.sp),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: Offset(0, 5),
+            if (userRelationship != null)
+              Container(
+                decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(5.sp),
                     ),
-                  ]),
-              child: Padding(
-                padding: EdgeInsets.all(5.sp),
-                child: Column(
-                  children: [
-                    Container(
-                      alignment: Alignment.center,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[350],
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(5),
-                          topRight: Radius.circular(5),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: Offset(0, 5),
+                      ),
+                    ]),
+                child: Padding(
+                  padding: EdgeInsets.all(5.sp),
+                  child: Column(
+                    children: [
+                      Container(
+                        alignment: Alignment.center,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[350],
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(5),
+                            topRight: Radius.circular(5),
+                          ),
+                        ),
+                        padding: EdgeInsets.all(5.sp),
+                        child: Text(
+                          "Mối quan hệ với tôi",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 14.sp),
                         ),
                       ),
-                      padding: EdgeInsets.all(5.sp),
-                      child: Text(
-                        "Mối quan hệ với tôi",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 14.sp),
+                      SizedBox(
+                        height: 5.sp,
                       ),
-                    ),
-                    SizedBox(
-                      height: 5.sp,
-                    ),
-                    Column(
-                      children: listRowRelationship
-                          .map((e) => Column(
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.all(8.sp),
-                                    child: e,
-                                  ),
-                                  e != listRowRelationship.last
-                                      ? hr
-                                      : SizedBox(),
-                                ],
-                              ))
-                          .toList(),
-                    ),
-                  ],
+                      Column(
+                        children: listRowRelationship!
+                            .map((e) => Column(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.all(8.sp),
+                                      child: e,
+                                    ),
+                                    e != listRowRelationship!.last
+                                        ? hr
+                                        : SizedBox(),
+                                  ],
+                                ))
+                            .toList(),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
             SizedBox(
               height: 10.sp,
             ),

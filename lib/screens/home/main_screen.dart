@@ -6,14 +6,17 @@ import 'package:networking/apis/apis_auth.dart';
 import 'package:networking/apis/apis_relationships.dart';
 import 'package:networking/apis/apis_user.dart';
 import 'package:networking/apis/apis_user_relationship.dart';
+import 'package:networking/models/user_model.dart';
 import 'package:networking/notification/home.dart';
 import 'package:networking/screens/home/chat_home.dart';
-import 'package:networking/screens/home/my_profile.dart';
 import 'package:networking/screens/home/relationships.dart';
 import 'package:networking/screens/home/take_care.dart';
+import 'package:networking/screens/home/my_profile.dart';
+import 'package:networking/screens/my_profile/edit_my_profile.dart';
 import 'package:networking/screens/relationships/new/new_relationship.dart';
 import 'package:networking/screens/take_care/new/new_relationship_care.dart';
 import 'package:networking/widgets/bottom_navigartion_bar.dart';
+import 'package:networking/widgets/popup_menu_my_profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
@@ -28,34 +31,47 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int currentIndex = 0;
+  String? myId = '';
+  late Widget screens;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     currentIndex = widget.index;
+    if (widget.index == 1) {
+      screens = TakeCareScreen();
+    } else {
+      screens = RelationshipScreen();
+    }
   }
-
-  List screens = const [
-    RelationshipScreen(),
-    TakeCareScreen(),
-    ChatScreen(),
-    ProfileScreen()
-  ];
 
   String title = 'Các mối quan hệ';
 
-  void onTab(int index) {
+  void onTab(int index) async {
+    if (index == 3) {
+      myId = await APIsAuth.getCurrentUserId();
+    }
     setState(() {
       currentIndex = index;
+
       switch (currentIndex) {
         case 0:
+          screens = RelationshipScreen();
           title = 'Các mối quan hệ';
           break;
         case 1:
+          screens = TakeCareScreen();
           title = 'Chăm sóc mối quan hệ';
           break;
         case 2:
+          screens = ChatScreen();
           title = 'Trò chuyện';
+          break;
+        case 3:
+          screens = ProfileScreen(
+            myId: myId!,
+          );
           break;
       }
     });
@@ -78,7 +94,6 @@ class _MainScreenState extends State<MainScreen> {
       case 1:
         // APIsReCare.getAllMyRelationshipCare();
 
-        // final meId = await APIsAuth.getCurrentUserId();
         // APIsUsRe.removeTable('reCares');
         // APIsRelationship.addListDefaut();
         // APIsUser.getAllUser();
@@ -101,7 +116,14 @@ class _MainScreenState extends State<MainScreen> {
         // APIsUsRe.removeTable('payload');
         break;
       case 3:
-        print("D");
+        final meId = await APIsAuth.getCurrentUserId();
+        Users? user = await APIsUser.getUserFromId(meId!);
+
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => EditMyProfile(user: user!),
+          ),
+        );
         break;
     }
   }
@@ -109,31 +131,22 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: currentIndex != 3
+            ? Text(
+                textAlign: TextAlign.center,
+                title,
+                style: TextStyle(fontSize: 23.sp, fontWeight: FontWeight.bold),
+              )
+            : null,
+        centerTitle: true,
+        actions: [
+          if (currentIndex == 3) PopupMenuMyProfile(),
+        ],
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Stack(children: [
-            Column(
-              children: [
-                SizedBox(height: 10.sp),
-                currentIndex == 3
-                    ? SizedBox()
-                    : Text(
-                        textAlign: TextAlign.center,
-                        title,
-                        style: TextStyle(
-                            fontSize: 23.sp, fontWeight: FontWeight.bold),
-                      ),
-                screens[currentIndex]
-              ],
-            ),
-            // Align(
-            //   alignment: Alignment.bottomCenter,
-            //   child: MyBottomNavigartionBar(
-            //       currentIndex: currentIndex,
-            //       onTapIcon: onTab,
-            //       onTapAdd: onTapAdd),
-            // ),
-          ]),
+          child: screens,
         ),
       ),
       bottomNavigationBar: MyBottomNavigartionBar(

@@ -24,8 +24,11 @@ class LocalNotifications {
     UserRelationship userRelationship =
         UserRelationship.fromMap(jsonDecode(datas[1]));
     Get.to(
-      () => DetailRelationshipCare.fromNotification(
-          reCare: reCare, userRelationship: userRelationship),
+      () => DetailRelationshipCare(
+        reCare: reCare,
+        userRelationship: userRelationship,
+        route: true,
+      ),
     );
   }
 

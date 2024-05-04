@@ -61,7 +61,10 @@ class _SplashScreenState extends State<SplashScreen>
           UserRelationship.fromMap(jsonDecode(datas[1]));
       Get.to(
         () => DetailRelationshipCare.fromNotification(
-            reCare: reCare, userRelationship: userRelationship),
+          reCare: reCare,
+          userRelationship: userRelationship,
+          route: true,
+        ),
       );
     } else {
       if (firstTime) {

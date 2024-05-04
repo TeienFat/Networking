@@ -6,7 +6,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:networking/apis/apis_ReCare.dart';
 import 'package:networking/bloc/reCare_list/re_care_list_bloc.dart';
+import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
 import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/helpers/helpers.dart';
 import 'package:networking/models/relationship_care_model.dart';
@@ -39,9 +41,14 @@ class ReCareCard extends StatefulWidget {
 }
 
 class _ReCareCardState extends State<ReCareCard> {
-  void _onEvaluate(bool isSuccess) {
+  void _onEvaluate(bool isSuccess) async {
     context.read<ReCareListBloc>().add(UpdateIsFinish(
         reCareId: widget.reCare.reCareId!, isFinish: isSuccess ? 1 : 0));
+    await APIsReCare.getNumSuccess(widget.userRelationship.usReId!);
+    final timeOfCare =
+        await APIsReCare.getNumSuccess(widget.userRelationship.usReId!);
+    context.read<UsReListBloc>().add(UpdateTimeOfCareUsRe(
+        usReId: widget.userRelationship.usReId!, timeOfCare: timeOfCare));
   }
 
   @override
@@ -159,7 +166,7 @@ class _ReCareCardState extends State<ReCareCard> {
                   ElevatedButton(
                     style: ButtonStyle(
                         backgroundColor: MaterialStatePropertyAll(Colors.red)),
-                    onPressed: () {
+                    onPressed: () async {
                       if (widget.reCare.contentImage!.isNotEmpty) {
                         for (var image in widget.reCare.contentImage!) {
                           File(image).delete();
@@ -168,7 +175,13 @@ class _ReCareCardState extends State<ReCareCard> {
                       context
                           .read<ReCareListBloc>()
                           .add(DeleteReCare(reCareId: widget.reCare.reCareId!));
-
+                      await APIsReCare.getNumSuccess(
+                          widget.userRelationship.usReId!);
+                      final timeOfCare = await APIsReCare.getNumSuccess(
+                          widget.userRelationship.usReId!);
+                      context.read<UsReListBloc>().add(UpdateTimeOfCareUsRe(
+                          usReId: widget.userRelationship.usReId!,
+                          timeOfCare: timeOfCare));
                       showSnackbar(
                         context,
                         "Đã xóa mục chăm sóc",
@@ -203,8 +216,10 @@ class _ReCareCardState extends State<ReCareCard> {
                 .push(
               MaterialPageRoute(
                 builder: (context) => DetailRelationshipCare(
-                    reCare: widget.reCare,
-                    userRelationship: widget.userRelationship),
+                  reCare: widget.reCare,
+                  userRelationship: widget.userRelationship,
+                  route: false,
+                ),
               ),
             )
                 .then((value) {

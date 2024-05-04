@@ -23,6 +23,7 @@ class QRScan extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<Relationship> relationships = [];
     return Scaffold(
       appBar: AppBar(
         title: Text("Quét mã QR"),
@@ -42,7 +43,9 @@ class QRScan extends StatelessWidget {
               List<String> datas =
                   List<String>.from(jsonDecode(barcodes.first.rawValue!));
               Users newUser = Users.fromMap(jsonDecode(datas[0]));
-              List<Relationship> relationships = Relationship.decode(datas[1]);
+              if (datas[1] != '') {
+                relationships = Relationship.decode(datas[1]);
+              }
               int num = relationships.length >= 2 ? 2 : 1;
               showDialog(
                 useSafeArea: true,

@@ -17,8 +17,10 @@ import 'package:networking/screens/relationships/share/qr_view.dart';
 class ShareRelationship extends StatefulWidget {
   const ShareRelationship(
       {super.key, required this.user, required this.userRelationship});
+  const ShareRelationship.myProfile({super.key, required this.user})
+      : this.userRelationship = null;
   final Users user;
-  final UserRelationship userRelationship;
+  final UserRelationship? userRelationship;
   @override
   State<ShareRelationship> createState() => _ShareRelationshipState();
 }
@@ -35,7 +37,7 @@ class _ShareRelationshipState extends State<ShareRelationship> {
   bool _isCheckedZalo = false;
   bool _isCheckedSkype = false;
   bool _isCheckedOtherInfo = false;
-
+  late List<String> dataShare;
   bool _isSelectAll = false;
 
   late List<Relationship> _listRelationship;
@@ -46,8 +48,9 @@ class _ShareRelationshipState extends State<ShareRelationship> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
-    _listRelationship = widget.userRelationship.relationships!;
+    if (widget.userRelationship != null) {
+      _listRelationship = widget.userRelationship!.relationships!;
+    }
     _listAddress = widget.user.address!;
     _otherInfo = widget.user.otherInfo!;
   }
@@ -115,7 +118,9 @@ class _ShareRelationshipState extends State<ShareRelationship> {
 
   void _selectAll(bool select) {
     setState(() {
-      _isCheckedRelationships = select;
+      if (widget.userRelationship != null) {
+        _isCheckedRelationships = select;
+      }
       _isCheckedBirthday = select;
       _isCheckedGender = select;
       _isCheckedHobby = select;
@@ -151,11 +156,14 @@ class _ShareRelationshipState extends State<ShareRelationship> {
         isOnline: false,
         blockUsers: [],
         token: '');
-
-    List<String> dataShare = [
-      jsonEncode(userShare.toMap()),
-      Relationship.encode(_listRelationship)
-    ];
+    if (widget.userRelationship != null) {
+      dataShare = [
+        jsonEncode(userShare.toMap()),
+        Relationship.encode(_listRelationship)
+      ];
+    } else {
+      dataShare = [jsonEncode(userShare.toMap()), ''];
+    }
 
     Navigator.push(
         context,
@@ -250,128 +258,130 @@ class _ShareRelationshipState extends State<ShareRelationship> {
                       SizedBox(
                         height: 10.sp,
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                            color: Colors.grey[100],
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(5.sp),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 2,
-                                blurRadius: 5,
-                                offset: Offset(0, 5),
+                      if (widget.userRelationship != null)
+                        Container(
+                          decoration: BoxDecoration(
+                              color: Colors.grey[100],
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(5.sp),
                               ),
-                            ]),
-                        child: Padding(
-                          padding: EdgeInsets.all(5.sp),
-                          child: Column(
-                            children: [
-                              Container(
-                                alignment: Alignment.center,
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[350],
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(5),
-                                    topRight: Radius.circular(5),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 2,
+                                  blurRadius: 5,
+                                  offset: Offset(0, 5),
+                                ),
+                              ]),
+                          child: Padding(
+                            padding: EdgeInsets.all(5.sp),
+                            child: Column(
+                              children: [
+                                Container(
+                                  alignment: Alignment.center,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[350],
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(5),
+                                      topRight: Radius.circular(5),
+                                    ),
+                                  ),
+                                  padding: EdgeInsets.only(left: 10.sp),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        "Mối quan hệ với tôi",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14.sp),
+                                      ),
+                                      Spacer(),
+                                      Checkbox(
+                                        fillColor:
+                                            MaterialStateProperty.resolveWith(
+                                                (states) {
+                                          if (!states.contains(
+                                              MaterialState.selected)) {
+                                            return Colors.white;
+                                          }
+                                          return null;
+                                        }),
+                                        activeColor: Colors.blue[800],
+                                        value: _isCheckedRelationships,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _isCheckedRelationships = value!;
+                                          });
+                                        },
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                padding: EdgeInsets.only(left: 10.sp),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      "Mối quan hệ với tôi",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14.sp),
-                                    ),
-                                    Spacer(),
-                                    Checkbox(
-                                      fillColor:
-                                          MaterialStateProperty.resolveWith(
-                                              (states) {
-                                        if (!states
-                                            .contains(MaterialState.selected)) {
-                                          return Colors.white;
-                                        }
-                                        return null;
-                                      }),
-                                      activeColor: Colors.blue[800],
-                                      value: _isCheckedRelationships,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _isCheckedRelationships = value!;
-                                        });
-                                      },
-                                    ),
-                                  ],
+                                SizedBox(
+                                  height: 5.sp,
                                 ),
-                              ),
-                              SizedBox(
-                                height: 5.sp,
-                              ),
-                              Column(
-                                children: _listRelationship.map((e) {
-                                  return Column(
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.all(
-                                            _isCheckedRelationships
-                                                ? 0
-                                                : 10.5.sp),
-                                        child: Row(
-                                          children: [
-                                            _isCheckedRelationships
-                                                ? IconButton(
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        if (_listRelationship
-                                                                .length >
-                                                            1) {
-                                                          _listRelationship
-                                                              .remove(e);
-                                                        }
-                                                      });
-                                                    },
-                                                    icon: Icon(
-                                                      Icons.remove_circle,
-                                                      color: Colors.red,
-                                                    ),
-                                                  )
-                                                : SizedBox(),
-                                            Text(
-                                              e.name!,
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w400,
-                                                  fontSize: 16),
-                                            ),
-                                            Spacer(),
-                                            showRelationshipTypeIcon(
-                                                e.type!, 20.sp),
-                                            SizedBox(
-                                              width: _isCheckedRelationships
-                                                  ? 13.sp
-                                                  : 2.5.sp,
-                                            )
-                                          ],
+                                Column(
+                                  children: _listRelationship.map((e) {
+                                    return Column(
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.all(
+                                              _isCheckedRelationships
+                                                  ? 0
+                                                  : 10.5.sp),
+                                          child: Row(
+                                            children: [
+                                              _isCheckedRelationships
+                                                  ? IconButton(
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          if (_listRelationship
+                                                                  .length >
+                                                              1) {
+                                                            _listRelationship
+                                                                .remove(e);
+                                                          }
+                                                        });
+                                                      },
+                                                      icon: Icon(
+                                                        Icons.remove_circle,
+                                                        color: Colors.red,
+                                                      ),
+                                                    )
+                                                  : SizedBox(),
+                                              Text(
+                                                e.name!,
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 16),
+                                              ),
+                                              Spacer(),
+                                              showRelationshipTypeIcon(
+                                                  e.type!, 20.sp),
+                                              SizedBox(
+                                                width: _isCheckedRelationships
+                                                    ? 13.sp
+                                                    : 2.5.sp,
+                                              )
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      e != _listRelationship.last
-                                          ? hr
-                                          : SizedBox(),
-                                    ],
-                                  );
-                                }).toList(),
-                              ),
-                            ],
+                                        e != _listRelationship.last
+                                            ? hr
+                                            : SizedBox(),
+                                      ],
+                                    );
+                                  }).toList(),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 10.sp,
-                      ),
+                      if (widget.userRelationship != null)
+                        SizedBox(
+                          height: 10.sp,
+                        ),
                       Container(
                         decoration: BoxDecoration(
                             color: Colors.grey[100],

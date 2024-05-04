@@ -209,10 +209,11 @@ class _RelationShipCardState extends State<RelationShipCard> {
                   SizedBox(
                     height: widget.type == 0 ? 5.sp : 0,
                   ),
-                  widget.type == 0
-                      ? Text(
-                          "Đã chăm sóc: ${widget.userRelationship.time_of_care}")
-                      : SizedBox(),
+                  if (widget.type == 0)
+                    widget.userRelationship.time_of_care! > 0
+                        ? Text(
+                            "Đã chăm sóc ${widget.userRelationship.time_of_care} lần")
+                        : Text("Chưa được chăm sóc"),
                 ],
               ),
               Spacer(),

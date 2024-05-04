@@ -51,6 +51,25 @@ class APIsUsRe {
     return listMyRelationship;
   }
 
+  static Future<void> updateTimeOfCareUsRe(
+      String usReId, int timeOfCare) async {
+    final SharedPreferences _prefs = await prefs;
+    List<String> listUsReRead = await _prefs.getStringList('usRes') ?? [];
+    List<UserRelationship> listUsRe = listUsReRead
+        .map((e) => UserRelationship.fromMap(jsonDecode(e)))
+        .toList();
+
+    for (int i = 0; i < listUsRe.length; i++) {
+      if (listUsRe[i].usReId!.length == usReId.length &&
+          listUsRe[i].usReId! == usReId) {
+        listUsRe[i].time_of_care = timeOfCare;
+        listUsRe[i].updateAt = DateTime.now();
+      }
+    }
+    listUsReRead = listUsRe.map((e) => jsonEncode(e.toMap())).toList();
+    await _prefs.setStringList('usRes', listUsReRead);
+  }
+
   static Future<void> updateUsRe(
     String usReId,
     bool special,

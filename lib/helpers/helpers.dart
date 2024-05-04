@@ -207,11 +207,8 @@ Widget getRowDateTime(
         MyDateUtil.getFormattedWeekday(dateTime),
         style: TextStyle(fontSize: fontSize),
       ),
-      SizedBox(
-        width: 3.sp,
-      ),
       Text(
-        DateFormat("- d' thg 'M', 'yyyy'").format(dateTime),
+        DateFormat(", d' thg 'M', 'yyyy'").format(dateTime),
         style: TextStyle(fontSize: fontSize),
       ),
     ],
@@ -409,7 +406,7 @@ List<Widget> getRowRelationship(List<Relationship> relationships, int num,
             style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.normal),
           ),
           SizedBox(
-            width: 15.sp,
+            width: 5.sp,
           ),
         ],
       ));
