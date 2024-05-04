@@ -5,8 +5,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:networking/apis/apis_ReCare.dart';
 import 'package:networking/apis/apis_user.dart';
 import 'package:networking/bloc/reCare_list/re_care_list_bloc.dart';
+import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
 import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/helpers/helpers.dart';
 import 'package:networking/models/relationship_care_model.dart';
@@ -15,23 +17,24 @@ import 'package:networking/screens/take_care/detail/list_Image.dart';
 import 'package:networking/screens/take_care/detail/scale_image.dart';
 import 'package:networking/screens/take_care/edit/evaluate.dart';
 import 'package:networking/widgets/menu_pick_image.dart';
-import 'package:networking/widgets/popup_menu_detail_relationship_care.dart';
 
 class DetailRelationshipCare extends StatefulWidget {
-  const DetailRelationshipCare({
-    super.key,
-    required this.reCare,
-    required this.userRelationship,
-  }) : fromNotification = false;
-  const DetailRelationshipCare.fromNotification({
-    super.key,
-    required this.reCare,
-    required this.userRelationship,
-  }) : fromNotification = true;
+  const DetailRelationshipCare(
+      {super.key,
+      required this.reCare,
+      required this.userRelationship,
+      required this.route})
+      : fromNotification = false;
+  const DetailRelationshipCare.fromNotification(
+      {super.key,
+      required this.reCare,
+      required this.userRelationship,
+      required this.route})
+      : fromNotification = true;
   final RelationshipCare reCare;
   final UserRelationship userRelationship;
   final bool fromNotification;
-
+  final bool route;
   @override
   State<DetailRelationshipCare> createState() => _DetailRelationshipCareState();
 }
@@ -52,7 +55,7 @@ class _DetailRelationshipCareState extends State<DetailRelationshipCare> {
       _isShowNote = false;
     }
 
-    if (widget.fromNotification) {
+    if (widget.route) {
       widget.reCare.isFinish = -1;
       _listFileImage = widget.reCare.contentImage!.map((e) => File(e)).toList();
     }
@@ -80,7 +83,7 @@ class _DetailRelationshipCareState extends State<DetailRelationshipCare> {
           '${widget.reCare.reCareId! + '-T' + time.toString()}.jpg');
       context.read<ReCareListBloc>().add(AddContentImage(
           reCareId: widget.reCare.reCareId!, imageUrl: imageUrl));
-      if (widget.fromNotification) {
+      if (widget.route) {
         setState(() {
           _listFileImage.add(File(imageUrl));
         });
@@ -97,7 +100,7 @@ class _DetailRelationshipCareState extends State<DetailRelationshipCare> {
             '${widget.reCare.reCareId! + '-T' + i.toString() + time.toString()}.jpg');
         context.read<ReCareListBloc>().add(AddContentImage(
             reCareId: widget.reCare.reCareId!, imageUrl: imageUrl));
-        if (widget.fromNotification) {
+        if (widget.route) {
           setState(() {
             _listFileImage.add(File(imageUrl));
           });
@@ -112,12 +115,17 @@ class _DetailRelationshipCareState extends State<DetailRelationshipCare> {
         reCareId: widget.reCare.reCareId!, imageUrl: imageUrl));
   }
 
-  void _onEvaluate(bool isSuccess) {
+  void _onEvaluate(bool isSuccess) async {
     setState(() {
       widget.reCare.isFinish = isSuccess ? 1 : 0;
       context.read<ReCareListBloc>().add(UpdateIsFinish(
           reCareId: widget.reCare.reCareId!, isFinish: isSuccess ? 1 : 0));
     });
+    await APIsReCare.getNumSuccess(widget.userRelationship.usReId!);
+    final timeOfCare =
+        await APIsReCare.getNumSuccess(widget.userRelationship.usReId!);
+    context.read<UsReListBloc>().add(UpdateTimeOfCareUsRe(
+        usReId: widget.userRelationship.usReId!, timeOfCare: timeOfCare));
   }
 
   Widget build(BuildContext context) {
@@ -144,7 +152,7 @@ class _DetailRelationshipCareState extends State<DetailRelationshipCare> {
     }
     return BlocBuilder<ReCareListBloc, ReCareListState>(
       builder: (context, state) {
-        if (!widget.fromNotification) {
+        if (!widget.route) {
           _listFileImage =
               widget.reCare.contentImage!.map((e) => File(e)).toList();
         }
@@ -161,67 +169,68 @@ class _DetailRelationshipCareState extends State<DetailRelationshipCare> {
                     icon: Icon(Icons.arrow_back))
                 : null,
             actions: [
-              widget.reCare.isFinish == 2
-                  ? PopupMenuDetailRelationshipCare(
-                      reCare: widget.reCare,
-                      userRelationship: widget.userRelationship)
-                  : IconButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: Text(
-                              "Xóa mục chăm sóc",
-                              textAlign: TextAlign.center,
-                            ),
-                            content: Text(
-                              "Bạn chắc chắn muốn xóa mục chăm sóc này?",
-                              textAlign: TextAlign.center,
-                            ),
-                            actions: [
-                              ElevatedButton(
-                                style: ButtonStyle(
-                                    backgroundColor:
-                                        MaterialStatePropertyAll(Colors.grey)),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text("Hủy"),
-                              ),
-                              ElevatedButton(
-                                style: ButtonStyle(
-                                    backgroundColor:
-                                        MaterialStatePropertyAll(Colors.red)),
-                                onPressed: () {
-                                  if (widget.reCare.contentImage!.isNotEmpty) {
-                                    for (var image
-                                        in widget.reCare.contentImage!) {
-                                      File(image).delete();
-                                    }
-                                  }
+              IconButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text(
+                        "Xóa mục chăm sóc",
+                        textAlign: TextAlign.center,
+                      ),
+                      content: Text(
+                        "Bạn chắc chắn muốn xóa mục chăm sóc này?",
+                        textAlign: TextAlign.center,
+                      ),
+                      actions: [
+                        ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStatePropertyAll(Colors.grey)),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("Hủy"),
+                        ),
+                        ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStatePropertyAll(Colors.red)),
+                          onPressed: () async {
+                            if (widget.reCare.contentImage!.isNotEmpty) {
+                              for (var image in widget.reCare.contentImage!) {
+                                File(image).delete();
+                              }
+                            }
 
-                                  context.read<ReCareListBloc>().add(
-                                      DeleteReCare(
-                                          reCareId: widget.reCare.reCareId!));
-
-                                  showSnackbar(
-                                    context,
-                                    "Đã xóa mục chăm sóc",
-                                    Duration(seconds: 3),
-                                    true,
-                                  );
-                                  Navigator.of(context)
-                                    ..pop()
-                                    ..pop(true);
-                                },
-                                child: Text("Xóa"),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                      icon: Icon(Icons.delete),
+                            context.read<ReCareListBloc>().add(DeleteReCare(
+                                reCareId: widget.reCare.reCareId!));
+                            await APIsReCare.getNumSuccess(
+                                widget.userRelationship.usReId!);
+                            final timeOfCare = await APIsReCare.getNumSuccess(
+                                widget.userRelationship.usReId!);
+                            context.read<UsReListBloc>().add(
+                                UpdateTimeOfCareUsRe(
+                                    usReId: widget.userRelationship.usReId!,
+                                    timeOfCare: timeOfCare));
+                            showSnackbar(
+                              context,
+                              "Đã xóa mục chăm sóc",
+                              Duration(seconds: 3),
+                              true,
+                            );
+                            Navigator.of(context)
+                              ..pop()
+                              ..pop(true);
+                          },
+                          child: Text("Xóa"),
+                        ),
+                      ],
                     ),
+                  );
+                },
+                icon: Icon(Icons.delete),
+              ),
             ],
           ),
           body: SafeArea(

@@ -58,15 +58,32 @@ class _MyBottomNavigartionBarState extends State<MyBottomNavigartionBar> {
               ),
               onPressed: () => widget.onTapIcon(1),
             ),
-            IconButton(
-              padding: EdgeInsets.all(0),
-              icon: Icon(
-                Icons.add_circle_rounded,
-                color: Colors.orange[600],
-                size: 60.sp,
-              ),
-              onPressed: () => widget.onTapAdd(widget.currentIndex),
-            ),
+            widget.currentIndex != 3
+                ? IconButton(
+                    padding: EdgeInsets.all(0),
+                    icon: Icon(
+                      Icons.add_circle_rounded,
+                      color: Colors.orange[600],
+                      size: 60.sp,
+                    ),
+                    onPressed: () => widget.onTapAdd(widget.currentIndex),
+                  )
+                : Container(
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle, color: Colors.orange[600]),
+                    padding: EdgeInsets.all(3.9.sp),
+                    margin:
+                        EdgeInsets.only(left: 5.sp, right: 5.sp, top: 0.5.sp),
+                    child: IconButton(
+                      padding: EdgeInsets.all(0),
+                      icon: Icon(
+                        Icons.edit,
+                        color: Colors.grey[300],
+                        size: 28.sp,
+                      ),
+                      onPressed: () => widget.onTapAdd(widget.currentIndex),
+                    ),
+                  ),
             IconButton(
               style: ButtonStyle(
                   backgroundColor: MaterialStatePropertyAll(

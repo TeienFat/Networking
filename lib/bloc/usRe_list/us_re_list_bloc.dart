@@ -19,6 +19,7 @@ class UsReListBloc extends Bloc<UsReListEvent, UsReListState> {
     );
     on<AddUsRe>(_addUsRe);
     on<DeleteUsRe>(_deleteUsRe);
+    on<UpdateTimeOfCareUsRe>(_updateTimeOfCareUsRe);
     on<UpdateUsRe>(_updateUsRe);
   }
   void _addUsRe(AddUsRe event, Emitter<UsReListState> emit) {
@@ -47,6 +48,17 @@ class UsReListBloc extends Bloc<UsReListEvent, UsReListState> {
       }
     }
     APIsUsRe.removeUsRe(event.usReId);
+    emit(UsReListUploaded(usRes: state.usRes));
+  }
+
+  void _updateTimeOfCareUsRe(
+      UpdateTimeOfCareUsRe event, Emitter<UsReListState> emit) {
+    for (int i = 0; i < state.usRes.length; i++) {
+      if (event.usReId == state.usRes[i].usReId) {
+        state.usRes[i].time_of_care = event.timeOfCare;
+      }
+    }
+    APIsUsRe.updateTimeOfCareUsRe(event.usReId, event.timeOfCare);
     emit(UsReListUploaded(usRes: state.usRes));
   }
 

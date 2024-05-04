@@ -12,18 +12,11 @@ import 'package:networking/screens/relationships/share/share_relationship.dart';
 
 enum Menu { notification, edit, share, remove }
 
-class PopupMenuDetailRelationship extends StatefulWidget {
+class PopupMenuDetailRelationship extends StatelessWidget {
   const PopupMenuDetailRelationship(
       {super.key, required this.user, required this.userRelationship});
   final Users user;
   final UserRelationship userRelationship;
-  @override
-  State<PopupMenuDetailRelationship> createState() =>
-      _PopupMenuDetailRelationshipState();
-}
-
-class _PopupMenuDetailRelationshipState
-    extends State<PopupMenuDetailRelationship> {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<Menu>(
@@ -36,8 +29,7 @@ class _PopupMenuDetailRelationshipState
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => EditRelationship(
-                    user: widget.user,
-                    userRelationship: widget.userRelationship),
+                    user: user, userRelationship: userRelationship),
               ),
             );
             break;
@@ -45,8 +37,7 @@ class _PopupMenuDetailRelationshipState
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => ShareRelationship(
-                    user: widget.user,
-                    userRelationship: widget.userRelationship),
+                    user: user, userRelationship: userRelationship),
               ),
             );
 
@@ -76,15 +67,16 @@ class _PopupMenuDetailRelationshipState
                     style: ButtonStyle(
                         backgroundColor: MaterialStatePropertyAll(Colors.red)),
                     onPressed: () {
-                      if (widget.user.imageUrl! != '') {
-                        File(widget.user.imageUrl!).delete();
+                      if (user.imageUrl! != '') {
+                        File(user.imageUrl!).delete();
                       }
 
-                      context.read<UsReListBloc>().add(
-                          DeleteUsRe(usReId: widget.userRelationship.usReId!));
+                      context
+                          .read<UsReListBloc>()
+                          .add(DeleteUsRe(usReId: userRelationship.usReId!));
                       context
                           .read<UserListBloc>()
-                          .add(DeleteUser(userId: widget.user.userId!));
+                          .add(DeleteUser(userId: user.userId!));
                       showSnackbar(
                         context,
                         "Đã xóa mối quan hệ",

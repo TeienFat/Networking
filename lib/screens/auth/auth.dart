@@ -99,6 +99,7 @@ class _AuthScreenState extends State<AuthScreen> {
         Navigator.of(context)
             .pushNamedAndRemoveUntil("/Main", (route) => false);
         context.read<UsReListBloc>().add(LoadUsReList());
+        context.read<UserListBloc>().add(LoadUserList());
         context.read<ReCareListBloc>().add(LoadReCareList());
       } else {
         showSnackbar(context, "Tên đăng nhập đã được sử dụng",

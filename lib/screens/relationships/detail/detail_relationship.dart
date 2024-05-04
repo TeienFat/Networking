@@ -41,7 +41,7 @@ class _DetailRelationshipState extends State<DetailRelationship> {
                 SliverPersistentHeader(
                   pinned: true,
                   delegate: MySliverAppBar(
-                      expandedHeight: ScreenUtil().screenHeight / 2.4,
+                      expandedHeight: ScreenUtil().screenHeight / 2.5,
                       user: widget.user,
                       userRelationship: widget.userRelationship),
                 ),
@@ -50,7 +50,8 @@ class _DetailRelationshipState extends State<DetailRelationship> {
                   delegate: MySliverButtonSwicth(
                       user: widget.user,
                       userRelationship: widget.userRelationship,
-                      onChangePage: _onChangePage),
+                      onChangePage: _onChangePage,
+                      page: _page),
                 ),
                 SliverList(
                   delegate: SliverChildListDelegate([
@@ -94,12 +95,23 @@ class _DetailRelationshipState extends State<DetailRelationship> {
                                     ));
                                   }
                                 }
-                                return Column(
-                                  children: listCard,
+                                return Padding(
+                                  padding: EdgeInsets.only(top: 10.sp),
+                                  child: Column(
+                                    children: listCard,
+                                  ),
                                 );
                               }
-                              return Center(
-                                  child: Text("Hãy thiết lập chăm sóc mới!"));
+                              return Padding(
+                                padding: EdgeInsets.only(top: 50.sp),
+                                child: Center(
+                                    child: Text(
+                                  "Hãy thiết lập chăm sóc mới!",
+                                  style: TextStyle(
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.bold),
+                                )),
+                              );
                             },
                           ),
                     SizedBox(height: 100.sp),

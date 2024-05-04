@@ -110,6 +110,25 @@ class APIsReCare {
     await _prefs.setStringList('reCares', listReCareRead);
   }
 
+  static Future<int> getNumSuccess(
+    String usReId,
+  ) async {
+    final SharedPreferences _prefs = await prefs;
+    List<String> listReCareRead = await _prefs.getStringList('reCares') ?? [];
+    List<RelationshipCare> listReCare = listReCareRead
+        .map((e) => RelationshipCare.fromMap(jsonDecode(e)))
+        .toList();
+    int success = 0;
+    for (int i = 0; i < listReCare.length; i++) {
+      if (listReCare[i].usReId!.length == usReId.length &&
+          listReCare[i].usReId! == usReId &&
+          listReCare[i].isFinish == 1) {
+        success += 1;
+      }
+    }
+    return success;
+  }
+
   static Future<void> updateIsFinish(
     String reCareId,
     int isFinish,
@@ -127,6 +146,7 @@ class APIsReCare {
         listReCare[i].updateAt = DateTime.now();
       }
     }
+
     listReCareRead = listReCare.map((e) => jsonEncode(e.toMap())).toList();
     await _prefs.setStringList('reCares', listReCareRead);
   }
