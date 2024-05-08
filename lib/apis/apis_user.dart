@@ -36,8 +36,8 @@ class APIsUser {
     List<String> listUserRead = await _prefs.getStringList('users') ?? [];
     listUserRead.add(jsonEncode(newUser.toMap()));
     await _prefs.setStringList('users', listUserRead);
-    // List<String> listUser = await _prefs.getStringList('users') ?? [];
-    // print(listUser);
+    List<String> listUser = await _prefs.getStringList('users') ?? [];
+    print(listUser);
   }
 
   static Future<List<Users>> getAllUser() async {
@@ -60,6 +60,25 @@ class APIsUser {
       if ((u.userId!.length == userId.length) && (u.userId == userId)) return u;
     }
     return null;
+  }
+
+  static Future<void> UpdateUserNotification(
+    String userId,
+    bool notification,
+  ) async {
+    final SharedPreferences _prefs = await prefs;
+    List<String> listUserRead = await _prefs.getStringList('users') ?? [];
+    List<Users> listUser =
+        listUserRead.map((e) => Users.fromMap(jsonDecode(e))).toList();
+    for (int i = 0; i < listUser.length; i++) {
+      if ((listUser[i].userId!.length == userId.length) &&
+          (listUser[i].userId == userId)) {
+        listUser[i].notification = notification;
+        listUser[i].updateAt = DateTime.now();
+      }
+    }
+    listUserRead = listUser.map((e) => jsonEncode(e.toMap())).toList();
+    await _prefs.setStringList('users', listUserRead);
   }
 
   static Future<void> updateUser(

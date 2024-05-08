@@ -7,7 +7,6 @@ import 'package:networking/apis/apis_relationships.dart';
 import 'package:networking/apis/apis_user.dart';
 import 'package:networking/apis/apis_user_relationship.dart';
 import 'package:networking/models/user_model.dart';
-import 'package:networking/notification/home.dart';
 import 'package:networking/screens/home/chat_home.dart';
 import 'package:networking/screens/home/relationships.dart';
 import 'package:networking/screens/home/take_care.dart';
@@ -112,8 +111,6 @@ class _MainScreenState extends State<MainScreen> {
         ));
         break;
       case 2:
-        // Get.to(() => HomePage());
-        // APIsUsRe.removeTable('payload');
         break;
       case 3:
         final meId = await APIsAuth.getCurrentUserId();
@@ -131,22 +128,31 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: currentIndex != 3
-            ? Text(
-                textAlign: TextAlign.center,
-                title,
-                style: TextStyle(fontSize: 23.sp, fontWeight: FontWeight.bold),
-              )
-            : null,
-        centerTitle: true,
-        actions: [
-          if (currentIndex == 3) PopupMenuMyProfile(),
-        ],
-      ),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: screens,
+          child: Column(
+            children: [
+              SizedBox(
+                height: 10.sp,
+              ),
+              Row(
+                mainAxisAlignment: currentIndex != 3
+                    ? MainAxisAlignment.center
+                    : MainAxisAlignment.end,
+                children: [
+                  if (currentIndex != 3)
+                    Text(
+                      textAlign: TextAlign.center,
+                      title,
+                      style: TextStyle(
+                          fontSize: 23.sp, fontWeight: FontWeight.bold),
+                    ),
+                  if (currentIndex == 3) PopupMenuMyProfile(),
+                ],
+              ),
+              screens,
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: MyBottomNavigartionBar(

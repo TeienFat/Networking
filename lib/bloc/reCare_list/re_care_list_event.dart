@@ -24,8 +24,9 @@ class AddReCare extends ReCareListEvent {
 
 class DeleteReCare extends ReCareListEvent {
   final String reCareId;
+  final UserRelationship usRe;
 
-  DeleteReCare({required this.reCareId});
+  DeleteReCare({required this.reCareId, required this.usRe});
 }
 
 class AddContentText extends ReCareListEvent {
@@ -61,6 +62,7 @@ class UpdateIsFinish extends ReCareListEvent {
 class UpdateReCare extends ReCareListEvent {
   final String reCareId;
   final UserRelationship usRe;
+  final String oldUsReId;
   final Users users;
   final DateTime startTime;
   final DateTime endTime;
@@ -69,6 +71,7 @@ class UpdateReCare extends ReCareListEvent {
   UpdateReCare({
     required this.reCareId,
     required this.usRe,
+    required this.oldUsReId,
     required this.users,
     required this.startTime,
     required this.endTime,

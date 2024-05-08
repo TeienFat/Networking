@@ -72,9 +72,13 @@ class _ImportContactsState extends State<ImportContacts> {
         skype: {'': ''},
         address: [],
         otherInfo: otherInfo));
-    context
-        .read<UsReListBloc>()
-        .add(AddUsRe(meId: meId!, myReId: userId, relationships: []));
+    context.read<UsReListBloc>().add(AddUsRe(
+        meId: meId!,
+        myReId: userId,
+        userName: contact.displayName,
+        birthday: DateTime(2000, 01, 01),
+        imageUrl: imageUrl,
+        relationships: []));
     showSnackbar(
       context,
       "Đã thêm mối quan hệ mới",
@@ -116,6 +120,7 @@ class _ImportContactsState extends State<ImportContacts> {
         skype: {'': ''},
         address: [],
         otherInfo: otherInfo,
+        notification: true,
         createdAt: null,
         updateAt: null,
         deleteAt: null,

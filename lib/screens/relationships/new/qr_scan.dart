@@ -302,6 +302,11 @@ class QRScan extends StatelessWidget {
                           context.read<UsReListBloc>().add(AddUsRe(
                               meId: meId!,
                               myReId: userId,
+                              userName: newUser.userName!,
+                              birthday: newUser.birthday != null
+                                  ? newUser.birthday
+                                  : DateTime(2000, 01, 01),
+                              imageUrl: newUser.imageUrl!,
                               relationships: relationships));
                           showSnackbar(
                             context,

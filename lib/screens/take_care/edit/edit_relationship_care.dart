@@ -102,6 +102,7 @@ class _EditRelationshipCareState extends State<EditRelationshipCare> {
         context.read<ReCareListBloc>().add(UpdateReCare(
             reCareId: widget.reCare.reCareId!,
             usRe: _enteredUsRe!,
+            oldUsReId: widget.userRelationship.usReId!,
             users: _enteredUser!,
             startTime: startTime,
             endTime: endTime,

@@ -14,6 +14,7 @@ class Users {
   Map<String, dynamic>? skype;
   List<Address>? address;
   Map<String, dynamic>? otherInfo;
+  bool? notification;
   DateTime? createdAt;
   DateTime? updateAt;
   DateTime? deleteAt;
@@ -35,6 +36,7 @@ class Users {
     required this.skype,
     required this.address,
     required this.otherInfo,
+    required this.notification,
     required this.createdAt,
     required this.updateAt,
     required this.deleteAt,
@@ -57,6 +59,7 @@ class Users {
     skype = map['skype'];
     address = map['address'] != null ? Address.decode(map['address']) : null;
     otherInfo = map['otherInfo'];
+    notification = map['notification'];
     createdAt =
         map['createdAt'] != null ? DateTime.parse(map['createdAt']) : null;
     updateAt = map['updateAt'] != null ? DateTime.parse(map['updateAt']) : null;
@@ -80,6 +83,7 @@ class Users {
       "skype": skype,
       "address": Address.encode(address!),
       "otherInfo": otherInfo,
+      'notification': notification,
       "createdAt": createdAt != null ? createdAt!.toIso8601String() : null,
       "updateAt": updateAt != null ? updateAt!.toIso8601String() : null,
       "deleteAt": deleteAt != null ? deleteAt!.toIso8601String() : null,

@@ -10,23 +10,43 @@ import 'package:networking/screens/relationships/detail/custom_button_switch.dar
 import 'package:networking/screens/relationships/detail/list_info.dart';
 import 'package:networking/screens/take_care/new/new_relationship_care.dart';
 import 'package:networking/widgets/take_care_card.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class DetailRelationship extends StatefulWidget {
   const DetailRelationship(
-      {super.key, required this.user, required this.userRelationship});
+      {super.key,
+      required this.user,
+      required this.userRelationship,
+      this.page = true})
+      : fromNotification = false;
+  const DetailRelationship.fromNotification(
+      {super.key,
+      required this.user,
+      required this.userRelationship,
+      this.page = true})
+      : fromNotification = true;
   final Users user;
   final UserRelationship userRelationship;
+  final bool page;
+  final bool fromNotification;
 
   @override
   State<DetailRelationship> createState() => _DetailRelationshipState();
 }
 
 class _DetailRelationshipState extends State<DetailRelationship> {
-  bool _page = true;
+  late bool _page;
   void _onChangePage(bool page) {
     setState(() {
       _page = page;
     });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _page = widget.page;
   }
 
   @override
@@ -43,7 +63,8 @@ class _DetailRelationshipState extends State<DetailRelationship> {
                   delegate: MySliverAppBar(
                       expandedHeight: ScreenUtil().screenHeight / 2.5,
                       user: widget.user,
-                      userRelationship: widget.userRelationship),
+                      userRelationship: widget.userRelationship,
+                      fromNotification: widget.fromNotification),
                 ),
                 SliverPersistentHeader(
                   pinned: true,
@@ -74,6 +95,18 @@ class _DetailRelationshipState extends State<DetailRelationship> {
                                     }
 
                                     if (a.endTime!.isAfter(b.endTime!)) {
+                                      return -1;
+                                    }
+                                    if (isSameDay(a.endTime!, b.endTime!)) {
+                                      if (a.startTime!.hour >
+                                          b.startTime!.hour) {
+                                        return 1;
+                                      }
+                                      if (a.startTime!.hour ==
+                                          b.startTime!.hour) {
+                                        if (a.startTime!.minute >=
+                                            b.startTime!.minute) return 1;
+                                      }
                                       return -1;
                                     }
                                     return 0;

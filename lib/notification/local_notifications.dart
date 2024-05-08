@@ -4,32 +4,59 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:networking/apis/apis_ReCare.dart';
+import 'package:networking/apis/apis_user.dart';
 import 'package:networking/models/relationship_care_model.dart';
+import 'package:networking/models/user_model.dart';
 import 'package:networking/models/user_relationship_model.dart';
+import 'package:networking/screens/relationships/detail/detail_relationship.dart';
 import 'package:networking/screens/take_care/detail/detail_relationship_care.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:networking/screens/take_care/schedule/schedule.dart';
+import 'package:table_calendar/table_calendar.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 class LocalNotifications {
   static final FlutterLocalNotificationsPlugin
       _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  static final onClickNotification = BehaviorSubject<String>();
 
   static void onNotificationTap(
       NotificationResponse notificationResponse) async {
     final payload = notificationResponse.payload!;
-    List<String> datas = List<String>.from(jsonDecode(payload));
-    RelationshipCare reCare = RelationshipCare.fromMap(jsonDecode(datas[0]));
-    UserRelationship userRelationship =
-        UserRelationship.fromMap(jsonDecode(datas[1]));
-    Get.to(
-      () => DetailRelationshipCare(
-        reCare: reCare,
-        userRelationship: userRelationship,
-        route: true,
-      ),
-    );
+    if (payload != 'Today') {
+      List<String> datas = List<String>.from(jsonDecode(payload));
+      if (datas.length == 3) {
+        UserRelationship userRelationship =
+            UserRelationship.fromMap(jsonDecode(datas[1]));
+        Users? users = await APIsUser.getUserFromId(datas[2]);
+        Get.to(
+          () => DetailRelationship(
+            userRelationship: userRelationship,
+            user: users!,
+            page: false,
+          ),
+        );
+      } else {
+        RelationshipCare reCare =
+            RelationshipCare.fromMap(jsonDecode(datas[0]));
+        UserRelationship userRelationship =
+            UserRelationship.fromMap(jsonDecode(datas[1]));
+        Get.to(
+          () => DetailRelationshipCare(
+            reCare: reCare,
+            userRelationship: userRelationship,
+            route: true,
+          ),
+        );
+      }
+    } else {
+      List<RelationshipCare> reCares =
+          await APIsReCare.getAllMyRelationshipCare();
+      List<RelationshipCare> eventsToday = reCares
+          .where((element) => isSameDay(element.startTime!, DateTime.now()))
+          .toList();
+      Get.to(() => ScheduleScreen(listEventsToday: eventsToday));
+    }
   }
 
   static Future init() async {
@@ -81,6 +108,24 @@ class LocalNotifications {
     );
   }
 
+  static Future _notificationDetailsWithoutIconPath(
+      String contentTitle, List<String> contentBody) async {
+    return NotificationDetails(
+      android: AndroidNotificationDetails(
+          'your channel id', 'Thông báo lịch chăm sóc',
+          channelDescription: 'your channel description',
+          icon: '@drawable/ic_handshake',
+          color: Colors.orangeAccent,
+          // largeIcon: '@mipmap/ic_launcher',
+          largeIcon: DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
+          styleInformation:
+              InboxStyleInformation(contentBody, contentTitle: contentTitle),
+          importance: Importance.max,
+          priority: Priority.high,
+          ticker: 'ticker'),
+    );
+  }
+
   static Future showSimpleNotification({
     required String title,
     required String body,
@@ -93,19 +138,18 @@ class LocalNotifications {
         payload: payload);
   }
 
-  static Future showPeriodicNotifications({
+  static Future showDailyNotifications({
     required String title,
     required String body,
-    required String iconPath,
     required List<String> contentBody,
     required String payload,
   }) async {
     await _flutterLocalNotificationsPlugin.periodicallyShow(
-        1,
+        123456,
         title,
         body,
-        RepeatInterval.everyMinute,
-        await _notificationDetails(iconPath, body, contentBody),
+        RepeatInterval.daily,
+        await _notificationDetailsWithoutIconPath(body, contentBody),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         payload: payload);
   }

@@ -10,14 +10,19 @@ import 'package:networking/screens/take_care/schedule/search_day.dart';
 import 'package:networking/widgets/take_care_card.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class Schedule extends StatefulWidget {
-  const Schedule({super.key, required this.listEventsToday});
+class ScheduleScreen extends StatefulWidget {
+  const ScheduleScreen({super.key, required this.listEventsToday})
+      : fromNotification = false;
+  const ScheduleScreen.fromNotification(
+      {super.key, required this.listEventsToday})
+      : fromNotification = true;
   final List<RelationshipCare> listEventsToday;
+  final bool fromNotification;
   @override
-  State<Schedule> createState() => _ScheduleState();
+  State<ScheduleScreen> createState() => _ScheduleScreenState();
 }
 
-class _ScheduleState extends State<Schedule> {
+class _ScheduleScreenState extends State<ScheduleScreen> {
   late List<RelationshipCare> _selectedEvents;
   CalendarFormat _calendarFormat = CalendarFormat.month;
   RangeSelectionMode _rangeSelectionMode = RangeSelectionMode.toggledOff;
@@ -116,6 +121,13 @@ class _ScheduleState extends State<Schedule> {
           appBar: AppBar(
             title: Text('Lập lịch chăm sóc'),
             centerTitle: true,
+            leading: widget.fromNotification
+                ? IconButton(
+                    onPressed: () {
+                      Navigator.of(context).pushReplacementNamed("/MainRecare");
+                    },
+                    icon: Icon(Icons.arrow_back))
+                : null,
             actions: [
               Padding(
                 padding: EdgeInsets.only(right: 0.sp),

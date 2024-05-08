@@ -172,9 +172,9 @@ class _ReCareCardState extends State<ReCareCard> {
                           File(image).delete();
                         }
                       }
-                      context
-                          .read<ReCareListBloc>()
-                          .add(DeleteReCare(reCareId: widget.reCare.reCareId!));
+                      context.read<ReCareListBloc>().add(DeleteReCare(
+                          reCareId: widget.reCare.reCareId!,
+                          usRe: widget.userRelationship));
                       await APIsReCare.getNumSuccess(
                           widget.userRelationship.usReId!);
                       final timeOfCare = await APIsReCare.getNumSuccess(

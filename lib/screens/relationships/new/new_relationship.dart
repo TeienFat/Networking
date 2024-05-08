@@ -160,6 +160,9 @@ class _NewRelationshipState extends State<NewRelationship> {
                     context.read<UsReListBloc>().add(AddUsRe(
                         meId: meId!,
                         myReId: userId,
+                        userName: _enteredUserName,
+                        birthday: _enteredBirthday,
+                        imageUrl: imageUrl,
                         relationships: _listRelationship));
                     showSnackbar(
                       context,
@@ -198,7 +201,13 @@ class _NewRelationshipState extends State<NewRelationship> {
               address: _listAddress,
               otherInfo: _otherInfo));
           context.read<UsReListBloc>().add(AddUsRe(
-              meId: meId!, myReId: userId, relationships: _listRelationship));
+              meId: meId!,
+              myReId: userId,
+              userName: _enteredUserName,
+              birthday: _enteredBirthday,
+              imageUrl: imageUrl,
+              relationships: _listRelationship));
+
           showSnackbar(
               context, "Đã thêm mối quan hệ mới", Duration(seconds: 2), true);
           Navigator.of(context).pop();
