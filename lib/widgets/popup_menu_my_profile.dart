@@ -2,18 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:networking/apis/apis_auth.dart';
 import 'package:networking/apis/apis_user.dart';
 import 'package:networking/models/user_model.dart';
-import 'package:networking/models/user_relationship_model.dart';
+import 'package:networking/screens/my_profile/setting.dart';
 import 'package:networking/screens/relationships/share/share_relationship.dart';
 
 enum Menu { setting, share, logout }
 
 class PopupMenuMyProfile extends StatelessWidget {
-  const PopupMenuMyProfile({
-    super.key,
-    // required this.user, required this.userRelationship
-  });
-  // final String user;
-  // final UserRelationship userRelationship;
+  const PopupMenuMyProfile({super.key});
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<Menu>(
@@ -21,12 +16,15 @@ class PopupMenuMyProfile extends StatelessWidget {
       onSelected: (Menu item) async {
         switch (item) {
           case Menu.setting:
-            // Navigator.of(context).push(
-            //   MaterialPageRoute(
-            //     builder: (context) => ShareRelationship(
-            //         user: user, userRelationship: userRelationship),
-            //   ),
-            // );
+            final meId = await APIsAuth.getCurrentUserId();
+            Users? user = await APIsUser.getUserFromId(meId!);
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (context) => SettingScreen(
+                        myId: meId,
+                        notificationEnabled: user!.notification!,
+                      )),
+            );
             break;
           case Menu.share:
             final meId = await APIsAuth.getCurrentUserId();

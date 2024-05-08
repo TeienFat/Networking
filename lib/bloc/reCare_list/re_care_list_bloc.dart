@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:networking/apis/apis_ReCare.dart';
+import 'package:networking/apis/apis_auth.dart';
+import 'package:networking/apis/apis_user.dart';
 import 'package:networking/models/relationship_care_model.dart';
 import 'package:networking/models/user_model.dart';
 import 'package:networking/models/user_relationship_model.dart';
@@ -30,7 +32,7 @@ class ReCareListBloc extends Bloc<ReCareListEvent, ReCareListState> {
     on<UpdateIsFinish>(_updateIsFinish);
     on<UpdateReCare>(_updateReCare);
   }
-  void _addReCare(AddReCare event, Emitter<ReCareListState> emit) {
+  void _addReCare(AddReCare event, Emitter<ReCareListState> emit) async {
     final reCareId = DateTime.now().microsecondsSinceEpoch / 1000000;
     final newReCare = RelationshipCare(
         reCareId: reCareId.toString(),
@@ -47,21 +49,31 @@ class ReCareListBloc extends Bloc<ReCareListEvent, ReCareListState> {
         deleteAt: null);
     state.reCares.add(newReCare);
     APIsReCare.createNewReCare(newReCare);
-    List<String> payload = [
-      jsonEncode(newReCare.toMap()),
-      jsonEncode(event.usRe.toMap())
-    ];
-    LocalNotifications.showScheduleNotification(
-        dateTime: event.startTime,
-        id: reCareId.round(),
-        title: "Chăm sóc nào!",
-        body: event.title,
-        iconPath: event.users.imageUrl!,
-        contentBody: [
-          event.users.userName! + ' - ' + event.usRe.relationships![0].name!
-        ],
-        payload: jsonEncode(payload));
     emit(ReCareListUploaded(reCares: state.reCares));
+    final myId = await APIsAuth.getCurrentUserId();
+    Users? isMe = await APIsUser.getUserFromId(myId!);
+    if (isMe!.notification!) {
+      if (event.usRe.notification!['schedule']) {
+        List<String> payload = [
+          jsonEncode(newReCare.toMap()),
+          jsonEncode(event.usRe.toMap())
+        ];
+        LocalNotifications.showScheduleNotification(
+            dateTime: event.startTime,
+            id: reCareId.round(),
+            title: "Chăm sóc nào!",
+            body: "\u{1F389}\u{1F37B} " + event.title,
+            iconPath: event.users.imageUrl!,
+            contentBody: [
+              event.users.userName! + ' - ' + event.usRe.relationships![0].name!
+            ],
+            payload: jsonEncode(payload));
+      }
+    }
+    if (event.usRe.notification!['remid']) {
+      APIsReCare.setNotificationRemind(
+          state.reCares, null, event.usRe.usReId!, null, null, null);
+    }
   }
 
   void _addContentText(AddContentText event, Emitter<ReCareListState> emit) {
@@ -107,8 +119,13 @@ class ReCareListBloc extends Bloc<ReCareListEvent, ReCareListState> {
     }
     int id = double.parse(event.reCareId).round();
     APIsReCare.removeReCare(event.reCareId);
-    LocalNotifications.cancel(id);
     emit(ReCareListUploaded(reCares: state.reCares));
+    LocalNotifications.cancel(id);
+
+    if (event.usRe.notification!['remid']) {
+      APIsReCare.setNotificationRemind(
+          state.reCares, null, event.usRe.usReId!, null, null, null);
+    }
   }
 
   void _updateIsFinish(UpdateIsFinish event, Emitter<ReCareListState> emit) {
@@ -121,8 +138,9 @@ class ReCareListBloc extends Bloc<ReCareListEvent, ReCareListState> {
     emit(ReCareListUploaded(reCares: state.reCares));
   }
 
-  void _updateReCare(UpdateReCare event, Emitter<ReCareListState> emit) {
+  void _updateReCare(UpdateReCare event, Emitter<ReCareListState> emit) async {
     RelationshipCare? reCarePayload;
+
     for (int i = 0; i < state.reCares.length; i++) {
       if (event.reCareId == state.reCares[i].reCareId) {
         state.reCares[i].usReId = event.usRe.usReId;
@@ -145,24 +163,41 @@ class ReCareListBloc extends Bloc<ReCareListEvent, ReCareListState> {
       }
     }
 
-    List<String> payload = [
-      jsonEncode(reCarePayload!.toMap()),
-      jsonEncode(event.usRe.toMap())
-    ];
     APIsReCare.updateReCare(event.reCareId, event.title, event.usRe.usReId!,
         event.startTime, event.endTime);
     int id = double.parse(event.reCareId).round();
     LocalNotifications.cancel(id);
-    LocalNotifications.showScheduleNotification(
-        dateTime: event.startTime,
-        id: id,
-        title: "Chăm sóc nào!",
-        body: event.title,
-        iconPath: event.users.imageUrl!,
-        contentBody: [
-          event.users.userName! + ' - ' + event.usRe.relationships![0].name!
-        ],
-        payload: jsonEncode(payload));
     emit(ReCareListUploaded(reCares: state.reCares));
+    final myId = await APIsAuth.getCurrentUserId();
+    Users? isMe = await APIsUser.getUserFromId(myId!);
+    if (isMe!.notification!) {
+      if (event.usRe.notification!['schedule']) {
+        List<String> payload = [
+          jsonEncode(reCarePayload!.toMap()),
+          jsonEncode(event.usRe.toMap())
+        ];
+        LocalNotifications.showScheduleNotification(
+            dateTime: event.startTime,
+            id: id,
+            title: "Chăm sóc nào!",
+            body: event.title,
+            iconPath: event.users.imageUrl!,
+            contentBody: [
+              event.users.userName! + ' - ' + event.usRe.relationships![0].name!
+            ],
+            payload: jsonEncode(payload));
+      }
+    }
+    if (event.usRe.notification!['remid']) {
+      if (event.usRe.usReId! == event.usRe.usReId!) {
+        APIsReCare.setNotificationRemind(
+            state.reCares, null, event.usRe.usReId!, null, null, null);
+      } else {
+        APIsReCare.setNotificationRemind(
+            state.reCares, null, event.usRe.usReId!, null, null, null);
+        APIsReCare.setNotificationRemind(
+            state.reCares, null, event.oldUsReId, null, null, null);
+      }
+    }
   }
 }

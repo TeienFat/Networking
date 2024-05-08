@@ -43,6 +43,12 @@ class DeleteUser extends UserListEvent {
   DeleteUser({required this.userId});
 }
 
+class UpdateUserNotification extends UserListEvent {
+  final String userId;
+  final bool notification;
+  UpdateUserNotification({required this.userId, required this.notification});
+}
+
 class UpdateUser extends UserListEvent {
   final String userId;
   final String userName;

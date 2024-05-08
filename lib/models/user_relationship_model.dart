@@ -6,7 +6,7 @@ class UserRelationship {
   String? myRelationShipId;
   bool? special;
   List<Relationship>? relationships;
-  List<dynamic>? notification;
+  Map<String, dynamic>? notification;
   int? time_of_care;
   DateTime? createdAt;
   DateTime? updateAt;

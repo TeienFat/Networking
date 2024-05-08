@@ -52,6 +52,7 @@ class MySliverButtonSwicth extends SliverPersistentHeaderDelegate {
             textColor: Colors.black,
             buttonHeight: 60.sp,
             buttonWidth: ScreenUtil().screenWidth,
+            initValue: page,
           ),
           if (!page)
             SizedBox(

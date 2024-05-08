@@ -239,7 +239,7 @@ class _PickRelationshipState extends State<PickRelationship> {
             ),
           );
         }
-        return Center(child: CircularProgressIndicator());
+        return Center(child: Text("Chưa có mối quan hệ nào"));
       },
     );
   }

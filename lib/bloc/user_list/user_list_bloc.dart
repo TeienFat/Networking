@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:networking/apis/apis_user.dart';
+import 'package:networking/apis/apis_user_relationship.dart';
 import 'package:networking/models/address_model.dart';
 import 'package:networking/models/user_model.dart';
 
@@ -16,6 +17,7 @@ class UserListBloc extends Bloc<UserListEvent, UserListState> {
     );
     on<AddUser>(_addUser);
     on<DeleteUser>(_deleteUser);
+    on<UpdateUserNotification>(_updateUserNotification);
     on<UpdateUser>(_updateUser);
   }
 
@@ -34,6 +36,7 @@ class UserListBloc extends Bloc<UserListEvent, UserListState> {
         skype: event.skype,
         address: event.address,
         otherInfo: event.otherInfo,
+        notification: true,
         createdAt: DateTime.now(),
         updateAt: null,
         deleteAt: null,
@@ -54,6 +57,22 @@ class UserListBloc extends Bloc<UserListEvent, UserListState> {
     }
     APIsUser.removeUser(event.userId);
     emit(UserListUploaded(users: state.users));
+  }
+
+  void _updateUserNotification(
+      UpdateUserNotification event, Emitter<UserListState> emit) async {
+    for (int i = 0; i < state.users.length; i++) {
+      if (event.userId == state.users[i].userId) {
+        state.users[i].notification = event.notification;
+        state.users[i].updateAt = DateTime.now();
+      }
+    }
+    APIsUser.UpdateUserNotification(
+      event.userId,
+      event.notification,
+    );
+    emit(UserListUploaded(users: state.users));
+    APIsUsRe.setNotificationForAllUsRe(event.notification);
   }
 
   void _updateUser(UpdateUser event, Emitter<UserListState> emit) {

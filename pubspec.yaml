@@ -83,7 +83,6 @@ dependencies:
   # đẩy thông báo
   flutter_local_notifications: ^17.1.1
   flutter_timezone: ^1.0.7
-  rxdart: ^0.27.7
   get: ^4.6.6
 
 dev_dependencies:

@@ -5,11 +5,19 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:networking/apis/apis_ReCare.dart';
+import 'package:networking/apis/apis_auth.dart';
 import 'package:networking/apis/apis_relationships.dart';
+import 'package:networking/apis/apis_user.dart';
 import 'package:networking/models/relationship_care_model.dart';
+import 'package:networking/models/user_model.dart';
 import 'package:networking/models/user_relationship_model.dart';
+import 'package:networking/notification/local_notifications.dart';
+import 'package:networking/screens/relationships/detail/detail_relationship.dart';
 import 'package:networking/screens/take_care/detail/detail_relationship_care.dart';
+import 'package:networking/screens/take_care/schedule/schedule.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -29,7 +37,15 @@ class _SplashScreenState extends State<SplashScreen>
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool firstTime = prefs.getBool('first_time') ?? true;
     var _duration = new Duration(seconds: 3);
-
+    final myId = await APIsAuth.getCurrentUserId();
+    Users? isMe = await APIsUser.getUserFromId(myId!);
+    if (isMe!.notification!) {
+      LocalNotifications.showDailyNotifications(
+          title: "Chăm sóc hôm nay!",
+          body: "\u{1F4C6} Chăm sóc các mục chăm sóc hôm nay nào!",
+          contentBody: [],
+          payload: "Today");
+    }
     if (!firstTime) {
       // not first time
       return Timer(_duration, goToNextScreen(false));
@@ -51,30 +67,54 @@ class _SplashScreenState extends State<SplashScreen>
     final NotificationAppLaunchDetails? notificationAppLaunchDetails =
         await _flutterLocalNotificationsPlugin
             .getNotificationAppLaunchDetails();
-
-    if (notificationAppLaunchDetails!.didNotificationLaunchApp) {
-      final payload =
-          notificationAppLaunchDetails.notificationResponse!.payload;
-      List<String> datas = List<String>.from(jsonDecode(payload!));
-      RelationshipCare reCare = RelationshipCare.fromMap(jsonDecode(datas[0]));
-      UserRelationship userRelationship =
-          UserRelationship.fromMap(jsonDecode(datas[1]));
-      Get.to(
-        () => DetailRelationshipCare.fromNotification(
-          reCare: reCare,
-          userRelationship: userRelationship,
-          route: true,
-        ),
-      );
+    if (firstTime) {
+      Navigator.of(context).pushReplacementNamed("/Welcome");
     } else {
-      if (firstTime) {
-        Navigator.of(context).pushReplacementNamed("/Welcome");
-      } else {
-        if (logged) {
-          Navigator.of(context).pushReplacementNamed("/Main");
+      if (logged) {
+        if (notificationAppLaunchDetails!.didNotificationLaunchApp) {
+          final payload =
+              notificationAppLaunchDetails.notificationResponse!.payload;
+          if (payload != 'Today') {
+            List<String> datas = List<String>.from(jsonDecode(payload!));
+            if (datas.length == 3) {
+              UserRelationship userRelationship =
+                  UserRelationship.fromMap(jsonDecode(datas[1]));
+              Users? users = await APIsUser.getUserFromId(datas[2]);
+              Get.to(
+                () => DetailRelationship.fromNotification(
+                  userRelationship: userRelationship,
+                  user: users!,
+                  page: false,
+                ),
+              );
+            } else {
+              RelationshipCare reCare =
+                  RelationshipCare.fromMap(jsonDecode(datas[0]));
+              UserRelationship userRelationship =
+                  UserRelationship.fromMap(jsonDecode(datas[1]));
+              Get.to(
+                () => DetailRelationshipCare.fromNotification(
+                  reCare: reCare,
+                  userRelationship: userRelationship,
+                  route: true,
+                ),
+              );
+            }
+          } else {
+            List<RelationshipCare> reCares =
+                await APIsReCare.getAllMyRelationshipCare();
+            List<RelationshipCare> eventsToday = reCares
+                .where(
+                    (element) => isSameDay(element.startTime!, DateTime.now()))
+                .toList();
+            Get.to(() =>
+                ScheduleScreen.fromNotification(listEventsToday: eventsToday));
+          }
         } else {
-          Navigator.of(context).pushReplacementNamed("/Auth");
+          Navigator.of(context).pushReplacementNamed("/Main");
         }
+      } else {
+        Navigator.of(context).pushReplacementNamed("/Auth");
       }
     }
   }

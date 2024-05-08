@@ -33,6 +33,16 @@ class _TakeCareScreenState extends State<TakeCareScreen> {
               if (a.endTime!.isAfter(b.endTime!)) {
                 return -1;
               }
+
+              if (isSameDay(a.endTime!, b.endTime!)) {
+                if (a.startTime!.hour > b.startTime!.hour) {
+                  return 1;
+                }
+                if (a.startTime!.hour == b.startTime!.hour) {
+                  if (a.startTime!.minute >= b.startTime!.minute) return 1;
+                }
+                return -1;
+              }
               return 0;
             },
           );
@@ -169,7 +179,7 @@ class _TakeCareScreenState extends State<TakeCareScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  Schedule(listEventsToday: eventsToday),
+                                  ScheduleScreen(listEventsToday: eventsToday),
                             ));
                       },
                       icon: Icon(
@@ -181,7 +191,7 @@ class _TakeCareScreenState extends State<TakeCareScreen> {
                   ],
                 ),
                 SizedBox(
-                  height: 20.sp,
+                  height: 10.sp,
                 ),
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 5.sp),
@@ -245,7 +255,7 @@ class _TakeCareScreenState extends State<TakeCareScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                Schedule(listEventsToday: eventsToday),
+                                ScheduleScreen(listEventsToday: eventsToday),
                           ));
                     },
                     icon: Icon(

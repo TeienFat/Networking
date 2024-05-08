@@ -7,6 +7,7 @@ import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/helpers/helpers.dart';
 import 'package:networking/models/user_model.dart';
 import 'package:networking/models/user_relationship_model.dart';
+import 'package:networking/screens/relationships/detail/setting_notification.dart';
 import 'package:networking/screens/relationships/edit/edit_relationship.dart';
 import 'package:networking/screens/relationships/share/share_relationship.dart';
 
@@ -24,6 +25,12 @@ class PopupMenuDetailRelationship extends StatelessWidget {
       onSelected: (Menu item) {
         switch (item) {
           case Menu.notification:
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) =>
+                    SettingNotification(userRelationship: userRelationship),
+              ),
+            );
             break;
           case Menu.edit:
             Navigator.of(context).push(

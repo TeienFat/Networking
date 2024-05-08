@@ -204,7 +204,8 @@ class _DetailRelationshipCareState extends State<DetailRelationshipCare> {
                             }
 
                             context.read<ReCareListBloc>().add(DeleteReCare(
-                                reCareId: widget.reCare.reCareId!));
+                                reCareId: widget.reCare.reCareId!,
+                                usRe: widget.userRelationship));
                             await APIsReCare.getNumSuccess(
                                 widget.userRelationship.usReId!);
                             final timeOfCare = await APIsReCare.getNumSuccess(

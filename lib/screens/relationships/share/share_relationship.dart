@@ -150,6 +150,7 @@ class _ShareRelationshipState extends State<ShareRelationship> {
         skype: _isCheckedSkype ? widget.user.skype : {},
         address: _isCheckedAddress ? _listAddress : [],
         otherInfo: _isCheckedSkype ? _otherInfo : {},
+        notification: true,
         createdAt: null,
         updateAt: null,
         deleteAt: null,

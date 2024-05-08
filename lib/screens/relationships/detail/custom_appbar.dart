@@ -12,10 +12,12 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
   final double expandedHeight;
   final Users user;
   final UserRelationship userRelationship;
+  final bool fromNotification;
   MySliverAppBar(
       {required this.expandedHeight,
       required this.user,
-      required this.userRelationship});
+      required this.userRelationship,
+      required this.fromNotification});
 
   @override
   Widget build(
@@ -48,7 +50,11 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
               alignment: Alignment.centerLeft,
               child: IconButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  if (!fromNotification) {
+                    Navigator.pop(context);
+                  } else {
+                    Navigator.of(context).pushReplacementNamed("/MainRecare");
+                  }
                 },
                 icon: const Icon(
                   Icons.arrow_back_ios,

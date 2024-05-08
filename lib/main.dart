@@ -25,7 +25,6 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await LocalNotifications.init();
-
   runApp(const MyApp());
 }
 
