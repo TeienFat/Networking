@@ -197,8 +197,26 @@ class _RelationshipScreenState extends State<RelationshipScreen> {
             ),
           );
         }
-        return Center(
-          child: Text("Hãy thiết lập các mối quan hệ mới"),
+        return Column(
+          children: [
+            Padding(
+              padding:
+                  EdgeInsets.only(top: 180.sp, right: 50.sp, bottom: 50.sp),
+              child: Icon(
+                FontAwesomeIcons.usersSlash,
+                size: 200.sp,
+                color: Colors.grey[300],
+              ),
+            ),
+            Text(
+              "Chưa có mối quan hệ nào",
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey[400],
+              ),
+            )
+          ],
         );
       },
     );

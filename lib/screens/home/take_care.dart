@@ -266,7 +266,23 @@ class _TakeCareScreenState extends State<TakeCareScreen> {
                   ),
                 ],
               ),
-              Text("Chưa có mục chăm sóc nào"),
+              Padding(
+                padding:
+                    EdgeInsets.only(top: 130.sp, right: 40.sp, bottom: 50.sp),
+                child: Icon(
+                  FontAwesomeIcons.handshakeSimpleSlash,
+                  size: 200.sp,
+                  color: Colors.grey[300],
+                ),
+              ),
+              Text(
+                "Chưa có mục chăm sóc nào",
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[400],
+                ),
+              )
             ],
           ),
         );

@@ -30,8 +30,9 @@ class _ProfileScreenState extends State<ProfileOfOthersScreen> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => NewRelationship.initUser(
+                              builder: (context) => NewRelationship.fromImport(
                                     user: user,
+                                    relationships: [],
                                   )));
                     },
                     icon: Icon(FontAwesomeIcons.handshakeAngle))

@@ -31,9 +31,19 @@ import 'package:url_launcher/url_launcher.dart';
 final _uuid = Uuid();
 
 class NewRelationship extends StatefulWidget {
-  const NewRelationship({super.key}) : this.user = null;
-  const NewRelationship.initUser({super.key, required this.user});
+  const NewRelationship({super.key})
+      : this.user = null,
+        this.relationships = null,
+        this.fromImport = false;
+  const NewRelationship.initUser(
+      {super.key, required this.user, required this.relationships})
+      : this.fromImport = false;
+  const NewRelationship.fromImport(
+      {super.key, required this.user, required this.relationships})
+      : this.fromImport = true;
   final Users? user;
+  final List<Relationship>? relationships;
+  final bool fromImport;
   @override
   State<NewRelationship> createState() => _NewRelationshipState();
 }
@@ -71,6 +81,10 @@ class _NewRelationshipState extends State<NewRelationship> {
     // TODO: implement initState
     super.initState();
     if (widget.user != null) {
+      if (widget.fromImport && widget.user!.imageUrl! != '') {
+        _enteredImageFile = File(widget.user!.imageUrl!);
+        print(_enteredImageFile!.path);
+      }
       _enteredUserName = widget.user!.userName;
       _enteredPhone = widget.user!.phone;
       _enteredEmail = widget.user!.email;
@@ -99,10 +113,9 @@ class _NewRelationshipState extends State<NewRelationship> {
         _enteredZaloPhone.text = widget.user!.zalo!.values.first;
 
       _enteredBirthday = widget.user!.birthday!;
-      // _numOfRelationship = widget.userRelationship.relationships!.length;
+      _numOfRelationship = widget.relationships!.length;
       _numOfAddress = widget.user!.address!.length;
-      // _listRelationship = widget.userRelationship.relationships!;
-      // _enteredSpecial = widget.userRelationship.special;
+      _listRelationship = widget.relationships!;
       _listAddress = widget.user!.address!;
       _otherInfo = widget.user!.otherInfo!;
     }
@@ -186,7 +199,19 @@ class _NewRelationshipState extends State<NewRelationship> {
                       imageUrl = await APIsUser.saveUserImage(
                           _enteredImageFile!, '$userId.jpg');
                     } else {
-                      imageUrl = '';
+                      if (widget.user != null && widget.user!.imageUrl != '') {
+                        final response =
+                            await http.get(Uri.parse(widget.user!.imageUrl!));
+                        final documentDirectory =
+                            await getApplicationDocumentsDirectory();
+                        String Url = '${documentDirectory.path}/$userId.jpg';
+                        final file = File(Url);
+                        file.writeAsBytesSync(response.bodyBytes);
+                        imageUrl = file.path;
+                        print(file.path);
+                      } else {
+                        imageUrl = '';
+                      }
                     }
                     context.read<UserListBloc>().add(AddUser(
                         userId: userId,
@@ -215,9 +240,7 @@ class _NewRelationshipState extends State<NewRelationship> {
                       Duration(seconds: 3),
                       true,
                     );
-                    Navigator.of(context)
-                      ..pop()
-                      ..pop();
+                    Navigator.of(context).pushReplacementNamed("/Main");
                   },
                   child: Text("Thêm"),
                 ),
@@ -243,7 +266,6 @@ class _NewRelationshipState extends State<NewRelationship> {
               imageUrl = '';
             }
           }
-
           context.read<UserListBloc>().add(AddUser(
               userId: userId,
               userName: _enteredUserName,
@@ -268,7 +290,7 @@ class _NewRelationshipState extends State<NewRelationship> {
 
           showSnackbar(
               context, "Đã thêm mối quan hệ mới", Duration(seconds: 2), true);
-          Navigator.of(context).pop();
+          Navigator.of(context).pushReplacementNamed("/Main");
         }
       } else {
         showSnackbar(context, "Vui lòng thiết lập mối quan hệ",
@@ -436,36 +458,38 @@ class _NewRelationshipState extends State<NewRelationship> {
         title: Text("Mối quan hệ mới"),
         centerTitle: true,
         actions: [
-          IconButton(
-            padding: EdgeInsets.all(0),
-            icon: Icon(
-              Icons.contacts,
-              color: Colors.black,
-              size: 25.sp,
+          if (widget.user == null)
+            IconButton(
+              padding: EdgeInsets.all(0),
+              icon: Icon(
+                Icons.contacts,
+                color: Colors.black,
+                size: 25.sp,
+              ),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ImportContacts(),
+                    ));
+              },
             ),
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ImportContacts(),
-                  ));
-            },
-          ),
-          IconButton(
-            padding: EdgeInsets.all(0),
-            icon: Icon(
-              Icons.qr_code_scanner_outlined,
-              color: Colors.black,
-              size: 25.sp,
+          if (widget.user == null)
+            IconButton(
+              padding: EdgeInsets.all(0),
+              icon: Icon(
+                Icons.qr_code_scanner_outlined,
+                color: Colors.black,
+                size: 25.sp,
+              ),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => QRScan(),
+                    ));
+              },
             ),
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => QRScan(),
-                  ));
-            },
-          ),
         ],
       ),
       body: SafeArea(
@@ -478,10 +502,12 @@ class _NewRelationshipState extends State<NewRelationship> {
                 child: Column(
                   children: [
                     UserImagePicker(
-                      initNetworkImage:
-                          widget.user != null && widget.user!.imageUrl != ''
-                              ? widget.user!.imageUrl!
-                              : null,
+                      initImageUrl: _enteredImageFile,
+                      initNetworkImage: !widget.fromImport &&
+                              widget.user != null &&
+                              widget.user!.imageUrl != ''
+                          ? widget.user!.imageUrl!
+                          : null,
                       onPickImage: (pickedImage) {
                         _enteredImageFile = pickedImage;
                       },

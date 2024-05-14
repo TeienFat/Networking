@@ -349,38 +349,42 @@ class ListInfo extends StatelessWidget {
                             color: Colors.grey[100],
                             position: RelativeRect.fromLTRB(280, y + 10, 20, 0),
                             items: [
-                              PopupMenuItem(
-                                onTap: () async {
-                                  await Clipboard.setData(ClipboardData(
-                                    text: user.facebook!.keys.first,
-                                  )).then((value) {
-                                    toast("Đã sao chép");
-                                  });
-                                },
-                                child: ListTile(
-                                  leading: Icon(Icons.copy),
-                                  title: Text(
-                                    'Tên người dùng',
-                                    style: TextStyle(fontSize: 12.sp),
+                              if (user.facebook!.keys.first != 'name' &&
+                                  user.facebook!.keys.first != '')
+                                PopupMenuItem(
+                                  onTap: () async {
+                                    await Clipboard.setData(ClipboardData(
+                                      text: user.facebook!.keys.first,
+                                    )).then((value) {
+                                      toast("Đã sao chép");
+                                    });
+                                  },
+                                  child: ListTile(
+                                    leading: Icon(Icons.copy),
+                                    title: Text(
+                                      'Tên người dùng',
+                                      style: TextStyle(fontSize: 12.sp),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              PopupMenuItem(
-                                onTap: () async {
-                                  await Clipboard.setData(ClipboardData(
-                                    text: user.facebook!.values.first,
-                                  )).then((value) {
-                                    toast("Đã sao chép");
-                                  });
-                                },
-                                child: ListTile(
-                                  leading: Icon(Icons.copy),
-                                  title: Text(
-                                    'Link',
-                                    style: TextStyle(fontSize: 12.sp),
+                              if (user.facebook!.values.first != 'link' &&
+                                  user.facebook!.values.first != '')
+                                PopupMenuItem(
+                                  onTap: () async {
+                                    await Clipboard.setData(ClipboardData(
+                                      text: user.facebook!.values.first,
+                                    )).then((value) {
+                                      toast("Đã sao chép");
+                                    });
+                                  },
+                                  child: ListTile(
+                                    leading: Icon(Icons.copy),
+                                    title: Text(
+                                      'Link',
+                                      style: TextStyle(fontSize: 12.sp),
+                                    ),
                                   ),
                                 ),
-                              ),
                             ]);
                       },
                       child: Padding(
@@ -419,38 +423,42 @@ class ListInfo extends StatelessWidget {
                             color: Colors.grey[100],
                             position: RelativeRect.fromLTRB(280, y + 10, 20, 0),
                             items: [
-                              PopupMenuItem(
-                                onTap: () async {
-                                  await Clipboard.setData(ClipboardData(
-                                    text: user.skype!.keys.first,
-                                  )).then((value) {
-                                    toast("Đã sao chép");
-                                  });
-                                },
-                                child: ListTile(
-                                  leading: Icon(Icons.copy),
-                                  title: Text(
-                                    'Tên người dùng',
-                                    style: TextStyle(fontSize: 12.sp),
+                              if (user.skype!.keys.first != 'name' &&
+                                  user.skype!.keys.first != '')
+                                PopupMenuItem(
+                                  onTap: () async {
+                                    await Clipboard.setData(ClipboardData(
+                                      text: user.skype!.keys.first,
+                                    )).then((value) {
+                                      toast("Đã sao chép");
+                                    });
+                                  },
+                                  child: ListTile(
+                                    leading: Icon(Icons.copy),
+                                    title: Text(
+                                      'Tên người dùng',
+                                      style: TextStyle(fontSize: 12.sp),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              PopupMenuItem(
-                                onTap: () async {
-                                  await Clipboard.setData(ClipboardData(
-                                    text: user.skype!.values.first,
-                                  )).then((value) {
-                                    toast("Đã sao chép");
-                                  });
-                                },
-                                child: ListTile(
-                                  leading: Icon(Icons.copy),
-                                  title: Text(
-                                    'ID Skype',
-                                    style: TextStyle(fontSize: 12.sp),
+                              if (user.skype!.values.first != 'id' &&
+                                  user.skype!.values.first != '')
+                                PopupMenuItem(
+                                  onTap: () async {
+                                    await Clipboard.setData(ClipboardData(
+                                      text: user.skype!.values.first,
+                                    )).then((value) {
+                                      toast("Đã sao chép");
+                                    });
+                                  },
+                                  child: ListTile(
+                                    leading: Icon(Icons.copy),
+                                    title: Text(
+                                      'ID Skype',
+                                      style: TextStyle(fontSize: 12.sp),
+                                    ),
                                   ),
                                 ),
-                              ),
                             ]);
                       },
                       child: Padding(
@@ -487,38 +495,42 @@ class ListInfo extends StatelessWidget {
                             color: Colors.grey[100],
                             position: RelativeRect.fromLTRB(280, y + 10, 20, 0),
                             items: [
-                              PopupMenuItem(
-                                onTap: () async {
-                                  await Clipboard.setData(ClipboardData(
-                                    text: user.zalo!.keys.first,
-                                  )).then((value) {
-                                    toast("Đã sao chép");
-                                  });
-                                },
-                                child: ListTile(
-                                  leading: Icon(Icons.copy),
-                                  title: Text(
-                                    'Tên người dùng',
-                                    style: TextStyle(fontSize: 12.sp),
+                              if (user.zalo!.keys.first != 'name' &&
+                                  user.zalo!.keys.first != '')
+                                PopupMenuItem(
+                                  onTap: () async {
+                                    await Clipboard.setData(ClipboardData(
+                                      text: user.zalo!.keys.first,
+                                    )).then((value) {
+                                      toast("Đã sao chép");
+                                    });
+                                  },
+                                  child: ListTile(
+                                    leading: Icon(Icons.copy),
+                                    title: Text(
+                                      'Tên người dùng',
+                                      style: TextStyle(fontSize: 12.sp),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              PopupMenuItem(
-                                onTap: () async {
-                                  await Clipboard.setData(ClipboardData(
-                                    text: user.zalo!.values.first,
-                                  )).then((value) {
-                                    toast("Đã sao chép");
-                                  });
-                                },
-                                child: ListTile(
-                                  leading: Icon(Icons.copy),
-                                  title: Text(
-                                    'Số điện thoại',
-                                    style: TextStyle(fontSize: 12.sp),
+                              if (user.zalo!.values.first != 'phone' &&
+                                  user.zalo!.values.first != '')
+                                PopupMenuItem(
+                                  onTap: () async {
+                                    await Clipboard.setData(ClipboardData(
+                                      text: user.zalo!.values.first,
+                                    )).then((value) {
+                                      toast("Đã sao chép");
+                                    });
+                                  },
+                                  child: ListTile(
+                                    leading: Icon(Icons.copy),
+                                    title: Text(
+                                      'Số điện thoại',
+                                      style: TextStyle(fontSize: 12.sp),
+                                    ),
                                   ),
                                 ),
-                              ),
                             ]);
                       },
                       child: Padding(
