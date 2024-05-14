@@ -2,18 +2,15 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:networking/apis/apis_auth.dart';
-import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
-import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/helpers/helpers.dart';
 import 'package:networking/models/relationship_model.dart';
 import 'package:networking/models/user_model.dart';
 import 'package:networking/screens/relationships/edit/list_reltionship_edit.dart';
+import 'package:networking/screens/relationships/new/new_relationship.dart';
 import 'package:uuid/uuid.dart';
 
 final _uuid = Uuid();
@@ -61,9 +58,13 @@ class QRScan extends StatelessWidget {
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Image(
-                          image: MemoryImage(image),
-                          height: 200.sp,
+                        ClipRRect(
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(20.sp)),
+                          child: Image(
+                            image: MemoryImage(image),
+                            height: 200.sp,
+                          ),
                         ),
                         SizedBox(
                           height: 20.sp,
@@ -74,18 +75,19 @@ class QRScan extends StatelessWidget {
                             fontSize: 14.sp,
                           ),
                         ),
-                        SizedBox(
-                          height: 20.sp,
-                        ),
-                        relationships != []
-                            ? Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: getRowRelationship(
-                                    relationships, num, 12.sp, 12.sp))
-                            : SizedBox(),
-                        SizedBox(
-                          height: 20.sp,
-                        ),
+                        if (relationships != [])
+                          SizedBox(
+                            height: 20.sp,
+                          ),
+                        if (relationships != [])
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: getRowRelationship(
+                                  relationships, num, 12.sp, 12.sp)),
+                        if (relationships != [])
+                          SizedBox(
+                            height: 20.sp,
+                          ),
                         newUser.address!.isNotEmpty
                             ? Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -194,7 +196,7 @@ class QRScan extends StatelessWidget {
                                         .format(newUser.birthday!),
                                     style: TextStyle(
                                         fontWeight: FontWeight.w400,
-                                        fontSize: 10.sp),
+                                        fontSize: 12.sp),
                                   )
                                 : SizedBox(),
                             SizedBox(
@@ -236,7 +238,7 @@ class QRScan extends StatelessWidget {
                                     newUser.phone!,
                                     style: TextStyle(
                                         fontWeight: FontWeight.w400,
-                                        fontSize: 10.sp),
+                                        fontSize: 12.sp),
                                   ),
                                 ],
                               )
@@ -275,9 +277,8 @@ class QRScan extends StatelessWidget {
                             backgroundColor:
                                 MaterialStatePropertyAll(Colors.green)),
                         onPressed: () async {
-                          String? meId = await APIsAuth.getCurrentUserId();
                           final userId = _uuid.v4();
-                          context.read<UserListBloc>().add(AddUser(
+                          Users user = Users(
                               userId: userId,
                               userName: newUser.userName!,
                               email: newUser.email!,
@@ -298,26 +299,24 @@ class QRScan extends StatelessWidget {
                                   ? newUser.skype!
                                   : {'': ''},
                               address: newUser.address!,
-                              otherInfo: newUser.otherInfo!));
-                          context.read<UsReListBloc>().add(AddUsRe(
-                              meId: meId!,
-                              myReId: userId,
-                              userName: newUser.userName!,
-                              birthday: newUser.birthday != null
-                                  ? newUser.birthday
-                                  : DateTime(2000, 01, 01),
-                              imageUrl: newUser.imageUrl!,
-                              relationships: relationships));
-                          showSnackbar(
-                            context,
-                            "Đã thêm mối quan hệ mới",
-                            Duration(seconds: 2),
-                            true,
-                          );
-                          Navigator.of(context)
-                            ..pop()
-                            ..pop()
-                            ..pop();
+                              otherInfo: newUser.otherInfo!,
+                              notification: true,
+                              createdAt: null,
+                              updateAt: null,
+                              deleteAt: null,
+                              isShare: false,
+                              isOnline: false,
+                              blockUsers: [],
+                              token: '');
+
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      NewRelationship.fromImport(
+                                        user: user,
+                                        relationships: relationships,
+                                      )));
                         },
                         child: Text("Thêm"),
                       ),

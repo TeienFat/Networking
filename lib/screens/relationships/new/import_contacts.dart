@@ -1,15 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:networking/apis/apis_auth.dart';
-import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
-import 'package:networking/bloc/user_list/user_list_bloc.dart';
-import 'package:networking/helpers/helpers.dart';
 import 'package:networking/models/user_model.dart';
 import 'package:networking/screens/relationships/edit/list_reltionship_edit.dart';
+import 'package:networking/screens/relationships/new/new_relationship.dart';
 import 'package:networking/widgets/contacts_card.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
@@ -46,7 +42,6 @@ class _ImportContactsState extends State<ImportContacts> {
   void _onAddContact(Contact contact) async {
     String imageUrl = '';
     final userId = _uuid.v4();
-    String? meId = await APIsAuth.getCurrentUserId();
     final phone = contact.phones.isNotEmpty ? contact.phones.first.number : '';
     final email = contact.emails.isNotEmpty ? contact.emails.first.address : '';
     Map<String, dynamic> otherInfo = contact.organizations.isNotEmpty
@@ -58,7 +53,8 @@ class _ImportContactsState extends State<ImportContacts> {
       convertedImg.writeAsBytesSync(contact.photo!);
       imageUrl = convertedImg.path;
     }
-    context.read<UserListBloc>().add(AddUser(
+
+    Users user = Users(
         userId: userId,
         userName: contact.displayName,
         email: email,
@@ -71,20 +67,23 @@ class _ImportContactsState extends State<ImportContacts> {
         zalo: {'': ''},
         skype: {'': ''},
         address: [],
-        otherInfo: otherInfo));
-    context.read<UsReListBloc>().add(AddUsRe(
-        meId: meId!,
-        myReId: userId,
-        userName: contact.displayName,
-        birthday: DateTime(2000, 01, 01),
-        imageUrl: imageUrl,
-        relationships: []));
-    showSnackbar(
-      context,
-      "Đã thêm mối quan hệ mới",
-      Duration(seconds: 3),
-      true,
-    );
+        otherInfo: otherInfo,
+        notification: true,
+        createdAt: null,
+        updateAt: null,
+        deleteAt: null,
+        isShare: false,
+        isOnline: false,
+        blockUsers: [],
+        token: '');
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => NewRelationship.fromImport(
+                  user: user,
+                  relationships: [],
+                )));
+
     setState(() {
       _contacts!.removeWhere(
         (element) => element.id == contact.id,

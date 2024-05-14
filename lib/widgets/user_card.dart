@@ -100,6 +100,7 @@ class _UserCardState extends State<UserCard> {
                         MaterialPageRoute(
                             builder: (context) => NewRelationship.initUser(
                                   user: widget.user,
+                                  relationships: [],
                                 )));
                   },
                   backgroundColor: Color.fromARGB(255, 238, 184, 6),

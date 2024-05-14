@@ -209,22 +209,20 @@ class _NewGroupChatState extends State<NewGroupChat> {
                         userSnapshot.data!.docs.isEmpty) {
                       return const Center(
                         child: Text(
-                          'No user found.',
+                          'Không có người dùng nào.',
                         ),
                       );
                     }
                     if (userSnapshot.hasError) {
                       return const Center(
                         child: Text(
-                          'Something went wrong...',
+                          'Có gì đó sai sai...',
                         ),
                       );
                     }
                     final data = userSnapshot.data!.docs;
                     _list = data.map((e) => Users.fromMap(e.data())).toList();
                     List<String> blockUsers = _list[getIndexUser()].blockUsers!;
-                    _list.removeWhere(
-                        (element) => element.userId == currentUserId);
                     _list.removeWhere(
                         (user) => blockUsers.contains(user.userId));
                     return Expanded(

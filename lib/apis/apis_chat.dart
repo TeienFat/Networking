@@ -27,7 +27,10 @@ class APIsChat {
   static String token = "";
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUser() {
-    return firestore.collection('user').snapshots();
+    return firestore
+        .collection('user')
+        .where('userId', isNotEqualTo: currentUserId)
+        .snapshots();
   }
 
   static Stream<DocumentSnapshot<Map<String, dynamic>>> getParticipants(

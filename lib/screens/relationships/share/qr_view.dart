@@ -46,12 +46,28 @@ class QRView extends StatelessWidget {
               SizedBox(
                 height: 50.sp,
               ),
-              PrettyQrView.data(
-                data: data,
-                decoration: const PrettyQrDecoration(
-                  shape: PrettyQrSmoothSymbol(),
-                  image: PrettyQrDecorationImage(
-                    image: AssetImage('assets/images/logo.png'),
+              Container(
+                padding: EdgeInsets.all(10.sp),
+                decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(5.sp),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: Offset(0, 5),
+                      ),
+                    ]),
+                child: PrettyQrView.data(
+                  data: data,
+                  decoration: const PrettyQrDecoration(
+                    shape: PrettyQrSmoothSymbol(),
+                    image: PrettyQrDecorationImage(
+                      image: AssetImage('assets/images/logo.png'),
+                    ),
                   ),
                 ),
               ),

@@ -137,30 +137,33 @@ class _MainScreenState extends State<MainScreen> {
         // context
         //     .read<UserListBloc>()
         //     .add(UpdateUserIsShare(userId: myId!, isShare: false));
-
-        showModalBottomSheet(
-          useSafeArea: true,
-          isScrollControlled: true,
-          context: context,
-          builder: (context) => MenuAddChat(
-            onAddChat: (type) {
-              if (type) {
-                showModalBottomSheet(
-                  useSafeArea: true,
-                  isScrollControlled: true,
-                  context: context,
-                  builder: (context) => NewGroupChat(),
-                );
-              } else {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ContactScreen(),
-                    ));
-              }
-            },
-          ),
-        );
+        myId = await APIsAuth.getCurrentUserId();
+        Users? user = await APIsUser.getUserFromId(myId!);
+        final isShare = user!.isShare!;
+        if (isShare)
+          showModalBottomSheet(
+            useSafeArea: true,
+            isScrollControlled: true,
+            context: context,
+            builder: (context) => MenuAddChat(
+              onAddChat: (type) {
+                if (type) {
+                  showModalBottomSheet(
+                    useSafeArea: true,
+                    isScrollControlled: true,
+                    context: context,
+                    builder: (context) => NewGroupChat(),
+                  );
+                } else {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ContactScreen(),
+                      ));
+                }
+              },
+            ),
+          );
         break;
       case 3:
         final meId = await APIsAuth.getCurrentUserId();
