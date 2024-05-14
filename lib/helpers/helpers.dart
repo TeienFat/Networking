@@ -25,7 +25,7 @@ Widget searchBar(Function filter, double width) {
         filled: true,
         fillColor: Color.fromRGBO(247, 247, 252, 1),
         hintText: 'Tìm kiếm',
-        hintStyle: TextStyle(color: Colors.grey),
+        hintStyle: TextStyle(color: Colors.grey, fontSize: 16),
         contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(15.0)),

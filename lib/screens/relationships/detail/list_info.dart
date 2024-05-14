@@ -395,7 +395,9 @@ class ListInfo extends StatelessWidget {
                               width: 17.sp,
                             ),
                             Text(
-                              user.facebook!.keys.first,
+                              user.facebook!.keys.first != 'name'
+                                  ? user.facebook!.keys.first
+                                  : '',
                               style: TextStyle(
                                   fontWeight: FontWeight.w400, fontSize: 14.sp),
                             ),
@@ -462,7 +464,9 @@ class ListInfo extends StatelessWidget {
                             width: 20.sp,
                           ),
                           Text(
-                            user.skype!.keys.first,
+                            user.skype!.keys.first != 'name'
+                                ? user.skype!.keys.first
+                                : '',
                             style: TextStyle(
                                 fontWeight: FontWeight.w400, fontSize: 14.sp),
                           ),
@@ -532,7 +536,9 @@ class ListInfo extends StatelessWidget {
                               width: 18.sp,
                             ),
                             Text(
-                              user.zalo!.keys.first,
+                              user.zalo!.keys.first != 'name'
+                                  ? user.zalo!.keys.first
+                                  : '',
                               style: TextStyle(
                                   fontWeight: FontWeight.w400, fontSize: 14.sp),
                             ),

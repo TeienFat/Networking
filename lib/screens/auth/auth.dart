@@ -5,6 +5,7 @@ import 'package:networking/apis/apis_auth.dart';
 import 'package:networking/bloc/reCare_list/re_care_list_bloc.dart';
 import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
 import 'package:networking/bloc/user_list/user_list_bloc.dart';
+import 'package:networking/main.dart';
 import 'package:networking/models/secuquestions_model.dart';
 import 'package:networking/screens/auth/forgot_password/forgot_password.dart';
 import 'package:uuid/uuid.dart';
@@ -56,10 +57,12 @@ class _AuthScreenState extends State<AuthScreen> {
       final validLogin =
           await APIsAuth.login(_enteredLoginName, _enteredPassword);
       if (validLogin) {
+        context.read<UsReListBloc>().add(LoadUsReList());
+        context.read<UserListBloc>().add(LoadUserList());
+        context.read<ReCareListBloc>().add(LoadReCareList());
+        currentUserId = await APIsAuth.getCurrentUserId();
         Navigator.of(context)
             .pushNamedAndRemoveUntil("/Main", (route) => false);
-        context.read<UsReListBloc>().add(LoadUsReList());
-        context.read<ReCareListBloc>().add(LoadReCareList());
       } else {
         showSnackbar(
           context,
@@ -95,12 +98,12 @@ class _AuthScreenState extends State<AuthScreen> {
 
         showSnackbar(context, "Đăng kí tài khoản thành công",
             Duration(seconds: 2), true);
-
-        Navigator.of(context)
-            .pushNamedAndRemoveUntil("/Main", (route) => false);
         context.read<UsReListBloc>().add(LoadUsReList());
         context.read<UserListBloc>().add(LoadUserList());
         context.read<ReCareListBloc>().add(LoadReCareList());
+        currentUserId = await APIsAuth.getCurrentUserId();
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil("/Main", (route) => false);
       } else {
         showSnackbar(context, "Tên đăng nhập đã được sử dụng",
             Duration(seconds: 2), false);

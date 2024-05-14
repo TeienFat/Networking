@@ -11,12 +11,13 @@ class ProfileScreen extends StatelessWidget {
   final String myId;
   @override
   Widget build(BuildContext context) {
+    context.read<UserListBloc>().add(LoadUserList());
     return BlocBuilder<UserListBloc, UserListState>(
       builder: (context, state) {
         if (state is UserListUploaded && state.users.isNotEmpty) {
           final users = state.users;
           for (var user in users) {
-            if ((user.userId!.length == myId.length) && (user.userId == myId)) {
+            if (user.userId!.length == myId.length && user.userId == myId) {
               return Column(
                 children: [
                   Container(

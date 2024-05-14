@@ -50,19 +50,19 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyB7E5V3Mp8Vq6Koosd6zGGo2o4AlcZVZmo',
-    appId: '1:618309803287:android:b97f1876cdc57149ceab52',
-    messagingSenderId: '618309803287',
-    projectId: 'networking-ac16c',
-    storageBucket: 'networking-ac16c.appspot.com',
+    apiKey: 'AIzaSyAXSZ-3DtJJwKTf3TFEfYXNfa_VsN4QWuQ',
+    appId: '1:163025859915:android:604dc42c6ed26eb503e4ce',
+    messagingSenderId: '163025859915',
+    projectId: 'networking-e5a2d',
+    storageBucket: 'networking-e5a2d.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBT1buZMuHaaMVIgGinmwaSCjyN7RcdvrM',
-    appId: '1:618309803287:ios:9bf7432e1571b8d7ceab52',
-    messagingSenderId: '618309803287',
-    projectId: 'networking-ac16c',
-    storageBucket: 'networking-ac16c.appspot.com',
+    apiKey: 'AIzaSyA-PsqzhedcuEnSwnmOAJaOmQsCyDYteq0',
+    appId: '1:163025859915:ios:25c48ae35870bf1103e4ce',
+    messagingSenderId: '163025859915',
+    projectId: 'networking-e5a2d',
+    storageBucket: 'networking-e5a2d.appspot.com',
     iosBundleId: 'com.example.networking',
   );
 }

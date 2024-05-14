@@ -7,8 +7,12 @@ import 'package:networking/widgets/menu_pick_image.dart';
 
 class UserImagePicker extends StatefulWidget {
   const UserImagePicker(
-      {super.key, required this.onPickImage, this.initImageUrl});
+      {super.key,
+      required this.onPickImage,
+      this.initImageUrl,
+      this.initNetworkImage});
   final File? initImageUrl;
+  final String? initNetworkImage;
   final void Function(File pickedImage) onPickImage;
 
   @override
@@ -68,8 +72,11 @@ class _UserImagePickerState extends State<UserImagePicker> {
             "assets/images/user.png",
             width: 100.sp,
           ),
-          foregroundImage:
-              _pickedImageFile != null ? FileImage(_pickedImageFile!) : null,
+          foregroundImage: _pickedImageFile != null
+              ? FileImage(_pickedImageFile!)
+              : widget.initNetworkImage != null
+                  ? NetworkImage(widget.initNetworkImage!) as ImageProvider
+                  : null,
         ),
         TextButton(
             onPressed: () {
