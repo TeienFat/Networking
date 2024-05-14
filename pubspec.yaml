@@ -84,7 +84,18 @@ dependencies:
   flutter_local_notifications: ^17.1.1
   flutter_timezone: ^1.0.7
   get: ^4.6.6
-
+  # Hiển thị hình ảnh từ internet và giữ chúng trong thư mục bộ đệm.
+  cached_network_image: ^3.3.0
+  # Lưu file về thư viện
+  gallery_saver: ^2.3.2
+  # Để chạy video
+  video_player: ^2.8.1
+  # Thực hiện các yêu cầu http
+  http: ^0.13.6
+  # Hiển thị thông báo khi có tin nhắn tới
+  flutter_notification_channel: ^2.0.0
+  # Vuốt tin nhắn
+  swipe_to: ^1.0.5
 dev_dependencies:
   flutter_test:
     sdk: flutter

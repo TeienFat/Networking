@@ -49,6 +49,12 @@ class UpdateUserNotification extends UserListEvent {
   UpdateUserNotification({required this.userId, required this.notification});
 }
 
+class UpdateUserIsShare extends UserListEvent {
+  final String userId;
+  final bool isShare;
+  UpdateUserIsShare({required this.userId, required this.isShare});
+}
+
 class UpdateUser extends UserListEvent {
   final String userId;
   final String userName;

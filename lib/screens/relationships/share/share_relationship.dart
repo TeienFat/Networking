@@ -2,9 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:networking/apis/apis_chat.dart';
+import 'package:networking/bloc/user_list/user_list_bloc.dart';
 
 import 'package:networking/helpers/helpers.dart';
 import 'package:networking/models/address_model.dart';
@@ -16,17 +19,24 @@ import 'package:networking/screens/relationships/share/qr_view.dart';
 
 class ShareRelationship extends StatefulWidget {
   const ShareRelationship(
-      {super.key, required this.user, required this.userRelationship});
+      {super.key, required this.user, required this.userRelationship})
+      : shareToCloud = false;
   const ShareRelationship.myProfile({super.key, required this.user})
-      : this.userRelationship = null;
+      : this.userRelationship = null,
+        shareToCloud = false;
+  const ShareRelationship.shareToCloud({super.key, required this.user})
+      : this.userRelationship = null,
+        shareToCloud = true;
   final Users user;
   final UserRelationship? userRelationship;
+  final bool shareToCloud;
   @override
   State<ShareRelationship> createState() => _ShareRelationshipState();
 }
 
 class _ShareRelationshipState extends State<ShareRelationship> {
   bool _isCheckedRelationships = false;
+  bool _isCheckedImage = false;
   bool _isCheckedBirthday = false;
   bool _isCheckedGender = false;
   bool _isCheckedHobby = false;
@@ -37,6 +47,7 @@ class _ShareRelationshipState extends State<ShareRelationship> {
   bool _isCheckedZalo = false;
   bool _isCheckedSkype = false;
   bool _isCheckedOtherInfo = false;
+  var imageUrl = '';
   late List<String> dataShare;
   bool _isSelectAll = false;
 
@@ -124,6 +135,7 @@ class _ShareRelationshipState extends State<ShareRelationship> {
       _isCheckedBirthday = select;
       _isCheckedGender = select;
       _isCheckedHobby = select;
+      _isCheckedImage = select;
       _isCheckedAddress = select;
       _isCheckedPhone = select;
       _isCheckedEmail = select;
@@ -135,42 +147,75 @@ class _ShareRelationshipState extends State<ShareRelationship> {
     });
   }
 
-  void _shareRelationship() {
+  void _onShareToCloud() {
+    context
+        .read<UserListBloc>()
+        .add(UpdateUserIsShare(userId: widget.user.userId!, isShare: true));
+    showSnackbar(
+        context, 'Đã chia sẻ thông tin thành công', Duration(seconds: 2), true);
+    Navigator.of(context).pushReplacementNamed("/MainChat");
+  }
+
+  void _shareRelationship() async {
+    if (widget.shareToCloud && _isCheckedImage && widget.user.imageUrl != '') {
+      imageUrl = await APIsChat.saveMedia(
+          0, widget.user.userId!, File(widget.user.imageUrl!), 'user_images');
+    }
     Users userShare = Users(
-        userId: '',
+        userId: widget.shareToCloud ? widget.user.userId : '',
         userName: widget.user.userName,
         email: _isCheckedEmail ? widget.user.email : '',
-        imageUrl: '',
+        imageUrl: imageUrl,
         gender: _isCheckedGender ? widget.user.gender : false,
         birthday: _isCheckedBirthday ? widget.user.birthday : null,
         hobby: _isCheckedHobby ? widget.user.hobby : '',
         phone: _isCheckedPhone ? widget.user.phone : '',
-        facebook: _isCheckedFB ? widget.user.facebook : {},
-        zalo: _isCheckedZalo ? widget.user.zalo : {},
-        skype: _isCheckedSkype ? widget.user.skype : {},
+        facebook: _isCheckedFB
+            ? widget.shareToCloud
+                ? {'name': 'link'}
+                : widget.user.facebook
+            : {},
+        zalo: _isCheckedZalo
+            ? widget.shareToCloud
+                ? {'name': 'phone'}
+                : widget.user.zalo
+            : {},
+        skype: _isCheckedSkype
+            ? widget.shareToCloud
+                ? {'name': 'id'}
+                : widget.user.skype
+            : {},
         address: _isCheckedAddress ? _listAddress : [],
         otherInfo: _isCheckedSkype ? _otherInfo : {},
         notification: true,
         createdAt: null,
         updateAt: null,
         deleteAt: null,
+        isShare: false,
         isOnline: false,
         blockUsers: [],
         token: '');
-    if (widget.userRelationship != null) {
-      dataShare = [
-        jsonEncode(userShare.toMap()),
-        Relationship.encode(_listRelationship)
-      ];
-    } else {
-      dataShare = [jsonEncode(userShare.toMap()), ''];
-    }
+    if (widget.shareToCloud) {
+      APIsChat.createNewUser(userShare);
 
-    Navigator.push(
+      _onShareToCloud();
+    } else {
+      if (widget.userRelationship != null) {
+        dataShare = [
+          jsonEncode(userShare.toMap()),
+          Relationship.encode(_listRelationship)
+        ];
+      } else {
+        dataShare = [jsonEncode(userShare.toMap()), ''];
+      }
+
+      Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => QRView(data: jsonEncode(dataShare)),
-        ));
+        ),
+      );
+    }
   }
 
   @override
@@ -215,16 +260,47 @@ class _ShareRelationshipState extends State<ShareRelationship> {
                   ),
                   Column(
                     children: [
-                      CircleAvatar(
-                        radius: 70.sp,
-                        backgroundColor: Colors.grey,
-                        child: Image.asset(
-                          "assets/images/user.png",
-                          width: 100.sp,
-                        ),
-                        foregroundImage: widget.user.imageUrl != ''
-                            ? FileImage(File(widget.user.imageUrl!))
-                            : null,
+                      Stack(
+                        children: [
+                          CircleAvatar(
+                            radius: 70.sp,
+                            backgroundColor: Colors.grey,
+                            child: Image.asset(
+                              "assets/images/user.png",
+                              width: 100.sp,
+                            ),
+                            foregroundImage: widget.user.imageUrl != ''
+                                ? FileImage(File(widget.user.imageUrl!))
+                                : null,
+                          ),
+                          if (widget.shareToCloud && widget.user.imageUrl != '')
+                            Positioned.fill(
+                              child: Align(
+                                alignment: Alignment.bottomRight,
+                                child: Transform.scale(
+                                  scale: 1.5,
+                                  child: Checkbox(
+                                    fillColor:
+                                        MaterialStateProperty.resolveWith(
+                                            (states) {
+                                      if (!states
+                                          .contains(MaterialState.selected)) {
+                                        return Colors.white;
+                                      }
+                                      return null;
+                                    }),
+                                    activeColor: Colors.blue[800],
+                                    value: _isCheckedImage,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _isCheckedImage = value!;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                       SizedBox(
                         height: 20.sp,

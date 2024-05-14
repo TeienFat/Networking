@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:networking/apis/apis_ReCare.dart';
@@ -6,7 +8,10 @@ import 'package:networking/apis/apis_auth.dart';
 import 'package:networking/apis/apis_relationships.dart';
 import 'package:networking/apis/apis_user.dart';
 import 'package:networking/apis/apis_user_relationship.dart';
+import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/models/user_model.dart';
+import 'package:networking/screens/chat/contacs.dart';
+import 'package:networking/screens/chat/share_my_profile.dart';
 import 'package:networking/screens/home/chat_home.dart';
 import 'package:networking/screens/home/relationships.dart';
 import 'package:networking/screens/home/take_care.dart';
@@ -15,6 +20,8 @@ import 'package:networking/screens/my_profile/edit_my_profile.dart';
 import 'package:networking/screens/relationships/new/new_relationship.dart';
 import 'package:networking/screens/take_care/new/new_relationship_care.dart';
 import 'package:networking/widgets/bottom_navigartion_bar.dart';
+import 'package:networking/widgets/menu_add_chat.dart';
+import 'package:networking/widgets/new_group.dart';
 import 'package:networking/widgets/popup_menu_my_profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -38,18 +45,30 @@ class _MainScreenState extends State<MainScreen> {
     // TODO: implement initState
     super.initState();
     currentIndex = widget.index;
-    if (widget.index == 1) {
-      screens = TakeCareScreen();
-    } else {
-      screens = RelationshipScreen();
+    switch (widget.index) {
+      case 0:
+        screens = RelationshipScreen();
+        break;
+      case 1:
+        screens = TakeCareScreen();
+        break;
+      case 2:
+        screens = ChatHome();
+        break;
     }
   }
 
   String title = 'Các mối quan hệ';
 
   void onTab(int index) async {
+    var isShare = false;
     if (index == 3) {
       myId = await APIsAuth.getCurrentUserId();
+    }
+    if (index == 2) {
+      myId = await APIsAuth.getCurrentUserId();
+      Users? user = await APIsUser.getUserFromId(myId!);
+      isShare = user!.isShare!;
     }
     setState(() {
       currentIndex = index;
@@ -64,7 +83,11 @@ class _MainScreenState extends State<MainScreen> {
           title = 'Chăm sóc mối quan hệ';
           break;
         case 2:
-          screens = ChatScreen();
+          if (isShare) {
+            screens = ChatHome();
+          } else {
+            screens = ShareMyProFile();
+          }
           title = 'Trò chuyện';
           break;
         case 3:
@@ -111,6 +134,33 @@ class _MainScreenState extends State<MainScreen> {
         ));
         break;
       case 2:
+        // context
+        //     .read<UserListBloc>()
+        //     .add(UpdateUserIsShare(userId: myId!, isShare: false));
+
+        showModalBottomSheet(
+          useSafeArea: true,
+          isScrollControlled: true,
+          context: context,
+          builder: (context) => MenuAddChat(
+            onAddChat: (type) {
+              if (type) {
+                showModalBottomSheet(
+                  useSafeArea: true,
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (context) => NewGroupChat(),
+                );
+              } else {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ContactScreen(),
+                    ));
+              }
+            },
+          ),
+        );
         break;
       case 3:
         final meId = await APIsAuth.getCurrentUserId();

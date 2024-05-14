@@ -124,6 +124,7 @@ class _ImportContactsState extends State<ImportContacts> {
         createdAt: null,
         updateAt: null,
         deleteAt: null,
+        isShare: false,
         isOnline: false,
         blockUsers: [],
         token: '');

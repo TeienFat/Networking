@@ -18,6 +18,7 @@ class UserListBloc extends Bloc<UserListEvent, UserListState> {
     on<AddUser>(_addUser);
     on<DeleteUser>(_deleteUser);
     on<UpdateUserNotification>(_updateUserNotification);
+    on<UpdateUserIsShare>(_updateUserIsShare);
     on<UpdateUser>(_updateUser);
   }
 
@@ -40,7 +41,8 @@ class UserListBloc extends Bloc<UserListEvent, UserListState> {
         createdAt: DateTime.now(),
         updateAt: null,
         deleteAt: null,
-        isOnline: true,
+        isShare: false,
+        isOnline: false,
         blockUsers: [],
         token: '');
     state.users.add(newUser);
@@ -73,6 +75,18 @@ class UserListBloc extends Bloc<UserListEvent, UserListState> {
     );
     emit(UserListUploaded(users: state.users));
     APIsUsRe.setNotificationForAllUsRe(event.notification);
+  }
+
+  void _updateUserIsShare(
+      UpdateUserIsShare event, Emitter<UserListState> emit) async {
+    for (int i = 0; i < state.users.length; i++) {
+      if (event.userId == state.users[i].userId) {
+        state.users[i].isShare = event.isShare;
+        state.users[i].updateAt = DateTime.now();
+      }
+    }
+    APIsUser.UpdateUserIsShare(event.userId, event.isShare);
+    emit(UserListUploaded(users: state.users));
   }
 
   void _updateUser(UpdateUser event, Emitter<UserListState> emit) {

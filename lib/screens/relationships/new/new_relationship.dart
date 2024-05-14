@@ -22,6 +22,8 @@ import 'package:networking/screens/relationships/new/import_contacts.dart';
 import 'package:networking/screens/relationships/new/qr_scan.dart';
 import 'package:networking/widgets/date_picker.dart';
 import 'package:networking/widgets/user_image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
 import 'package:tiengviet/tiengviet.dart';
 import 'package:uuid/uuid.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -29,8 +31,9 @@ import 'package:url_launcher/url_launcher.dart';
 final _uuid = Uuid();
 
 class NewRelationship extends StatefulWidget {
-  const NewRelationship({super.key});
-
+  const NewRelationship({super.key}) : this.user = null;
+  const NewRelationship.initUser({super.key, required this.user});
+  final Users? user;
   @override
   State<NewRelationship> createState() => _NewRelationshipState();
 }
@@ -62,6 +65,48 @@ class _NewRelationshipState extends State<NewRelationship> {
   List<Relationship> _listRelationship = [];
   List<Address> _listAddress = [];
   Map<String, dynamic> _otherInfo = {};
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (widget.user != null) {
+      _enteredUserName = widget.user!.userName;
+      _enteredPhone = widget.user!.phone;
+      _enteredEmail = widget.user!.email;
+      _enteredHobby = widget.user!.hobby;
+      _enteredGender = widget.user!.gender!;
+
+      if (widget.user!.facebook!.keys.first.isNotEmpty &&
+          widget.user!.facebook!.keys.first != 'name')
+        _enteredFBName.text = widget.user!.facebook!.keys.first;
+      if (widget.user!.facebook!.values.first.isNotEmpty &&
+          widget.user!.facebook!.values.first != 'link')
+        _enteredFBLink.text = widget.user!.facebook!.values.first;
+
+      if (widget.user!.skype!.keys.first.isNotEmpty &&
+          widget.user!.skype!.keys.first != 'name')
+        _enteredSkypeName.text = widget.user!.skype!.keys.first;
+      if (widget.user!.skype!.values.first.isNotEmpty &&
+          widget.user!.skype!.values.first != 'id')
+        _enteredSkypeId.text = widget.user!.skype!.values.first;
+
+      if (widget.user!.zalo!.keys.first.isNotEmpty &&
+          widget.user!.zalo!.keys.first != 'name')
+        _enteredZaloName.text = widget.user!.zalo!.keys.first;
+      if (widget.user!.zalo!.values.first.isNotEmpty &&
+          widget.user!.zalo!.values.first != 'phone')
+        _enteredZaloPhone.text = widget.user!.zalo!.values.first;
+
+      _enteredBirthday = widget.user!.birthday!;
+      // _numOfRelationship = widget.userRelationship.relationships!.length;
+      _numOfAddress = widget.user!.address!.length;
+      // _listRelationship = widget.userRelationship.relationships!;
+      // _enteredSpecial = widget.userRelationship.special;
+      _listAddress = widget.user!.address!;
+      _otherInfo = widget.user!.otherInfo!;
+    }
+  }
 
   void _createNewRelationship() async {
     final isValid = _formKey.currentState!.validate();
@@ -184,8 +229,21 @@ class _NewRelationshipState extends State<NewRelationship> {
             imageUrl =
                 await APIsUser.saveUserImage(_enteredImageFile!, '$userId.jpg');
           } else {
-            imageUrl = '';
+            if (widget.user != null && widget.user!.imageUrl != '') {
+              final response =
+                  await http.get(Uri.parse(widget.user!.imageUrl!));
+              final documentDirectory =
+                  await getApplicationDocumentsDirectory();
+              String Url = '${documentDirectory.path}/$userId.jpg';
+              final file = File(Url);
+              file.writeAsBytesSync(response.bodyBytes);
+              imageUrl = file.path;
+              print(file.path);
+            } else {
+              imageUrl = '';
+            }
           }
+
           context.read<UserListBloc>().add(AddUser(
               userId: userId,
               userName: _enteredUserName,
@@ -420,6 +478,10 @@ class _NewRelationshipState extends State<NewRelationship> {
                 child: Column(
                   children: [
                     UserImagePicker(
+                      initNetworkImage:
+                          widget.user != null && widget.user!.imageUrl != ''
+                              ? widget.user!.imageUrl!
+                              : null,
                       onPickImage: (pickedImage) {
                         _enteredImageFile = pickedImage;
                       },
@@ -448,6 +510,7 @@ class _NewRelationshipState extends State<NewRelationship> {
                             children: [
                               Expanded(
                                 child: TextFormField(
+                                  initialValue: _enteredUserName,
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
                                     hintText: "Họ tên",
@@ -793,6 +856,7 @@ class _NewRelationshipState extends State<NewRelationship> {
                                 FaIcon(FontAwesomeIcons.solidHeart),
                                 Expanded(
                                   child: TextFormField(
+                                    initialValue: _enteredHobby,
                                     decoration: InputDecoration(
                                       border: InputBorder.none,
                                       hintText: "Sở thích",
@@ -813,6 +877,7 @@ class _NewRelationshipState extends State<NewRelationship> {
                                 FaIcon(FontAwesomeIcons.phone),
                                 Expanded(
                                   child: TextFormField(
+                                    initialValue: _enteredPhone,
                                     decoration: InputDecoration(
                                       border: InputBorder.none,
                                       hintText: "Số điện thoại",
@@ -844,6 +909,7 @@ class _NewRelationshipState extends State<NewRelationship> {
                                 ),
                                 Expanded(
                                   child: TextFormField(
+                                    initialValue: _enteredEmail,
                                     decoration: InputDecoration(
                                       border: InputBorder.none,
                                       hintText: "Email",

@@ -37,17 +37,18 @@ class _SplashScreenState extends State<SplashScreen>
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool firstTime = prefs.getBool('first_time') ?? true;
     var _duration = new Duration(seconds: 3);
-    final myId = await APIsAuth.getCurrentUserId();
-    Users? isMe = await APIsUser.getUserFromId(myId!);
-    if (isMe!.notification!) {
-      LocalNotifications.showDailyNotifications(
-          title: "Chăm sóc hôm nay!",
-          body: "\u{1F4C6} Chăm sóc các mục chăm sóc hôm nay nào!",
-          contentBody: [],
-          payload: "Today");
-    }
+
     if (!firstTime) {
       // not first time
+      final myId = await APIsAuth.getCurrentUserId();
+      Users? isMe = await APIsUser.getUserFromId(myId!);
+      if (isMe!.notification!) {
+        LocalNotifications.showDailyNotifications(
+            title: "Chăm sóc hôm nay!",
+            body: "\u{1F4C6} Chăm sóc các mục chăm sóc hôm nay nào!",
+            contentBody: [],
+            payload: "Today");
+      }
       return Timer(_duration, goToNextScreen(false));
     } else {
       // first time

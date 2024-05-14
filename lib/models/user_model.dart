@@ -18,6 +18,7 @@ class Users {
   DateTime? createdAt;
   DateTime? updateAt;
   DateTime? deleteAt;
+  bool? isShare;
   bool? isOnline;
   List<String>? blockUsers;
   String? token;
@@ -40,6 +41,7 @@ class Users {
     required this.createdAt,
     required this.updateAt,
     required this.deleteAt,
+    required this.isShare,
     required this.isOnline,
     required this.blockUsers,
     required this.token,
@@ -64,6 +66,7 @@ class Users {
         map['createdAt'] != null ? DateTime.parse(map['createdAt']) : null;
     updateAt = map['updateAt'] != null ? DateTime.parse(map['updateAt']) : null;
     deleteAt = map['deleteAt'] != null ? DateTime.parse(map['deleteAt']) : null;
+    isShare = map['isShare'];
     isOnline = map['isOnline'];
     blockUsers = List<String>.from(map['blockUsers']);
     token = map['token'];
@@ -88,6 +91,7 @@ class Users {
       "updateAt": updateAt != null ? updateAt!.toIso8601String() : null,
       "deleteAt": deleteAt != null ? deleteAt!.toIso8601String() : null,
       "isOnline": isOnline,
+      "isShare": isShare,
       "blockUsers": blockUsers,
       "token": token
     });

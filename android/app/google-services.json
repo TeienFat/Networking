@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "618309803287",
-    "project_id": "networking-ac16c",
-    "storage_bucket": "networking-ac16c.appspot.com"
+    "project_number": "163025859915",
+    "project_id": "networking-e5a2d",
+    "storage_bucket": "networking-e5a2d.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:618309803287:android:b97f1876cdc57149ceab52",
+        "mobilesdk_app_id": "1:163025859915:android:604dc42c6ed26eb503e4ce",
         "android_client_info": {
           "package_name": "com.example.networking"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB7E5V3Mp8Vq6Koosd6zGGo2o4AlcZVZmo"
+          "current_key": "AIzaSyAXSZ-3DtJJwKTf3TFEfYXNfa_VsN4QWuQ"
         }
       ],
       "services": {
