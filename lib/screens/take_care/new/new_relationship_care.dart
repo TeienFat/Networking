@@ -40,9 +40,9 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
 
   var _enteredAllDay = false;
   TimeOfDay _enteredStartTime =
-      TimeOfDay(hour: TimeOfDay.now().hour, minute: 0);
-  TimeOfDay _enteredEndTime =
       TimeOfDay(hour: TimeOfDay.now().hour + 1, minute: 0);
+  TimeOfDay _enteredEndTime =
+      TimeOfDay(hour: TimeOfDay.now().hour + 2, minute: 0);
   late DateTime _enteredStartDay;
   late DateTime _enteredEndDay;
 
@@ -74,41 +74,52 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
       return;
     }
     if (_enteredUsRe != null) {
-      if (!_checkvalidTime(_enteredStartTime, _enteredEndTime) &&
-          (isSameDay(_enteredStartDay, _enteredEndDay))) {
+      if (!_checkvalidTime(TimeOfDay.now(), _enteredStartTime) &&
+          (isSameDay(DateTime.now(), _enteredStartDay))) {
         showSnackbar(
           context,
           "Giờ không hợp lệ",
-          subtitle: "Giờ kết thúc phải lớn giờ bắt đầu nếu cùng ngày",
+          subtitle: "Giờ bắt đầu phải lớn giờ hiện tại nếu là hôm nay",
           Duration(seconds: 3),
           false,
         );
       } else {
-        final startTime = _enteredStartDay.copyWith(
-            hour: _enteredStartTime.hour,
-            minute: _enteredStartTime.minute,
-            second: 0,
-            millisecond: 0,
-            microsecond: 0);
-        final endTime = _enteredEndDay.copyWith(
-            hour: _enteredEndTime.hour,
-            minute: _enteredEndTime.minute,
-            second: 0,
-            millisecond: 0,
-            microsecond: 0);
-        String? meId = await APIsAuth.getCurrentUserId();
-        context.read<ReCareListBloc>().add(AddReCare(
-            meId: meId!,
-            usRe: _enteredUsRe!,
-            users: _enteredUser!,
-            startTime: startTime,
-            endTime: endTime,
-            title: _enteredTitle));
+        if (!_checkvalidTime(_enteredStartTime, _enteredEndTime) &&
+            (isSameDay(_enteredStartDay, _enteredEndDay))) {
+          showSnackbar(
+            context,
+            "Giờ không hợp lệ",
+            subtitle: "Giờ kết thúc phải lớn giờ bắt đầu nếu cùng ngày",
+            Duration(seconds: 3),
+            false,
+          );
+        } else {
+          final startTime = _enteredStartDay.copyWith(
+              hour: _enteredStartTime.hour,
+              minute: _enteredStartTime.minute,
+              second: 0,
+              millisecond: 0,
+              microsecond: 0);
+          final endTime = _enteredEndDay.copyWith(
+              hour: _enteredEndTime.hour,
+              minute: _enteredEndTime.minute,
+              second: 0,
+              millisecond: 0,
+              microsecond: 0);
+          String? meId = await APIsAuth.getCurrentUserId();
+          context.read<ReCareListBloc>().add(AddReCare(
+              meId: meId!,
+              usRe: _enteredUsRe!,
+              users: _enteredUser!,
+              startTime: startTime,
+              endTime: endTime,
+              title: _enteredTitle));
 
-        showSnackbar(
-            context, "Đã thêm mục chăm sóc mới", Duration(seconds: 2), true);
+          showSnackbar(
+              context, "Đã thêm mục chăm sóc mới", Duration(seconds: 2), true);
 
-        Navigator.of(context).pop(true);
+          Navigator.of(context).pop(true);
+        }
       }
     } else {
       showSnackbar(

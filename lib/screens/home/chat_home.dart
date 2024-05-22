@@ -64,64 +64,68 @@ class _ChatHomeState extends State<ChatHome> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: StreamBuilder(
-        stream: APIsChat.getAllChatroom(),
-        builder: (ctx, chatroomSnapshot) {
-          if (chatroomSnapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              heightFactor: 10,
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (!chatroomSnapshot.hasData ||
-              chatroomSnapshot.data!.docs.isEmpty) {
-            return Column(
-              children: [
-                Padding(
-                  padding:
-                      EdgeInsets.only(top: 180.sp, right: 50.sp, bottom: 50.sp),
-                  child: Icon(
-                    FontAwesomeIcons.commentSlash,
-                    size: 200.sp,
-                    color: Colors.grey[300],
+      padding: EdgeInsets.all(5.sp),
+      child: Column(
+        children: [
+          SizedBox(
+            height: 5.sp,
+          ),
+          searchBar(_runFilter, ScreenUtil().screenWidth),
+          SizedBox(
+            height: 10,
+          ),
+          StreamBuilder(
+            stream: APIsChat.getAllChatroom(),
+            builder: (ctx, chatroomSnapshot) {
+              if (chatroomSnapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  heightFactor: 10,
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (!chatroomSnapshot.hasData ||
+                  chatroomSnapshot.data!.docs.isEmpty) {
+                return Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: 180.sp, right: 50.sp, bottom: 50.sp),
+                      child: Icon(
+                        FontAwesomeIcons.commentSlash,
+                        size: 200.sp,
+                        color: Colors.grey[300],
+                      ),
+                    ),
+                    Text(
+                      "Chưa có đoạn chat nào",
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[400],
+                      ),
+                    )
+                  ],
+                );
+              }
+              if (chatroomSnapshot.hasError) {
+                return const Center(
+                  heightFactor: 10,
+                  child: Text(
+                    'Có gì đó sai sai',
                   ),
-                ),
-                Text(
-                  "Chưa có đoạn chat nào",
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[400],
-                  ),
-                )
-              ],
-            );
-          }
-          if (chatroomSnapshot.hasError) {
-            return const Center(
-              heightFactor: 10,
-              child: Text(
-                'Có gì đó sai sai',
-              ),
-            );
-          }
-          final data = chatroomSnapshot.data!.docs;
-          _listChatroom =
-              data.map<ChatRoom>((e) => ChatRoom.fromMap(e.data())).toList();
-          _listChatroom.sort((a, b) {
-            if (int.parse(a.lastSend!) > (int.parse(b.lastSend!))) {
-              return 0;
-            }
-            return 1;
-          });
-          return Column(
-            children: [
-              searchBar(_runFilter, ScreenUtil().screenWidth),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
+                );
+              }
+              final data = chatroomSnapshot.data!.docs;
+              _listChatroom = data
+                  .map<ChatRoom>((e) => ChatRoom.fromMap(e.data()))
+                  .toList();
+              _listChatroom.sort((a, b) {
+                if (int.parse(a.lastSend!) > (int.parse(b.lastSend!))) {
+                  return 0;
+                }
+                return 1;
+              });
+              return Container(
                 padding: EdgeInsets.symmetric(horizontal: 5.sp),
                 height: ScreenUtil().screenHeight * 0.7,
                 child: ListView.builder(
@@ -201,10 +205,10 @@ class _ChatHomeState extends State<ChatHome> {
                       return FutureBuilder(
                           future:
                               APIsChat.getChatRoomName(_listChatroom[index]),
-                          builder: (ctx, usersnapshot) {
-                            if (usersnapshot.connectionState ==
+                          builder: (ctx, groupNamesnapshot) {
+                            if (groupNamesnapshot.connectionState ==
                                 ConnectionState.done) {
-                              String groupName = usersnapshot.data!;
+                              String groupName = groupNamesnapshot.data!;
                               return ChatRoomCard.group(
                                 chatRoom: _listChatroom[index],
                                 groupName: groupName,
@@ -215,10 +219,10 @@ class _ChatHomeState extends State<ChatHome> {
                     }
                   },
                 ),
-              ),
-            ],
-          );
-        },
+              );
+            },
+          ),
+        ],
       ),
     );
   }

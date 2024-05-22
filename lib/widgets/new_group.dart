@@ -8,6 +8,7 @@ import 'package:networking/screens/chat/chat_screen.dart';
 import 'package:networking/widgets/user_avatar.dart';
 import 'package:networking/widgets/user_card.dart';
 import 'package:flutter/material.dart';
+import 'package:tiengviet/tiengviet.dart';
 import 'package:uuid/uuid.dart';
 
 var uuid = Uuid();
@@ -29,9 +30,9 @@ class _NewGroupChatState extends State<NewGroupChat> {
   void _runFilter(String _enteredKeyword) {
     _searchList.clear();
     for (var user in _list) {
-      if (user.userName!
+      if (TiengViet.parse(user.userName!)
           .toLowerCase()
-          .contains(_enteredKeyword.toLowerCase())) {
+          .contains(TiengViet.parse(_enteredKeyword).toLowerCase())) {
         _searchList.add(user);
       }
     }
@@ -149,13 +150,14 @@ class _NewGroupChatState extends State<NewGroupChat> {
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 10),
+                  padding: const EdgeInsets.only(left: 10, bottom: 10),
                   child: TextField(
                     controller: _groupNameController,
                     style: TextStyle(
                       fontSize: 18,
                     ),
                     decoration: InputDecoration(
+                      fillColor: Colors.grey[300],
                       hintStyle: TextStyle(
                         fontSize: 18,
                       ),
@@ -225,6 +227,7 @@ class _NewGroupChatState extends State<NewGroupChat> {
                     List<String> blockUsers = _list[getIndexUser()].blockUsers!;
                     _list.removeWhere(
                         (user) => blockUsers.contains(user.userId));
+                    _list.removeWhere((user) => user.userId == currentUserId);
                     return Expanded(
                       child: ListView.builder(
                         shrinkWrap: true,

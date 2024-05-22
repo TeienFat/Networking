@@ -27,10 +27,7 @@ class APIsChat {
   static String token = "";
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUser() {
-    return firestore
-        .collection('user')
-        .where('userId', isNotEqualTo: currentUserId)
-        .snapshots();
+    return firestore.collection('user').snapshots();
   }
 
   static Stream<DocumentSnapshot<Map<String, dynamic>>> getParticipants(
@@ -180,29 +177,56 @@ class APIsChat {
     });
   }
 
+  static Future<void> deleteChatRoomFull(String chatroomId) async {
+    return await firestore.collection('chatrooms').doc(chatroomId).delete();
+  }
+
   static Future<String> getChatRoomName(ChatRoom chatRoom) async {
     Map<String, bool> participants = chatRoom.participants!;
     List<String> listId = participants.keys.toList();
-
+    String name = "";
     listId.removeWhere((element) => element == currentUserId);
     int numOfParticipants = listId.length;
     if (numOfParticipants > 2) {
       listId = listId.sublist(1, 3);
-    }
-    String name = "";
-    for (var i = 0; i <= 1; i++) {
-      Users userchat;
+      for (var i = 0; i <= 1; i++) {
+        Users userchat;
 
-      DocumentSnapshot docSnap =
-          await firestore.collection('user').doc(listId[i]).get();
+        DocumentSnapshot docSnap =
+            await firestore.collection('user').doc(listId[i]).get();
 
-      userchat = Users.fromMap(docSnap.data() as Map<String, dynamic>);
-      if (i == 0) {
-        name = name + getLastWordOfName(userchat.userName!) + ", ";
-      } else {
+        userchat = Users.fromMap(docSnap.data() as Map<String, dynamic>);
+        if (i == 0) {
+          name = name + getLastWordOfName(userchat.userName!) + ", ";
+        } else {
+          name = name + getLastWordOfName(userchat.userName!);
+        }
+      }
+    } else {
+      if (numOfParticipants == 2) {
+        for (var i = 0; i <= 1; i++) {
+          Users userchat;
+
+          DocumentSnapshot docSnap =
+              await firestore.collection('user').doc(listId[i]).get();
+
+          userchat = Users.fromMap(docSnap.data() as Map<String, dynamic>);
+          if (i == 0) {
+            name = name + getLastWordOfName(userchat.userName!) + ", ";
+          } else {
+            name = name + getLastWordOfName(userchat.userName!);
+          }
+        }
+      }
+      if (numOfParticipants < 2) {
+        Users userchat;
+        DocumentSnapshot docSnap =
+            await firestore.collection('user').doc(listId[0]).get();
+        userchat = Users.fromMap(docSnap.data() as Map<String, dynamic>);
         name = name + getLastWordOfName(userchat.userName!);
       }
     }
+
     if ((numOfParticipants - 3) <= 0)
       return name;
     else
@@ -409,8 +433,6 @@ class APIsChat {
 
   static Future<void> updateMessageReadStatus(
       String chatRoomId, String messageId) async {
-    // final now = DateTime.now().millisecondsSinceEpoch.toString();
-
     DocumentSnapshot document = await firestore
         .collection('chatrooms')
         .doc(chatRoomId)

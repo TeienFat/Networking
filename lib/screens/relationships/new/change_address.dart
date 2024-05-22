@@ -155,9 +155,11 @@ class _ChangeAddressState extends State<ChangeAddress> {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
                                     builder: (context) => PickAddress(
-                                          initProvince: _selectedProvince,
-                                          initDistrict: _selectedDistrict,
-                                          initWards: _selectedWards,
+                                          initProvince:
+                                              _selectedProvince ?? null,
+                                          initDistrict:
+                                              _selectedDistrict ?? null,
+                                          initWards: _selectedWards ?? null,
                                           onPickAddress:
                                               (province, district, wards) {
                                             _onPickAddress(

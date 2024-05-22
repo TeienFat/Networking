@@ -9,10 +9,12 @@ import 'package:networking/bloc/user/user_bloc.dart';
 import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/notification/local_notifications.dart';
 import 'package:networking/screens/auth/auth.dart';
+import 'package:networking/screens/chatbot/api_key.dart';
 import 'package:networking/screens/home/main_screen.dart';
 import 'package:networking/screens/splash/splash_screen.dart';
 import 'package:networking/screens/splash/welcome_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 
 import 'firebase_options.dart';
 
@@ -28,6 +30,9 @@ void main() async {
   );
   await LocalNotifications.init();
   currentUserId = await APIsAuth.getCurrentUserId();
+  Gemini.init(
+    apiKey: GEMINI_API_KEY,
+  );
   runApp(const MyApp());
 }
 
@@ -53,6 +58,7 @@ class MyApp extends StatelessWidget {
             return GetMaterialApp(
               title: 'Flutter Demo',
               debugShowCheckedModeBanner: false,
+
               // darkTheme: ThemeData.dark().copyWith(
               //   useMaterial3: true,
               //   colorScheme: kDarkColorScheme,
@@ -71,6 +77,7 @@ class MyApp extends StatelessWidget {
               //   ),
               // ),
               theme: ThemeData().copyWith(
+                scaffoldBackgroundColor: Colors.white,
                 useMaterial3: true,
                 colorScheme: kColorScheme,
                 // appBarTheme: const AppBarTheme().copyWith(
