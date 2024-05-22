@@ -12,6 +12,7 @@ import 'package:networking/models/user_relationship_model.dart';
 import 'package:networking/widgets/date_picker.dart';
 import 'package:networking/widgets/pick_relationship.dart';
 import 'package:networking/widgets/time_picker.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class EditRelationshipCare extends StatefulWidget {
   const EditRelationshipCare(
@@ -71,45 +72,54 @@ class _EditRelationshipCareState extends State<EditRelationshipCare> {
       return;
     }
     if (_enteredUsRe != null) {
-      if (!_checkvalidTime(_enteredStartTime, _enteredEndTime) &&
-          (_enteredStartDay.year == _enteredEndDay.year &&
-              _enteredStartDay.month == _enteredEndDay.month &&
-              _enteredStartDay.day == _enteredEndDay.day)) {
+      if (!_checkvalidTime(TimeOfDay.now(), _enteredStartTime) &&
+          (isSameDay(DateTime.now(), _enteredStartDay))) {
         showSnackbar(
           context,
           "Giờ không hợp lệ",
-          subtitle: "Giờ kết thúc phải lớn giờ bắt đầu nếu cùng ngày",
+          subtitle: "Giờ bắt đầu phải lớn giờ hiện tại nếu là hôm nay",
           Duration(seconds: 3),
           false,
         );
       } else {
-        if (_enteredUser == null) {
-          _enteredUser =
-              await APIsUser.getUserFromId(_enteredUsRe!.myRelationShipId!);
+        if (!_checkvalidTime(_enteredStartTime, _enteredEndTime) &&
+            (isSameDay(_enteredStartDay, _enteredEndDay))) {
+          showSnackbar(
+            context,
+            "Giờ không hợp lệ",
+            subtitle: "Giờ kết thúc phải lớn giờ bắt đầu nếu cùng ngày",
+            Duration(seconds: 3),
+            false,
+          );
+        } else {
+          if (_enteredUser == null) {
+            _enteredUser =
+                await APIsUser.getUserFromId(_enteredUsRe!.myRelationShipId!);
+          }
+          final startTime = _enteredStartDay.copyWith(
+              hour: _enteredStartTime.hour,
+              minute: _enteredStartTime.minute,
+              second: 0,
+              millisecond: 0,
+              microsecond: 0);
+          final endTime = _enteredEndDay.copyWith(
+              hour: _enteredEndTime.hour,
+              minute: _enteredEndTime.minute,
+              second: 0,
+              millisecond: 0,
+              microsecond: 0);
+          context.read<ReCareListBloc>().add(UpdateReCare(
+              reCareId: widget.reCare.reCareId!,
+              usRe: _enteredUsRe!,
+              oldUsReId: widget.userRelationship.usReId!,
+              users: _enteredUser!,
+              startTime: startTime,
+              endTime: endTime,
+              title: _enteredTitle));
+          showSnackbar(context, "Đã chỉnh sửa thông tin mục chăm sóc",
+              Duration(seconds: 2), true);
+          Navigator.of(context).pop(true);
         }
-        final startTime = _enteredStartDay.copyWith(
-            hour: _enteredStartTime.hour,
-            minute: _enteredStartTime.minute,
-            second: 0,
-            millisecond: 0,
-            microsecond: 0);
-        final endTime = _enteredEndDay.copyWith(
-            hour: _enteredEndTime.hour,
-            minute: _enteredEndTime.minute,
-            second: 0,
-            millisecond: 0,
-            microsecond: 0);
-        context.read<ReCareListBloc>().add(UpdateReCare(
-            reCareId: widget.reCare.reCareId!,
-            usRe: _enteredUsRe!,
-            oldUsReId: widget.userRelationship.usReId!,
-            users: _enteredUser!,
-            startTime: startTime,
-            endTime: endTime,
-            title: _enteredTitle));
-        showSnackbar(context, "Đã chỉnh sửa thông tin mục chăm sóc",
-            Duration(seconds: 2), true);
-        Navigator.of(context).pop(true);
       }
     } else {
       showSnackbar(context, "Hãy chọn mối quan hệ cần chăm sóc",

@@ -1,7 +1,9 @@
 import 'package:networking/apis/apis_chat.dart';
+import 'package:networking/apis/apis_user.dart';
 import 'package:networking/helpers/helpers.dart';
 import 'package:networking/main.dart';
 import 'package:networking/models/chatroom_model.dart';
+import 'package:networking/models/message_model.dart';
 import 'package:networking/models/user_model.dart';
 import 'package:networking/screens/chat/profile_of_others.dart';
 import 'package:networking/widgets/change_name_image_group.dart';
@@ -55,10 +57,24 @@ class _ChatSettingScreenState extends State<ChatSettingScreen> {
           ),
           ElevatedButton(
             onPressed: () async {
-              await APIsChat.leaveTheGroupChat(widget.chatRoom, currentUserId);
-              Navigator.pop(context);
-              Navigator.of(context).pushReplacementNamed("/MainChat");
-              toast("Đã rời khỏi nhóm");
+              final currentUser = await APIsUser.getUserFromId(currentUserId);
+              if (widget.chatRoom.participants!.length == 2) {
+                await APIsChat.deleteChatRoomFull(widget.chatRoom.chatroomid!);
+                Navigator.of(context).pushReplacementNamed("/MainChat");
+                toast("Đã rời khỏi nhóm");
+              } else {
+                await APIsChat.sendMessage(
+                    widget.chatRoom,
+                    currentUser!.userName! + " đã rời khỏi nhóm",
+                    TypeSend.notification,
+                    null);
+                await APIsChat.leaveTheGroupChat(
+                    widget.chatRoom, currentUserId);
+                Navigator.pop(context);
+                Navigator.of(context).pushReplacementNamed("/MainChat");
+
+                toast("Đã rời khỏi nhóm");
+              }
             },
             child: Text(
               'Rời khỏi',

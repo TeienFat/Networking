@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:networking/apis/apis_ReCare.dart';
 import 'package:networking/apis/apis_auth.dart';
+import 'package:networking/apis/apis_chatbot.dart';
 import 'package:networking/apis/apis_relationships.dart';
 import 'package:networking/apis/apis_user.dart';
 import 'package:networking/apis/apis_user_relationship.dart';
@@ -111,7 +112,9 @@ class _MainScreenState extends State<MainScreen> {
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => NewRelationship(),
         ));
+        APIsChatBot.getDataForChatBot();
         // APIsUsRe.getAllMyRelationship();
+
         break;
       case 1:
         // APIsReCare.getAllMyRelationshipCare();
@@ -181,35 +184,72 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(
-                height: 10.sp,
-              ),
-              Row(
-                mainAxisAlignment: currentIndex != 3
-                    ? MainAxisAlignment.center
-                    : MainAxisAlignment.end,
-                children: [
-                  if (currentIndex != 3)
-                    Text(
-                      textAlign: TextAlign.center,
-                      title,
-                      style: TextStyle(
-                          fontSize: 23.sp, fontWeight: FontWeight.bold),
+        child: Stack(
+          children: [
+            currentIndex != 3
+                ? Column(
+                    children: [
+                      SizedBox(
+                        height: 10.sp,
+                      ),
+                      Row(
+                        mainAxisAlignment: currentIndex != 3
+                            ? MainAxisAlignment.center
+                            : MainAxisAlignment.end,
+                        children: [
+                          if (currentIndex != 3)
+                            Text(
+                              textAlign: TextAlign.center,
+                              title,
+                              style: TextStyle(
+                                  fontSize: 23.sp, fontWeight: FontWeight.bold),
+                            ),
+                          if (currentIndex == 3) PopupMenuMyProfile(),
+                        ],
+                      ),
+                      screens,
+                    ],
+                  )
+                : SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 10.sp,
+                        ),
+                        Row(
+                          mainAxisAlignment: currentIndex != 3
+                              ? MainAxisAlignment.center
+                              : MainAxisAlignment.end,
+                          children: [
+                            if (currentIndex != 3)
+                              Text(
+                                textAlign: TextAlign.center,
+                                title,
+                                style: TextStyle(
+                                    fontSize: 23.sp,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            if (currentIndex == 3) PopupMenuMyProfile(),
+                          ],
+                        ),
+                        screens,
+                      ],
                     ),
-                  if (currentIndex == 3) PopupMenuMyProfile(),
-                ],
+                  ),
+            Positioned.fill(
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: MyBottomNavigartionBar(
+                    currentIndex: currentIndex,
+                    onTapIcon: onTab,
+                    onTapAdd: onTapAdd),
               ),
-              screens,
-            ],
-          ),
+            )
+          ],
         ),
       ),
-      bottomNavigationBar: MyBottomNavigartionBar(
-          currentIndex: currentIndex, onTapIcon: onTab, onTapAdd: onTapAdd),
     );
   }
 }

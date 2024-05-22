@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:networking/helpers/helpers.dart';
 import 'package:networking/models/district_model.dart';
 import 'package:networking/models/province_model.dart';
 import 'package:networking/models/wards_model.dart';
+import 'package:tiengviet/tiengviet.dart';
 
 class PickAddress extends StatefulWidget {
   const PickAddress(
@@ -31,7 +33,10 @@ class _PickAddressState extends State<PickAddress> {
   String? _enteredProvinceId;
   String? _enteredDistrictId;
   String? _enteredWardsId;
-
+  var _isSearching = false;
+  List<Province> _listProvinceSearch = [];
+  List<District> _listDistrictSearch = [];
+  List<Wards> _listWardsSearch = [];
   var _isPickType;
 
   Future<String> _loadADataAsset() async {
@@ -73,27 +78,82 @@ class _PickAddressState extends State<PickAddress> {
     thickness: 1.5.sp,
   );
 
+  void _runFilter(String _enteredKeyword) async {
+    switch (_isPickType) {
+      case 0:
+        final provinces = await _loadProvince();
+        _listProvinceSearch.clear();
+        for (var province in provinces) {
+          if (TiengViet.parse(province.name!)
+              .toLowerCase()
+              .contains(TiengViet.parse(_enteredKeyword).toLowerCase())) {
+            _listProvinceSearch.add(province);
+          }
+        }
+        setState(() {
+          _isSearching = true;
+          _listProvinceSearch;
+        });
+        break;
+      case 1:
+        final districts = await _loadDistrict(_enteredProvinceId!);
+        _listDistrictSearch.clear();
+        for (var district in districts) {
+          if (TiengViet.parse(district.name!)
+              .toLowerCase()
+              .contains(TiengViet.parse(_enteredKeyword).toLowerCase())) {
+            _listDistrictSearch.add(district);
+          }
+        }
+        setState(() {
+          _isSearching = true;
+          _listDistrictSearch;
+        });
+        break;
+      case 2:
+        final wards =
+            await _loadWards(_enteredProvinceId!, _enteredDistrictId!);
+        _listWardsSearch.clear();
+        for (var ward in wards) {
+          if (TiengViet.parse(ward.name!)
+              .toLowerCase()
+              .contains(TiengViet.parse(_enteredKeyword).toLowerCase())) {
+            _listWardsSearch.add(ward);
+          }
+        }
+        setState(() {
+          _isSearching = true;
+          _listWardsSearch;
+        });
+        break;
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    if (widget.initProvince != null &&
-        widget.initDistrict != null &&
-        widget.initWards != null) {
+
+    if (widget.initProvince!.id != null &&
+        widget.initDistrict!.id != null &&
+        widget.initWards!.id != null) {
       _enteredProvinceId = widget.initProvince!.id;
       _enteredProvinceName = widget.initProvince!.name;
       _enteredDistrictId = widget.initDistrict!.id;
       _enteredDistrictName = widget.initDistrict!.name;
       _enteredWardsId = widget.initWards!.id;
       _enteredWardsName = widget.initWards!.name;
+      _isPickType = 2;
+    } else {
+      _isPickType = 0;
     }
-    _isPickType = 0;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: searchBar(_runFilter, ScreenUtil().screenWidth),
         actions: [
           TextButton(
             onPressed: () {
@@ -256,10 +316,21 @@ class _PickAddressState extends State<PickAddress> {
                           if (snapshot.hasError) {
                             return Center(child: Text("Có gì đó sai sai..."));
                           }
-                          List<Province> _listProvince = snapshot.data!;
+                          List<Province> _listProvince = _isSearching
+                              ? _listProvinceSearch
+                              : snapshot.data!;
                           return Expanded(
                             child: ListView.builder(
                               itemBuilder: (context, index) {
+                                if (_isSearching &&
+                                    _listProvinceSearch.isEmpty) {
+                                  return Center(
+                                      child: Padding(
+                                    padding: EdgeInsets.only(top: 10.sp),
+                                    child: Text(
+                                        "Không tìm thấy tỉnh/thành phố nào"),
+                                  ));
+                                }
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -273,6 +344,7 @@ class _PickAddressState extends State<PickAddress> {
                                             _enteredProvinceId =
                                                 _listProvince[index].id!;
                                             _isPickType = 1;
+                                            _isSearching = false;
                                           });
                                         },
                                         child: Row(
@@ -303,7 +375,11 @@ class _PickAddressState extends State<PickAddress> {
                                   ],
                                 );
                               },
-                              itemCount: _listProvince.length,
+                              itemCount: _isSearching
+                                  ? _listProvinceSearch.isEmpty
+                                      ? 1
+                                      : _listProvinceSearch.length
+                                  : snapshot.data!.length,
                             ),
                           );
                         },
@@ -319,10 +395,21 @@ class _PickAddressState extends State<PickAddress> {
                                 return Center(
                                     child: Text("Có gì đó sai sai..."));
                               }
-                              List<District> _listDistrict = snapshot.data!;
+                              List<District> _listDistrict = _isSearching
+                                  ? _listDistrictSearch
+                                  : snapshot.data!;
                               return Expanded(
                                 child: ListView.builder(
                                   itemBuilder: (context, index) {
+                                    if (_isSearching &&
+                                        _listDistrictSearch.isEmpty) {
+                                      return Center(
+                                          child: Padding(
+                                        padding: EdgeInsets.only(top: 10.sp),
+                                        child: Text(
+                                            "Không tìm thấy quận/huyện nào"),
+                                      ));
+                                    }
                                     return Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -337,6 +424,7 @@ class _PickAddressState extends State<PickAddress> {
                                                 _enteredDistrictId =
                                                     _listDistrict[index].id!;
                                                 _isPickType = 2;
+                                                _isSearching = false;
                                               });
                                             },
                                             child: Row(
@@ -369,7 +457,11 @@ class _PickAddressState extends State<PickAddress> {
                                       ],
                                     );
                                   },
-                                  itemCount: _listDistrict.length,
+                                  itemCount: _isSearching
+                                      ? _listDistrictSearch.isEmpty
+                                          ? 1
+                                          : _listDistrictSearch.length
+                                      : snapshot.data!.length,
                                 ),
                               );
                             },
@@ -385,10 +477,21 @@ class _PickAddressState extends State<PickAddress> {
                                 return Center(
                                     child: Text("Có gì đó sai sai..."));
                               }
-                              List<Wards> _listWards = snapshot.data!;
+                              List<Wards> _listWards = _isSearching
+                                  ? _listWardsSearch
+                                  : snapshot.data!;
                               return Expanded(
                                 child: ListView.builder(
                                   itemBuilder: (context, index) {
+                                    if (_isSearching &&
+                                        _listWardsSearch.isEmpty) {
+                                      return Center(
+                                          child: Padding(
+                                        padding: EdgeInsets.only(top: 10.sp),
+                                        child: Text(
+                                            "Không tìm thấy phường/xã nào"),
+                                      ));
+                                    }
                                     return Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -434,7 +537,11 @@ class _PickAddressState extends State<PickAddress> {
                                       ],
                                     );
                                   },
-                                  itemCount: _listWards.length,
+                                  itemCount: _isSearching
+                                      ? _listWardsSearch.isEmpty
+                                          ? 1
+                                          : _listWardsSearch.length
+                                      : snapshot.data!.length,
                                 ),
                               );
                             },

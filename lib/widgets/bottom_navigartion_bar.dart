@@ -18,100 +18,150 @@ class MyBottomNavigartionBar extends StatefulWidget {
 class _MyBottomNavigartionBarState extends State<MyBottomNavigartionBar> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.grey[300],
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(15.sp),
-          topRight: Radius.circular(15.sp),
-        ),
-      ),
-      padding: EdgeInsets.symmetric(horizontal: 10.sp),
-      height: 60.sp,
-      child: Container(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            IconButton(
-              style: ButtonStyle(
-                  backgroundColor: MaterialStatePropertyAll(
-                widget.currentIndex == 0 ? Colors.grey[300] : null,
-              )),
-              icon: Icon(
-                Icons.home_outlined,
-                size: 30.sp,
-                color:
-                    widget.currentIndex == 0 ? Colors.orange[600] : Colors.grey,
-              ),
-              onPressed: () => widget.onTapIcon(0),
-            ),
-            IconButton(
-              style: ButtonStyle(
-                  backgroundColor: MaterialStatePropertyAll(
-                widget.currentIndex == 1 ? Colors.grey[300] : null,
-              )),
-              icon: Icon(
-                FontAwesomeIcons.handshake,
-                size: 25,
-                color:
-                    widget.currentIndex == 1 ? Colors.orange[600] : Colors.grey,
-              ),
-              onPressed: () => widget.onTapIcon(1),
-            ),
-            widget.currentIndex != 3
-                ? IconButton(
-                    padding: EdgeInsets.all(0),
-                    icon: Icon(
-                      Icons.add_circle_rounded,
-                      color: Colors.orange[600],
-                      size: 60.sp,
+    return SizedBox(
+      height: 75.sp,
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Container(
+                width: 70.sp,
+                height: 70.sp,
+                padding: EdgeInsets.only(top: 7.sp),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color.fromARGB(255, 255, 204, 146),
+                      spreadRadius: 3,
+                      blurRadius: 10,
+                      offset: Offset(0, 1),
                     ),
-                    onPressed: () => widget.onTapAdd(widget.currentIndex),
-                  )
-                : Container(
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle, color: Colors.orange[600]),
-                    padding: EdgeInsets.all(3.9.sp),
-                    margin:
-                        EdgeInsets.only(left: 5.sp, right: 5.sp, top: 0.5.sp),
-                    child: IconButton(
-                      padding: EdgeInsets.all(0),
-                      icon: Icon(
-                        Icons.edit,
-                        color: Colors.grey[300],
-                        size: 28.sp,
-                      ),
-                      onPressed: () => widget.onTapAdd(widget.currentIndex),
-                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Positioned.fill(
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20.sp),
+                    topRight: Radius.circular(20.sp),
                   ),
-            IconButton(
-              style: ButtonStyle(
-                  backgroundColor: MaterialStatePropertyAll(
-                widget.currentIndex == 2 ? Colors.grey[300] : null,
-              )),
-              icon: Icon(
-                Icons.chat_outlined,
-                size: 25.sp,
-                color:
-                    widget.currentIndex == 2 ? Colors.orange[600] : Colors.grey,
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color.fromARGB(255, 255, 204, 146),
+                      spreadRadius: 3,
+                      blurRadius: 10,
+                      offset: Offset(0, 1),
+                    ),
+                  ],
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 10.sp),
+                height: 60.sp,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      highlightColor: Colors.transparent,
+                      splashColor: Colors.transparent,
+                      icon: Icon(
+                        Icons.home_outlined,
+                        size: 30.sp,
+                        color: widget.currentIndex == 0
+                            ? Colors.orange[600]
+                            : Colors.grey,
+                      ),
+                      onPressed: () => widget.onTapIcon(0),
+                    ),
+                    IconButton(
+                      highlightColor: Colors.transparent,
+                      splashColor: Colors.transparent,
+                      icon: Icon(
+                        FontAwesomeIcons.handshake,
+                        size: 25,
+                        color: widget.currentIndex == 1
+                            ? Colors.orange[600]
+                            : Colors.grey,
+                      ),
+                      onPressed: () => widget.onTapIcon(1),
+                    ),
+                    SizedBox(
+                      width: 50.sp,
+                    ),
+                    IconButton(
+                      highlightColor: Colors.transparent,
+                      splashColor: Colors.transparent,
+                      icon: Icon(
+                        Icons.chat_outlined,
+                        size: 25.sp,
+                        color: widget.currentIndex == 2
+                            ? Colors.orange[600]
+                            : Colors.grey,
+                      ),
+                      onPressed: () => widget.onTapIcon(2),
+                    ),
+                    IconButton(
+                      highlightColor: Colors.transparent,
+                      splashColor: Colors.transparent,
+                      icon: Icon(
+                        Icons.person_outline_sharp,
+                        size: 35,
+                        color: widget.currentIndex == 3
+                            ? Colors.orange[600]
+                            : Colors.grey,
+                      ),
+                      onPressed: () => widget.onTapIcon(3),
+                    ),
+                  ],
+                ),
               ),
-              onPressed: () => widget.onTapIcon(2),
             ),
-            IconButton(
-              style: ButtonStyle(
-                  backgroundColor: MaterialStatePropertyAll(
-                widget.currentIndex == 3 ? Colors.grey[300] : null,
-              )),
-              icon: Icon(
-                Icons.person_outline_sharp,
-                size: 35,
-                color:
-                    widget.currentIndex == 3 ? Colors.orange[600] : Colors.grey,
+          ),
+          Positioned.fill(
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Container(
+                width: 70.sp,
+                height: 70.sp,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                ),
+                child: widget.currentIndex != 3
+                    ? IconButton(
+                        padding: EdgeInsets.all(0),
+                        icon: Icon(
+                          Icons.add_circle_rounded,
+                          color: Colors.orange[600],
+                          size: 65.sp,
+                        ),
+                        onPressed: () => widget.onTapAdd(widget.currentIndex),
+                      )
+                    : Container(
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle, color: Colors.orange[600]),
+                        margin: EdgeInsets.only(left: 8.sp, right: 8.sp),
+                        child: IconButton(
+                          padding: EdgeInsets.all(0),
+                          icon: Icon(
+                            Icons.edit,
+                            color: Colors.white,
+                            size: 28.sp,
+                          ),
+                          onPressed: () => widget.onTapAdd(widget.currentIndex),
+                        ),
+                      ),
               ),
-              onPressed: () => widget.onTapIcon(3),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -196,8 +196,6 @@ class _NewMessageState extends State<NewMessage> {
               controller: _messageController,
               style: TextStyle(fontSize: 18),
               textCapitalization: TextCapitalization.sentences,
-              autocorrect: true,
-              enableSuggestions: true,
               onTap: () {
                 setState(() {
                   _isTyping = true;
