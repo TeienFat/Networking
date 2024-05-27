@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:networking/apis/apis_auth.dart';
+import 'package:networking/apis/apis_user.dart';
+import 'package:networking/apis/apis_user_relationship.dart';
+import 'package:networking/bloc/notification_list/notification_list_bloc.dart';
 import 'package:networking/bloc/reCare_list/re_care_list_bloc.dart';
 import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
 import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/main.dart';
 import 'package:networking/models/secuquestions_model.dart';
+import 'package:networking/models/user_model.dart';
 import 'package:networking/screens/auth/forgot_password/forgot_password.dart';
 import 'package:uuid/uuid.dart';
 import 'package:networking/helpers/helpers.dart';
@@ -24,10 +28,10 @@ class _AuthScreenState extends State<AuthScreen> {
   final _formKey = GlobalKey<FormState>();
   var _isLogin = true;
   var _loginFailed = false;
-  var _enteredLoginName = '';
-  var _enteredPassword = '';
-  var _enteredUserName = '';
-  var _enteredAnswer = '';
+  var _enteredLoginName;
+  var _enteredPassword;
+  var _enteredUserName;
+  var _enteredAnswer;
   var _isAuthenticating = false;
   var _heightLogin = 220.sp;
   var _heightRegister = 155.sp;
@@ -60,7 +64,12 @@ class _AuthScreenState extends State<AuthScreen> {
         context.read<UsReListBloc>().add(LoadUsReList());
         context.read<UserListBloc>().add(LoadUserList());
         context.read<ReCareListBloc>().add(LoadReCareList());
+        context.read<NotificationListBloc>().add(LoadNotificationList());
         currentUserId = await APIsAuth.getCurrentUserId();
+        Users? user = await APIsUser.getUserFromId(currentUserId);
+        if (user!.notification!) {
+          APIsUsRe.setNotificationForAllUsRe(true);
+        }
         Navigator.of(context)
             .pushNamedAndRemoveUntil("/Main", (route) => false);
       } else {
@@ -381,7 +390,8 @@ class _AuthScreenState extends State<AuthScreen> {
                         },
                         child: Text(
                           _isLogin ? "Tạo tài khoản" : "Đăng nhập",
-                          style: TextStyle(fontSize: 16.sp),
+                          style: TextStyle(
+                              fontSize: 16.sp, color: Colors.orange[600]),
                         ),
                       ),
                     ],

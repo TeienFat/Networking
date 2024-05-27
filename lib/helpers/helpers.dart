@@ -157,6 +157,21 @@ bool checkDayAfter(DateTime day1, DateTime day2) {
   return false;
 }
 
+bool checkDayBefore(DateTime day1, DateTime day2) {
+  if (day1.year < day2.year) {
+    return true;
+  }
+  if (day1.month < day2.month && day1.year <= day2.year) {
+    return true;
+  }
+  if (day1.year <= day2.year &&
+      day1.month <= day2.month &&
+      day1.day < day2.day) {
+    return true;
+  }
+  return false;
+}
+
 extension DateTimeExtension on DateTime {
   int get weekOfMonth {
     var date = this;
@@ -219,8 +234,14 @@ String calculateTimeRange(DateTime startDate) {
   DateTime currentDate = DateTime.now();
   Duration timeRange = currentDate.difference(startDate);
 
-  if (timeRange.inDays == 0) {
-    return 'Hôm nay';
+  if (timeRange.inMinutes < 1) {
+    return 'Vừa xong';
+  } else if (timeRange.inHours < 1) {
+    int minutes = timeRange.inMinutes;
+    return '$minutes phút trước';
+  } else if (timeRange.inDays == 0) {
+    int hours = timeRange.inHours;
+    return '$hours giờ trước';
   } else if (timeRange.inDays == 1) {
     return 'Hôm qua';
   } else if (timeRange.inDays < 7) {

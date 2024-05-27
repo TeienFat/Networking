@@ -6,6 +6,7 @@ abstract class ReCareListEvent {}
 class LoadReCareList extends ReCareListEvent {}
 
 class AddReCare extends ReCareListEvent {
+  final double reCareId;
   final String meId;
   final UserRelationship usRe;
   final Users users;
@@ -14,7 +15,8 @@ class AddReCare extends ReCareListEvent {
   final String title;
 
   AddReCare(
-      {required this.meId,
+      {required this.reCareId,
+      required this.meId,
       required this.usRe,
       required this.users,
       required this.startTime,

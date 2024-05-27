@@ -4,7 +4,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:networking/apis/apis_chatbot.dart';
 import 'package:networking/main.dart';
 import 'package:networking/models/message_model.dart';
-import 'package:networking/screens/chatbot/api_key.dart';
+import 'package:networking/screens/chatbot/api_chatbot_key.dart';
 import 'package:networking/screens/chatbot/chatbot_message_bubble.dart';
 import 'package:flutter/material.dart';
 
@@ -23,6 +23,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
     final now = DateTime.now().millisecondsSinceEpoch.toString();
     final nowBot = DateTime.now().millisecondsSinceEpoch + 1;
     final enteredMessage = _messageController.text;
+    await APIsChatBot.getDataForChatBot();
     final data = await APIsChatBot.getDataForChatBot();
     if (enteredMessage.trim().isEmpty) {
       return;

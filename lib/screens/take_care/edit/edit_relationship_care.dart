@@ -1,11 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:networking/apis/apis_ReCare.dart';
 import 'package:networking/apis/apis_user.dart';
+import 'package:networking/bloc/notification_list/notification_list_bloc.dart';
 import 'package:networking/bloc/reCare_list/re_care_list_bloc.dart';
 import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/helpers/helpers.dart';
+import 'package:networking/main.dart';
 import 'package:networking/models/relationship_care_model.dart';
 import 'package:networking/models/user_model.dart';
 import 'package:networking/models/user_relationship_model.dart';
@@ -116,6 +121,27 @@ class _EditRelationshipCareState extends State<EditRelationshipCare> {
               startTime: startTime,
               endTime: endTime,
               title: _enteredTitle));
+          context
+              .read<NotificationListBloc>()
+              .add(DeleteNotification(notiId: widget.reCare.reCareId!));
+          await APIsReCare.getReCare(widget.reCare.reCareId!);
+          var reCare = await APIsReCare.getReCare(widget.reCare.reCareId!);
+
+          List<String> payload = [
+            jsonEncode(reCare!.toMap()),
+            jsonEncode(_enteredUsRe!.toMap())
+          ];
+          context.read<NotificationListBloc>().add(AddNotification(
+              notiId: widget.reCare.reCareId!,
+              userId: currentUserId,
+              title: 'Chăm sóc nào!',
+              body: "\u{1F389}\u{1F37B} " + _enteredTitle,
+              contentBody: _enteredUser!.userName! +
+                  ' - ' +
+                  _enteredUsRe!.relationships![0].name!,
+              usReImage: _enteredUser!.imageUrl!,
+              payload: jsonEncode(payload),
+              period: startTime));
           showSnackbar(context, "Đã chỉnh sửa thông tin mục chăm sóc",
               Duration(seconds: 2), true);
           Navigator.of(context).pop(true);

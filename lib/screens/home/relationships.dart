@@ -26,10 +26,10 @@ class _RelationshipScreenState extends State<RelationshipScreen> {
   var _isSearching = false;
   List<UserRelationship> _usReSearch = [];
 
-  Users? _getUser(List<Users> users, String userId) {
+  String? _getUser(List<Users> users, String userId) {
     for (var user in users) {
       if (user.userId!.length == userId.length && user.userId! == userId) {
-        return user;
+        return user.userName!.split(' ').last;
       }
     }
     return null;
@@ -165,73 +165,84 @@ class _RelationshipScreenState extends State<RelationshipScreen> {
         ),
       ),
     ];
-    return Column(
-      children: [
-        BlocBuilder<ReCareListBloc, ReCareListState>(
-          builder: (context, state) {
-            final reCares = state.reCares;
-            return BlocBuilder<UsReListBloc, UsReListState>(
+    return BlocBuilder<UserListBloc, UserListState>(
+      builder: (context, state) {
+        final users = state.users;
+        return Column(
+          children: [
+            BlocBuilder<ReCareListBloc, ReCareListState>(
               builder: (context, state) {
-                if (state is UsReListUploaded && state.usRes.isNotEmpty) {
-                  final usRes = state.usRes;
-                  List<UserRelationship> usReSort = usRes;
-                  switch (_currentListNum) {
-                    case 1:
-                      usReSort = usRes
-                          .where((element) => _checkInWeek(element.createdAt!))
-                          .toList();
+                final reCares = state.reCares;
+                return BlocBuilder<UsReListBloc, UsReListState>(
+                  builder: (context, state) {
+                    if (state is UsReListUploaded && state.usRes.isNotEmpty) {
+                      final usRes = state.usRes;
+                      List<UserRelationship> usReSort = usRes;
                       usReSort.sort(
                         (a, b) {
-                          if (a.createdAt!.isBefore(b.createdAt!)) {
-                            return 1;
-                          }
-
-                          if (a.createdAt!.isAfter(b.createdAt!)) {
-                            return -1;
-                          }
-                          return 0;
+                          final userNameA =
+                              _getUser(users, a.myRelationShipId!);
+                          final userNameB =
+                              _getUser(users, b.myRelationShipId!);
+                          return TiengViet.parse(userNameA!.toLowerCase())
+                              .compareTo(
+                                  TiengViet.parse(userNameB!.toLowerCase()));
                         },
                       );
-                      break;
-                    case 2:
-                      usReSort = usRes
-                          .where((element) => element.time_of_care! > 0)
-                          .toList();
-                      usReSort.sort(
-                        (a, b) {
-                          final timeA =
-                              _getLastDayOfSuccess(reCares, a.usReId!);
-                          final timeB =
-                              _getLastDayOfSuccess(reCares, b.usReId!);
-                          if (timeA.isBefore(timeB)) {
-                            return 1;
-                          }
-                          if (timeA.isAfter(timeB)) {
-                            return -1;
-                          }
-                          return 0;
-                        },
-                      );
+                      switch (_currentListNum) {
+                        case 1:
+                          usReSort = usRes
+                              .where(
+                                  (element) => _checkInWeek(element.createdAt!))
+                              .toList();
+                          usReSort.sort(
+                            (a, b) {
+                              if (a.createdAt!.isBefore(b.createdAt!)) {
+                                return 1;
+                              }
 
-                      break;
-                    case 3:
-                      usReSort = usRes
-                          .where((element) => element.time_of_care == 0)
-                          .toList();
+                              if (a.createdAt!.isAfter(b.createdAt!)) {
+                                return -1;
+                              }
+                              return 0;
+                            },
+                          );
+                          break;
+                        case 2:
+                          usReSort = usRes
+                              .where((element) => element.time_of_care! > 0)
+                              .toList();
+                          usReSort.sort(
+                            (a, b) {
+                              final timeA =
+                                  _getLastDayOfSuccess(reCares, a.usReId!);
+                              final timeB =
+                                  _getLastDayOfSuccess(reCares, b.usReId!);
+                              if (timeA.isBefore(timeB)) {
+                                return 1;
+                              }
+                              if (timeA.isAfter(timeB)) {
+                                return -1;
+                              }
+                              return 0;
+                            },
+                          );
 
-                      break;
-                    case 4:
-                      usReSort = usRes
-                          .where((element) => element.special == true)
-                          .toList();
+                          break;
+                        case 3:
+                          usReSort = usRes
+                              .where((element) => element.time_of_care == 0)
+                              .toList();
 
-                      break;
-                    default:
-                      usReSort = usRes;
-                  }
-                  return BlocBuilder<UserListBloc, UserListState>(
-                    builder: (context, state) {
-                      final users = state.users;
+                          break;
+                        case 4:
+                          usReSort = usRes
+                              .where((element) => element.special == true)
+                              .toList();
+
+                          break;
+                        default:
+                      }
                       void _runFilter(String _enteredKeyword) {
                         _usReSearch.clear();
                         for (var usRe in usReSort) {
@@ -313,9 +324,9 @@ class _RelationshipScreenState extends State<RelationshipScreen> {
                               height: 10.sp,
                             ),
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: 5.sp),
                               height: ScreenUtil().screenHeight * 0.68,
                               child: ListView.builder(
+                                padding: EdgeInsets.symmetric(horizontal: 5.sp),
                                 itemBuilder: (context, index) {
                                   final listUsRe =
                                       _isSearching ? _usReSearch : usReSort;
@@ -332,44 +343,25 @@ class _RelationshipScreenState extends State<RelationshipScreen> {
                                   }
                                   return Column(
                                     children: [
-                                      BlocBuilder<UserListBloc, UserListState>(
-                                          builder: (context, state) {
-                                        if (state is UserListUploaded &&
-                                            state.users.isNotEmpty) {
-                                          final users = state.users;
-                                          usRes.sort(
-                                            (a, b) {
-                                              final userA = _getUser(
-                                                  users, a.myRelationShipId!);
-                                              final userB = _getUser(
-                                                  users, b.myRelationShipId!);
-                                              return userA!.userName!
-                                                  .compareTo(userB!.userName!);
-                                            },
-                                          );
-
-                                          for (var user in users) {
-                                            if ((user.userId!.length ==
-                                                    listUsRe[index]
-                                                        .myRelationShipId!
-                                                        .length) &&
-                                                (user.userId ==
-                                                    listUsRe[index]
-                                                        .myRelationShipId!)) {
-                                              return RelationShipCard(
+                                      for (var user in users)
+                                        if ((user.userId!.length ==
+                                                listUsRe[index]
+                                                    .myRelationShipId!
+                                                    .length) &&
+                                            (user.userId ==
+                                                listUsRe[index]
+                                                    .myRelationShipId!))
+                                          Column(
+                                            children: [
+                                              RelationShipCard(
                                                   userRelationship:
                                                       listUsRe[index],
-                                                  user: user);
-                                            }
-                                          }
-                                        }
-                                        return Center(
-                                          child: CircularProgressIndicator(),
-                                        );
-                                      }),
-                                      SizedBox(
-                                        height: 10.sp,
-                                      ),
+                                                  user: user),
+                                              SizedBox(
+                                                height: 10.sp,
+                                              )
+                                            ],
+                                          ),
                                     ],
                                   );
                                 },
@@ -383,35 +375,35 @@ class _RelationshipScreenState extends State<RelationshipScreen> {
                           ],
                         ),
                       );
-                    },
-                  );
-                }
-                return Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(
-                          top: 180.sp, right: 50.sp, bottom: 50.sp),
-                      child: Icon(
-                        FontAwesomeIcons.usersSlash,
-                        size: 200.sp,
-                        color: Colors.grey[300],
-                      ),
-                    ),
-                    Text(
-                      "Chưa có mối quan hệ nào",
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[400],
-                      ),
-                    )
-                  ],
+                    }
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                              top: 180.sp, right: 50.sp, bottom: 50.sp),
+                          child: Icon(
+                            FontAwesomeIcons.usersSlash,
+                            size: 200.sp,
+                            color: Colors.grey[300],
+                          ),
+                        ),
+                        Text(
+                          "Chưa có mối quan hệ nào",
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey[400],
+                          ),
+                        )
+                      ],
+                    );
+                  },
                 );
               },
-            );
-          },
-        ),
-      ],
+            ),
+          ],
+        );
+      },
     );
   }
 }

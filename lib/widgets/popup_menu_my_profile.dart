@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:networking/apis/apis_auth.dart';
+import 'package:networking/apis/apis_chat.dart';
 import 'package:networking/apis/apis_user.dart';
+import 'package:networking/apis/apis_user_relationship.dart';
 import 'package:networking/models/user_model.dart';
 import 'package:networking/screens/my_profile/setting.dart';
 import 'package:networking/screens/relationships/share/share_relationship.dart';
@@ -36,10 +38,15 @@ class PopupMenuMyProfile extends StatelessWidget {
             );
             break;
           default:
+            final meId = await APIsAuth.getCurrentUserId();
+            Users? user = await APIsUser.getUserFromId(meId!);
+            if (user!.notification!) {
+              APIsUsRe.setNotificationForAllUsRe(false);
+            }
             APIsAuth.logout();
-            Navigator.of(context).pushNamedAndRemoveUntil(
-                "/Auth", (route) => false); // FirebaseAuth.instance.signOut();
-          // APIs.updateStatus(false);
+            Navigator.of(context)
+                .pushNamedAndRemoveUntil("/Auth", (route) => false);
+            APIsChat.updateStatus(false);
         }
       },
       itemBuilder: (BuildContext context) => <PopupMenuEntry<Menu>>[
