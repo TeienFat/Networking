@@ -36,12 +36,12 @@ class _TakeCareScreenState extends State<TakeCareScreen> {
 
               if (isSameDay(a.endTime!, b.endTime!)) {
                 if (a.startTime!.hour > b.startTime!.hour) {
-                  return 1;
+                  return -1;
                 }
                 if (a.startTime!.hour == b.startTime!.hour) {
-                  if (a.startTime!.minute >= b.startTime!.minute) return 1;
+                  if (a.startTime!.minute >= b.startTime!.minute) return -1;
                 }
-                return -1;
+                return 1;
               }
               return 0;
             },
@@ -194,9 +194,9 @@ class _TakeCareScreenState extends State<TakeCareScreen> {
                   height: 10.sp,
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 5.sp),
                   height: ScreenUtil().screenHeight * 0.75,
                   child: ListView.builder(
+                    padding: EdgeInsets.symmetric(horizontal: 5.sp),
                     itemBuilder: (context, index) {
                       return Column(
                         children: [
@@ -225,7 +225,7 @@ class _TakeCareScreenState extends State<TakeCareScreen> {
                           ),
                           SizedBox(
                             height: reCaresSort[index] == reCaresSort.last
-                                ? 70.sp
+                                ? 20.sp
                                 : 10.sp,
                           ),
                         ],

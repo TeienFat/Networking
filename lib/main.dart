@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:networking/apis/apis_auth.dart';
+import 'package:networking/bloc/notification_list/notification_list_bloc.dart';
 import 'package:networking/bloc/reCare_list/re_care_list_bloc.dart';
 import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
 import 'package:networking/bloc/user/user_bloc.dart';
 import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/notification/local_notifications.dart';
 import 'package:networking/screens/auth/auth.dart';
-import 'package:networking/screens/chatbot/api_key.dart';
+import 'package:networking/screens/chatbot/api_chatbot_key.dart';
 import 'package:networking/screens/home/main_screen.dart';
 import 'package:networking/screens/splash/splash_screen.dart';
 import 'package:networking/screens/splash/welcome_screen.dart';
@@ -50,6 +51,9 @@ class MyApp extends StatelessWidget {
               create: (context) => UserListBloc()..add(LoadUserList())),
           BlocProvider(
               create: (context) => ReCareListBloc()..add(LoadReCareList())),
+          BlocProvider(
+              create: (context) =>
+                  NotificationListBloc()..add(LoadNotificationList())),
           BlocProvider(create: (context) => UserBloc()),
         ],
         child: ScreenUtilInit(

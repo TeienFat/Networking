@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:networking/apis/apis_ReCare.dart';
+import 'package:networking/bloc/notification_list/notification_list_bloc.dart';
 import 'package:networking/bloc/reCare_list/re_care_list_bloc.dart';
 import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
 import 'package:networking/bloc/user_list/user_list_bloc.dart';
@@ -151,7 +152,7 @@ class _ReCareCardState extends State<ReCareCard> {
                   textAlign: TextAlign.center,
                 ),
                 content: Text(
-                  "Bạn chắc chắn muốn xóa mục chăm sóc này?",
+                  "Xóa mục chăm sóc này?",
                   textAlign: TextAlign.center,
                 ),
                 actions: [
@@ -182,6 +183,8 @@ class _ReCareCardState extends State<ReCareCard> {
                       context.read<UsReListBloc>().add(UpdateTimeOfCareUsRe(
                           usReId: widget.userRelationship.usReId!,
                           timeOfCare: timeOfCare));
+                      context.read<NotificationListBloc>().add(
+                          DeleteNotification(notiId: widget.reCare.reCareId!));
                       showSnackbar(
                         context,
                         "Đã xóa mục chăm sóc",

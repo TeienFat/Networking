@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:networking/main.dart';
 import 'package:networking/models/account_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -47,9 +48,17 @@ class APIsAuth {
     await _prefs.setStringList('accounts', listAccRead);
     await _prefs.setBool('logged', true);
     await _prefs.setString('currentUserId', newAccount.userId!);
+  }
 
-    // final listAcc = await _prefs.getStringList('accounts') ?? [];
-    // print(listAcc);
+  static Future<String?> getLoginName() async {
+    final SharedPreferences _prefs = await prefs;
+    List<String> listAccRead = await _prefs.getStringList('accounts') ?? [];
+    for (var acc in listAccRead) {
+      Account account = Account.fromMap(jsonDecode(acc));
+      if ((account.userId!.length == currentUserId.length) &&
+          (account.userId == currentUserId)) return account.loginName!;
+    }
+    return null;
   }
 
   static Future<Account?> getAccountFromLoginName(String loginName) async {
@@ -63,8 +72,29 @@ class APIsAuth {
     return null;
   }
 
-  static Future<void> updateAccount() async {
-    // final SharedPreferences _prefs = await prefs;
+  static Future<Account?> getAccountFromUserId() async {
+    final SharedPreferences _prefs = await prefs;
+    List<String> listAccRead = await _prefs.getStringList('accounts') ?? [];
+    for (var acc in listAccRead) {
+      Account account = Account.fromMap(jsonDecode(acc));
+      if ((account.userId!.length == currentUserId.length) &&
+          (account.userId == currentUserId)) return account;
+    }
+    return null;
+  }
+
+  static Future<bool> checkPassword(String loginName, String password) async {
+    final SharedPreferences _prefs = await prefs;
+    List<String> listAccRead = await _prefs.getStringList('accounts') ?? [];
+    for (var acc in listAccRead) {
+      Account account = Account.fromMap(jsonDecode(acc));
+      if ((account.loginName!.length == loginName.length) &&
+          (account.loginName == loginName) &&
+          account.password == password) {
+        return true;
+      }
+    }
+    return false;
   }
 
   static Future<void> resetPassword(
@@ -85,6 +115,25 @@ class APIsAuth {
     }
   }
 
+  static Future<void> resetSeQuestion(
+      String loginName, String newSeQuestion, String newSeAnswer) async {
+    final SharedPreferences _prefs = await prefs;
+    List<String> listAccRead = await _prefs.getStringList('accounts') ?? [];
+    for (var acc in listAccRead) {
+      Account account = Account.fromMap(jsonDecode(acc));
+      if ((account.loginName!.length == loginName.length) &&
+          (account.loginName == loginName)) {
+        account.question = newSeQuestion;
+        account.answer = newSeAnswer;
+        account.updateAt = DateTime.now();
+        listAccRead.remove(acc);
+        listAccRead.add(jsonEncode(account.toMap()));
+        await _prefs.setStringList('accounts', listAccRead);
+        return;
+      }
+    }
+  }
+
   static Future<void> deleteAccount() async {
     final SharedPreferences _prefs = await prefs;
     await _prefs.clear();
@@ -93,8 +142,6 @@ class APIsAuth {
   static Future<bool> login(String loginName, String password) async {
     final SharedPreferences _prefs = await prefs;
     List<String> listAccRead = await _prefs.getStringList('accounts') ?? [];
-    // List<Account> listAccParse =
-    //     listAccRead.map((e) => Account.fromMap(jsonDecode(e))).toList();
     for (var account in listAccRead) {
       Account acc = Account.fromMap(jsonDecode(account));
       if ((acc.loginName!.length == loginName.length) &&

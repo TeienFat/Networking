@@ -33,9 +33,8 @@ class ReCareListBloc extends Bloc<ReCareListEvent, ReCareListState> {
     on<UpdateReCare>(_updateReCare);
   }
   void _addReCare(AddReCare event, Emitter<ReCareListState> emit) async {
-    final reCareId = DateTime.now().microsecondsSinceEpoch / 1000000;
     final newReCare = RelationshipCare(
-        reCareId: reCareId.toString(),
+        reCareId: event.reCareId.toString(),
         meId: event.meId,
         usReId: event.usRe.usReId,
         startTime: event.startTime,
@@ -60,7 +59,7 @@ class ReCareListBloc extends Bloc<ReCareListEvent, ReCareListState> {
         ];
         LocalNotifications.showScheduleNotification(
             dateTime: event.startTime,
-            id: reCareId.round(),
+            id: event.reCareId.round(),
             title: "Chăm sóc nào!",
             body: "\u{1F389}\u{1F37B} " + event.title,
             iconPath: event.users.imageUrl!,

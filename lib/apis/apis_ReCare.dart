@@ -167,22 +167,35 @@ class APIsReCare {
     for (var reCare in reCares) {
       if (reCare.isFinish == 2) {
         int id = double.parse(reCare.reCareId!).round();
+        List<String> payload = [
+          jsonEncode(reCare.toMap()),
+          jsonEncode(usRe.toMap())
+        ];
+        // final newNoti = Notifications(
+        //     notiId: id.toString(),
+        //     userId: currentUserId,
+        //     title: "Chăm sóc nào!",
+        //     body: "\u{1F389}\u{1F37B} " + reCare.title!,
+        //     contentBody:
+        //         users!.userName! + ' - ' + usRe.relationships![0].name!,
+        //     usReImage: users.imageUrl!,
+        //     payload: jsonEncode(payload),
+        //     status: false,
+        //     period: reCare.startTime!);
+        // APIsNotification.createNewNotification(newNoti);
         if (isMe!.notification!) {
           if (type) {
-            List<String> payload = [
-              jsonEncode(reCare.toMap()),
-              jsonEncode(usRe.toMap())
-            ];
             LocalNotifications.showScheduleNotification(
-                dateTime: reCare.startTime!,
-                id: id,
-                title: "Chăm sóc nào!",
-                body: "\u{1F389}\u{1F37B} " + reCare.title!,
-                iconPath: users!.imageUrl!,
-                contentBody: [
-                  users.userName! + ' - ' + usRe.relationships![0].name!
-                ],
-                payload: jsonEncode(payload));
+              dateTime: reCare.startTime!,
+              id: id,
+              title: "Chăm sóc nào!",
+              body: "\u{1F389}\u{1F37B} " + reCare.title!,
+              iconPath: users!.imageUrl!,
+              contentBody: [
+                users.userName! + ' - ' + usRe.relationships![0].name!
+              ],
+              payload: jsonEncode(payload),
+            );
           } else {
             LocalNotifications.cancel(id);
           }
@@ -356,5 +369,18 @@ class APIsReCare {
         return;
       }
     }
+  }
+
+  static Future<RelationshipCare?> getReCare(String reCareId) async {
+    final SharedPreferences _prefs = await prefs;
+    List<String> listReCareRead = await _prefs.getStringList('reCares') ?? [];
+    for (var reCare in listReCareRead) {
+      RelationshipCare rc = RelationshipCare.fromMap(jsonDecode(reCare));
+      if ((rc.reCareId!.length == reCareId.length) &&
+          (rc.reCareId == reCareId)) {
+        return rc;
+      }
+    }
+    return null;
   }
 }

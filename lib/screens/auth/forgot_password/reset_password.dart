@@ -29,6 +29,7 @@ class _ResetPasswordState extends State<ResetPassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: SafeArea(
         child: Padding(
           padding:
@@ -50,7 +51,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                             fontWeight: FontWeight.bold),
                       ),
                       SizedBox(
-                        height: 20.sp,
+                        height: 10.sp,
                       ),
                       Form(
                         key: _formKey,
@@ -101,7 +102,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                         ),
                       ),
                       SizedBox(
-                        height: 20.sp,
+                        height: 10.sp,
                       ),
                       Align(
                         alignment: Alignment.centerRight,

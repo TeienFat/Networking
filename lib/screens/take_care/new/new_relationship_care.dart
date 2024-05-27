@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:networking/apis/apis_ReCare.dart';
 import 'package:networking/apis/apis_auth.dart';
+import 'package:networking/bloc/notification_list/notification_list_bloc.dart';
 import 'package:networking/bloc/reCare_list/re_care_list_bloc.dart';
 import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/helpers/helpers.dart';
@@ -107,17 +111,35 @@ class _NewRelationshipCareState extends State<NewRelationshipCare> {
               millisecond: 0,
               microsecond: 0);
           String? meId = await APIsAuth.getCurrentUserId();
+          final reCareId = DateTime.now().microsecondsSinceEpoch / 1000000;
           context.read<ReCareListBloc>().add(AddReCare(
+              reCareId: reCareId,
               meId: meId!,
               usRe: _enteredUsRe!,
               users: _enteredUser!,
               startTime: startTime,
               endTime: endTime,
               title: _enteredTitle));
+          await APIsReCare.getReCare(reCareId.toString());
+          var reCare = await APIsReCare.getReCare(reCareId.toString());
 
+          List<String> payload = [
+            jsonEncode(reCare!.toMap()),
+            jsonEncode(_enteredUsRe!.toMap())
+          ];
+          context.read<NotificationListBloc>().add(AddNotification(
+              notiId: reCareId.toString(),
+              userId: meId,
+              title: 'Chăm sóc nào!',
+              body: "\u{1F389}\u{1F37B} " + _enteredTitle,
+              contentBody: _enteredUser!.userName! +
+                  ' - ' +
+                  _enteredUsRe!.relationships![0].name!,
+              usReImage: _enteredUser!.imageUrl!,
+              payload: jsonEncode(payload),
+              period: startTime));
           showSnackbar(
               context, "Đã thêm mục chăm sóc mới", Duration(seconds: 2), true);
-
           Navigator.of(context).pop(true);
         }
       }

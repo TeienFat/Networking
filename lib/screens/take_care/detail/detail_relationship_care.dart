@@ -7,12 +7,14 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:networking/apis/apis_ReCare.dart';
 import 'package:networking/apis/apis_user.dart';
+import 'package:networking/bloc/notification_list/notification_list_bloc.dart';
 import 'package:networking/bloc/reCare_list/re_care_list_bloc.dart';
 import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
 import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/helpers/helpers.dart';
 import 'package:networking/models/relationship_care_model.dart';
 import 'package:networking/models/user_relationship_model.dart';
+import 'package:networking/notification/local_notifications.dart';
 import 'package:networking/screens/take_care/detail/list_Image.dart';
 import 'package:networking/screens/take_care/detail/scale_image.dart';
 import 'package:networking/screens/take_care/edit/evaluate.dart';
@@ -48,6 +50,11 @@ class _DetailRelationshipCareState extends State<DetailRelationshipCare> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    int id = double.parse(widget.reCare.reCareId!).round();
+    LocalNotifications.cancel(id);
+    context
+        .read<NotificationListBloc>()
+        .add(UpdateNotiStatus(notiId: widget.reCare.reCareId!, status: 2));
     if (widget.reCare.contentText != '') {
       _contentTextController.text = widget.reCare.contentText!;
       _isShowNote = true;
@@ -179,7 +186,7 @@ class _DetailRelationshipCareState extends State<DetailRelationshipCare> {
                         textAlign: TextAlign.center,
                       ),
                       content: Text(
-                        "Bạn chắc chắn muốn xóa mục chăm sóc này?",
+                        "Xóa mục chăm sóc này?",
                         textAlign: TextAlign.center,
                       ),
                       actions: [
@@ -214,6 +221,9 @@ class _DetailRelationshipCareState extends State<DetailRelationshipCare> {
                                 UpdateTimeOfCareUsRe(
                                     usReId: widget.userRelationship.usReId!,
                                     timeOfCare: timeOfCare));
+                            context.read<NotificationListBloc>().add(
+                                DeleteNotification(
+                                    notiId: widget.reCare.reCareId!));
                             showSnackbar(
                               context,
                               "Đã xóa mục chăm sóc",

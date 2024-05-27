@@ -9,6 +9,7 @@ import 'package:networking/apis/apis_chatbot.dart';
 import 'package:networking/apis/apis_relationships.dart';
 import 'package:networking/apis/apis_user.dart';
 import 'package:networking/apis/apis_user_relationship.dart';
+import 'package:networking/bloc/notification_list/notification_list_bloc.dart';
 import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/models/user_model.dart';
 import 'package:networking/screens/chat/contacs.dart';
@@ -18,11 +19,13 @@ import 'package:networking/screens/home/relationships.dart';
 import 'package:networking/screens/home/take_care.dart';
 import 'package:networking/screens/home/my_profile.dart';
 import 'package:networking/screens/my_profile/edit_my_profile.dart';
+import 'package:networking/screens/my_profile/notification_list.dart';
 import 'package:networking/screens/relationships/new/new_relationship.dart';
 import 'package:networking/screens/take_care/new/new_relationship_care.dart';
 import 'package:networking/widgets/bottom_navigartion_bar.dart';
 import 'package:networking/widgets/menu_add_chat.dart';
 import 'package:networking/widgets/new_group.dart';
+import 'package:networking/widgets/notification_icon.dart';
 import 'package:networking/widgets/popup_menu_my_profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -118,7 +121,6 @@ class _MainScreenState extends State<MainScreen> {
         break;
       case 1:
         // APIsReCare.getAllMyRelationshipCare();
-
         // APIsUsRe.removeTable('reCares');
         // APIsRelationship.addListDefaut();
         // APIsUser.getAllUser();
@@ -231,7 +233,20 @@ class _MainScreenState extends State<MainScreen> {
                                     fontSize: 23.sp,
                                     fontWeight: FontWeight.bold),
                               ),
-                            if (currentIndex == 3) PopupMenuMyProfile(),
+                            if (currentIndex == 3)
+                              Row(
+                                children: [
+                                  BlocBuilder<NotificationListBloc,
+                                      NotificationListState>(
+                                    builder: (context, state) {
+                                      return NotificationIcon(
+                                        notifications: state.notifications,
+                                      );
+                                    },
+                                  ),
+                                  PopupMenuMyProfile(),
+                                ],
+                              ),
                           ],
                         ),
                         screens,
