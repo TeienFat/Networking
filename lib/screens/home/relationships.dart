@@ -26,13 +26,13 @@ class _RelationshipScreenState extends State<RelationshipScreen> {
   var _isSearching = false;
   List<UserRelationship> _usReSearch = [];
 
-  String? _getUser(List<Users> users, String userId) {
+  String _getUser(List<Users> users, String userId) {
     for (var user in users) {
       if (user.userId!.length == userId.length && user.userId! == userId) {
         return user.userName!.split(' ').last;
       }
     }
-    return null;
+    return '';
   }
 
   bool _checkInWeek(DateTime targetDate) {
@@ -46,6 +46,9 @@ class _RelationshipScreenState extends State<RelationshipScreen> {
   }
 
   DateTime _getLastDayOfSuccess(List<RelationshipCare> reCares, String usReId) {
+    if (reCares.isEmpty) {
+      return DateTime.now();
+    }
     reCares = reCares
         .where((element) => element.usReId == usReId && element.isFinish == 1)
         .toList();
@@ -176,7 +179,12 @@ class _RelationshipScreenState extends State<RelationshipScreen> {
                 return BlocBuilder<UsReListBloc, UsReListState>(
                   builder: (context, state) {
                     if (state is UsReListUploaded && state.usRes.isNotEmpty) {
-                      final usRes = state.usRes;
+                      var usRes = state.usRes;
+                      usRes = usRes
+                          .where(
+                            (element) => element.deleteAt == null,
+                          )
+                          .toList();
                       List<UserRelationship> usReSort = usRes;
                       usReSort.sort(
                         (a, b) {
@@ -184,9 +192,9 @@ class _RelationshipScreenState extends State<RelationshipScreen> {
                               _getUser(users, a.myRelationShipId!);
                           final userNameB =
                               _getUser(users, b.myRelationShipId!);
-                          return TiengViet.parse(userNameA!.toLowerCase())
+                          return TiengViet.parse(userNameA.toLowerCase())
                               .compareTo(
-                                  TiengViet.parse(userNameB!.toLowerCase()));
+                                  TiengViet.parse(userNameB.toLowerCase()));
                         },
                       );
                       switch (_currentListNum) {

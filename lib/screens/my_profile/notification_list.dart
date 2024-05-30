@@ -28,11 +28,11 @@ class NotificationList extends StatefulWidget {
 }
 
 class _NotificationListState extends State<NotificationList> {
-  bool _checkHasTodayEvent(List<Notifications> listNoti) {
+  String? _checkHasTodayEvent(List<Notifications> listNoti) {
     for (var noti in listNoti) {
-      if (isSameDay(noti.period, DateTime.now())) return true;
+      if (isSameDay(noti.period, DateTime.now())) return noti.notiId;
     }
-    return false;
+    return null;
   }
 
   String? _getNotiIdFirstBefore(List<Notifications> listNoti) {
@@ -79,27 +79,9 @@ class _NotificationListState extends State<NotificationList> {
             );
             if (state is NotificationListUploaded && notifications.isNotEmpty) {
               final beforeNotiId = _getNotiIdFirstBefore(notifications);
+              final todayNotificationId = _checkHasTodayEvent(notifications);
               return Column(
                 children: [
-                  if (_checkHasTodayEvent(notifications))
-                    Padding(
-                      padding: EdgeInsets.only(top: 10.sp, left: 5.sp),
-                      child: Row(children: [
-                        Icon(
-                          Icons.star,
-                          color: Colors.amber,
-                          size: 30.sp,
-                        ),
-                        SizedBox(
-                          width: 5.sp,
-                        ),
-                        Text(
-                          "Hôm nay",
-                          style: TextStyle(
-                              fontSize: 14.sp, fontWeight: FontWeight.bold),
-                        )
-                      ]),
-                    ),
                   Expanded(
                     child: ListView.builder(
                       padding: EdgeInsets.all(10.sp),
@@ -122,6 +104,29 @@ class _NotificationListState extends State<NotificationList> {
                                   ),
                                   Text(
                                     "Trước đó",
+                                    style: TextStyle(
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ]),
+                              ),
+                            if (todayNotificationId != null &&
+                                notifications[index].notiId ==
+                                    todayNotificationId)
+                              Padding(
+                                padding:
+                                    EdgeInsets.only(top: 10.sp, bottom: 5.sp),
+                                child: Row(children: [
+                                  Icon(
+                                    Icons.star,
+                                    color: Colors.amber,
+                                    size: 30.sp,
+                                  ),
+                                  SizedBox(
+                                    width: 5.sp,
+                                  ),
+                                  Text(
+                                    "Hôm nay",
                                     style: TextStyle(
                                         fontSize: 14.sp,
                                         fontWeight: FontWeight.bold),

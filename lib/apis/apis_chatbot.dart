@@ -74,7 +74,6 @@ class APIsChatBot {
     final myInfo = await APIsUser.getUserFromId(currentUserId);
     data += "Dưới đây là thông tin của tôi: " + getInfoFromUser(myInfo!);
     data += await getAllUsReInfo();
-    print(data);
     return data;
   }
 }

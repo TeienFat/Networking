@@ -9,9 +9,10 @@ import 'package:networking/bloc/reCare_list/re_care_list_bloc.dart';
 import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
 import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/main.dart';
+import 'package:networking/models/account_model.dart';
 import 'package:networking/models/secuquestions_model.dart';
 import 'package:networking/models/user_model.dart';
-import 'package:networking/screens/auth/forgot_password/forgot_password.dart';
+import 'package:networking/screens/auth/forgot_password/via_sequestion.dart';
 import 'package:uuid/uuid.dart';
 import 'package:networking/helpers/helpers.dart';
 
@@ -107,6 +108,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
         showSnackbar(context, "Đăng kí tài khoản thành công",
             Duration(seconds: 2), true);
+        context.read<UsReListBloc>().add(LoadUsReList());
         context.read<UsReListBloc>().add(LoadUsReList());
         context.read<UserListBloc>().add(LoadUserList());
         context.read<ReCareListBloc>().add(LoadReCareList());
@@ -212,15 +214,26 @@ class _AuthScreenState extends State<AuthScreen> {
                         Align(
                           alignment: Alignment.centerRight,
                           child: TextButton(
-                            onPressed: () {
-                              _formKey.currentState!.save();
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ForgotPassword(
-                                      loginName: _enteredLoginName),
-                                ),
-                              );
+                            onPressed: () async {
+                              Account? account =
+                                  await APIsAuth.getAccountFromLoginName(
+                                      _enteredLoginName);
+                              if (account != null) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ViaSeQuestion(account: account),
+                                  ),
+                                );
+                              } else {
+                                showSnackbar(
+                                  context,
+                                  'Vui lòng kiểm tra lại tên đăng nhập',
+                                  Duration(seconds: 2),
+                                  false,
+                                );
+                              }
                             },
                             child: Text(
                               'Quên mật khẩu?',

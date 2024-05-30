@@ -115,7 +115,7 @@ class _MainScreenState extends State<MainScreen> {
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => NewRelationship(),
         ));
-        APIsChatBot.getDataForChatBot();
+        // APIsChatBot.getDataForChatBot();
         // APIsUsRe.getAllMyRelationship();
 
         break;

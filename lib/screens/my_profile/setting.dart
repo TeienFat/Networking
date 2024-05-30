@@ -115,25 +115,6 @@ class _SettingScreenState extends State<SettingScreen> {
                 ),
               ),
               SizedBox(height: 10.sp),
-              TextButton(
-                style: ButtonStyle(
-                  padding: WidgetStatePropertyAll(
-                    EdgeInsets.all(0),
-                  ),
-                ),
-                onPressed: () {},
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Sao lưu dữ liệu",
-                      style: TextStyle(fontSize: 16.sp),
-                    ),
-                    Icon(FontAwesomeIcons.cloud),
-                  ],
-                ),
-              ),
-              SizedBox(height: 10.sp),
             ],
           ),
         ),

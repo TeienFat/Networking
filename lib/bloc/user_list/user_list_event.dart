@@ -49,6 +49,13 @@ class UpdateUserNotification extends UserListEvent {
   UpdateUserNotification({required this.userId, required this.notification});
 }
 
+class UpdateUserNumDayOfAutoDelete extends UserListEvent {
+  final String userId;
+  final int numDayOfAutoDelete;
+  UpdateUserNumDayOfAutoDelete(
+      {required this.userId, required this.numDayOfAutoDelete});
+}
+
 class UpdateUserIsShare extends UserListEvent {
   final String userId;
   final bool isShare;

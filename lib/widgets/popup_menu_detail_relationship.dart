@@ -1,9 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
-import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/helpers/helpers.dart';
 import 'package:networking/models/user_model.dart';
 import 'package:networking/models/user_relationship_model.dart';
@@ -47,7 +44,6 @@ class PopupMenuDetailRelationship extends StatelessWidget {
                     user: user, userRelationship: userRelationship),
               ),
             );
-
             break;
           default:
             showDialog(
@@ -74,16 +70,9 @@ class PopupMenuDetailRelationship extends StatelessWidget {
                     style: ButtonStyle(
                         backgroundColor: MaterialStatePropertyAll(Colors.red)),
                     onPressed: () {
-                      if (user.imageUrl! != '') {
-                        File(user.imageUrl!).delete();
-                      }
-
-                      context
-                          .read<UsReListBloc>()
-                          .add(DeleteUsRe(usReId: userRelationship.usReId!));
-                      context
-                          .read<UserListBloc>()
-                          .add(DeleteUser(userId: user.userId!));
+                      context.read<UsReListBloc>().add(RemoveUsRe(
+                          usReId: userRelationship.usReId!,
+                          deleteAt: DateTime.now()));
                       showSnackbar(
                         context,
                         "Đã xóa mối quan hệ",

@@ -304,6 +304,7 @@ class QRScan extends StatelessWidget {
                               createdAt: null,
                               updateAt: null,
                               deleteAt: null,
+                              numDayOfAutoDelete: 30,
                               isShare: false,
                               isOnline: false,
                               blockUsers: [],

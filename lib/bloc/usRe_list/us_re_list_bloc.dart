@@ -21,6 +21,7 @@ class UsReListBloc extends Bloc<UsReListEvent, UsReListState> {
     );
     on<AddUsRe>(_addUsRe);
     on<DeleteUsRe>(_deleteUsRe);
+    on<RemoveUsRe>(_removeUsRe);
     on<UpdateTimeOfCareUsRe>(_updateTimeOfCareUsRe);
     on<UpdateRemidNotification>(_updateRemidNotification);
     on<UpdateHowLongRemid>(_updateHowLongRemid);
@@ -66,7 +67,19 @@ class UsReListBloc extends Bloc<UsReListEvent, UsReListState> {
         break;
       }
     }
-    APIsUsRe.removeUsRe(event.usReId);
+    APIsUsRe.deleteUsRe(event.usReId);
+    emit(UsReListUploaded(usRes: state.usRes));
+  }
+
+  void _removeUsRe(RemoveUsRe event, Emitter<UsReListState> emit) {
+    for (int i = 0; i < state.usRes.length; i++) {
+      if (event.usReId == state.usRes[i].usReId) {
+        LocalNotifications.cancel(state.usRes[i].notification!['id']);
+        LocalNotifications.cancel(state.usRes[i].notification!['id'] + 1);
+        state.usRes[i].deleteAt = event.deleteAt;
+      }
+    }
+    APIsUsRe.removeUsRe(event.usReId, event.deleteAt ?? null);
     emit(UsReListUploaded(usRes: state.usRes));
   }
 
