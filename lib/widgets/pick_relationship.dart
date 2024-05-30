@@ -28,7 +28,12 @@ class _PickRelationshipState extends State<PickRelationship> {
     return BlocBuilder<UsReListBloc, UsReListState>(
       builder: (context, state) {
         if (state is UsReListUploaded && state.usRes.isNotEmpty) {
-          final usRes = state.usRes;
+          var usRes = state.usRes;
+          usRes = usRes
+              .where(
+                (element) => element.deleteAt == null,
+              )
+              .toList();
           return Container(
             decoration: BoxDecoration(
                 color: Colors.grey[100],

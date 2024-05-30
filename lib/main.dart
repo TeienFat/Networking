@@ -132,21 +132,8 @@ class MyApp extends StatelessWidget {
                       ),
                     ),
               ),
-
               home: const SplashScreen(),
               routes: <String, WidgetBuilder>{
-                // '/Auth': (BuildContext context) => new StreamBuilder(
-                //       stream: FirebaseAuth.instance.authStateChanges(),
-                //       builder: (context, snapshot) {
-                //         // if (snapshot.connectionState == ConnectionState.waiting) {
-                //         //   return const Authenticating();
-                //         // }
-                //         if (snapshot.hasData) {
-                //           return const VerifyEmail();
-                //         }
-                //         return const AuthScreen();
-                //       },
-                //     ),
                 '/Auth': (BuildContext context) => new AuthScreen(),
                 '/Welcome': (BuildContext context) => new WelcomeScreen(),
                 '/Main': (BuildContext context) => new MainScreen(),

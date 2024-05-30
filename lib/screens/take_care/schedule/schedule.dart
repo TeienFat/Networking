@@ -176,11 +176,11 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
               ),
             ],
           ),
-          body: Padding(
-            padding: EdgeInsets.all(10.sp),
-            child: Column(
-              children: [
-                Container(
+          body: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.sp),
+                child: Container(
                   padding: EdgeInsets.only(bottom: 5.sp, right: 5.sp),
                   decoration: BoxDecoration(
                       color: Colors.grey[100],
@@ -375,73 +375,71 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                     },
                   ),
                 ),
-                SizedBox(height: 10.sp),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: _selectedEvents.length,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        children: [
-                          if (isSameDay(_selectedEvents[index].startTime!,
-                              DateTime.now()))
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 5.sp),
-                              child: Row(children: [
-                                Icon(
-                                  Icons.star,
-                                  color: Colors.amber,
-                                  size: 30.sp,
-                                ),
-                                SizedBox(
-                                  width: 5.sp,
-                                ),
-                                Text(
-                                  "Hôm nay",
-                                  style: TextStyle(
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.bold),
-                                )
-                              ]),
-                            ),
-                          BlocBuilder<UsReListBloc, UsReListState>(
-                            builder: (context, state) {
-                              if (state is UsReListUploaded &&
-                                  state.usRes.isNotEmpty) {
-                                final usRes = state.usRes;
-                                for (var us in usRes) {
-                                  if (us.usReId!.length ==
-                                          _selectedEvents[index]
-                                              .usReId!
-                                              .length &&
-                                      us.usReId! ==
-                                          _selectedEvents[index].usReId!) {
-                                    return ReCareCard.schedule(
-                                      reCare: _selectedEvents[index],
-                                      userRelationship: us,
-                                      listType: 0,
-                                      load: _reload,
-                                    );
-                                  }
+              ),
+              SizedBox(height: 10.sp),
+              Expanded(
+                child: ListView.builder(
+                  padding: EdgeInsets.all(10.sp),
+                  itemCount: _selectedEvents.length,
+                  itemBuilder: (context, index) {
+                    return Column(
+                      children: [
+                        if (isSameDay(
+                            _selectedEvents[index].startTime!, DateTime.now()))
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 5.sp),
+                            child: Row(children: [
+                              Icon(
+                                Icons.star,
+                                color: Colors.amber,
+                                size: 30.sp,
+                              ),
+                              SizedBox(
+                                width: 5.sp,
+                              ),
+                              Text(
+                                "Hôm nay",
+                                style: TextStyle(
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.bold),
+                              )
+                            ]),
+                          ),
+                        BlocBuilder<UsReListBloc, UsReListState>(
+                          builder: (context, state) {
+                            if (state is UsReListUploaded &&
+                                state.usRes.isNotEmpty) {
+                              final usRes = state.usRes;
+                              for (var us in usRes) {
+                                if (us.usReId!.length ==
+                                        _selectedEvents[index].usReId!.length &&
+                                    us.usReId! ==
+                                        _selectedEvents[index].usReId!) {
+                                  return ReCareCard.schedule(
+                                    reCare: _selectedEvents[index],
+                                    userRelationship: us,
+                                    listType: 0,
+                                    load: _reload,
+                                  );
                                 }
                               }
-                              return Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            },
-                          ),
-                          SizedBox(
-                            height:
-                                _selectedEvents[index] == _selectedEvents.last
-                                    ? 70.sp
-                                    : 10.sp,
-                          ),
-                        ],
-                      );
-                    },
-                  ),
+                            }
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          },
+                        ),
+                        SizedBox(
+                          height: _selectedEvents[index] == _selectedEvents.last
+                              ? 70.sp
+                              : 10.sp,
+                        ),
+                      ],
+                    );
+                  },
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },

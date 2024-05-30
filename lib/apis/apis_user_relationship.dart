@@ -68,6 +68,24 @@ class APIsUsRe {
     return null;
   }
 
+  static Future<void> removeUsRe(String usReId, DateTime? deleteAt) async {
+    final SharedPreferences _prefs = await prefs;
+    List<String> listUsReRead = await _prefs.getStringList('usRes') ?? [];
+    List<UserRelationship> listUsRe = listUsReRead
+        .map((e) => UserRelationship.fromMap(jsonDecode(e)))
+        .toList();
+
+    for (int i = 0; i < listUsRe.length; i++) {
+      if (listUsRe[i].usReId!.length == usReId.length &&
+          listUsRe[i].usReId! == usReId) {
+        listUsRe[i].deleteAt = deleteAt;
+        listUsRe[i].updateAt = DateTime.now();
+      }
+    }
+    listUsReRead = listUsRe.map((e) => jsonEncode(e.toMap())).toList();
+    await _prefs.setStringList('usRes', listUsReRead);
+  }
+
   static Future<void> updateTimeOfCareUsRe(
       String usReId, int timeOfCare) async {
     final SharedPreferences _prefs = await prefs;
@@ -277,7 +295,7 @@ class APIsUsRe {
     }
   }
 
-  static Future<void> removeUsRe(String usReId) async {
+  static Future<void> deleteUsRe(String usReId) async {
     final SharedPreferences _prefs = await prefs;
     List<String> listUsReRead = await _prefs.getStringList('usRes') ?? [];
     for (var usRe in listUsReRead) {

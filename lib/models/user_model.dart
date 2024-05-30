@@ -18,6 +18,7 @@ class Users {
   DateTime? createdAt;
   DateTime? updateAt;
   DateTime? deleteAt;
+  int? numDayOfAutoDelete;
   bool? isShare;
   bool? isOnline;
   List<String>? blockUsers;
@@ -41,6 +42,7 @@ class Users {
     required this.createdAt,
     required this.updateAt,
     required this.deleteAt,
+    required this.numDayOfAutoDelete,
     required this.isShare,
     required this.isOnline,
     required this.blockUsers,
@@ -66,6 +68,7 @@ class Users {
         map['createdAt'] != null ? DateTime.parse(map['createdAt']) : null;
     updateAt = map['updateAt'] != null ? DateTime.parse(map['updateAt']) : null;
     deleteAt = map['deleteAt'] != null ? DateTime.parse(map['deleteAt']) : null;
+    numDayOfAutoDelete = map['numDayOfAutoDelete'];
     isShare = map['isShare'];
     isOnline = map['isOnline'];
     blockUsers = List<String>.from(map['blockUsers']);
@@ -90,6 +93,7 @@ class Users {
       "createdAt": createdAt != null ? createdAt!.toIso8601String() : null,
       "updateAt": updateAt != null ? updateAt!.toIso8601String() : null,
       "deleteAt": deleteAt != null ? deleteAt!.toIso8601String() : null,
+      'numDayOfAutoDelete': numDayOfAutoDelete,
       "isOnline": isOnline,
       "isShare": isShare,
       "blockUsers": blockUsers,

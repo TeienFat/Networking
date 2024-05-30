@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:networking/bloc/notification_list/notification_list_bloc.dart';
+import 'package:networking/bloc/reCare_list/re_care_list_bloc.dart';
 import 'package:networking/bloc/usRe_list/us_re_list_bloc.dart';
 import 'package:networking/bloc/user_list/user_list_bloc.dart';
 import 'package:networking/helpers/helpers.dart';
@@ -35,6 +37,12 @@ class RelationShipCard extends StatefulWidget {
       required this.newUser,
       required this.newRelationships})
       : this.type = 2;
+  const RelationShipCard.trash(
+      {super.key, required this.user, required this.userRelationship})
+      : newUser = null,
+        newRelationships = null,
+        this.type = 3;
+
   final UserRelationship userRelationship;
   final Users user;
   final int type;
@@ -49,102 +57,195 @@ class _RelationShipCardState extends State<RelationShipCard> {
   @override
   Widget build(BuildContext context) {
     return Slidable(
-      enabled: widget.type == 0 ? true : false,
+      enabled: widget.type == 0 || widget.type == 3 ? true : false,
       endActionPane: ActionPane(motion: DrawerMotion(), children: [
-        SlidableAction(
-          onPressed: (context) {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => ShareRelationship(
-                    user: widget.user,
-                    userRelationship: widget.userRelationship),
-              ),
-            );
-          },
-          backgroundColor: Color(0xFF0392CF),
-          foregroundColor: Colors.white,
-          icon: FontAwesomeIcons.shareAlt,
-        ),
-        SlidableAction(
-          onPressed: (context) {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => EditRelationship(
-                    user: widget.user,
-                    userRelationship: widget.userRelationship),
-              ),
-            );
-          },
-          backgroundColor: Color.fromARGB(255, 238, 184, 6),
-          foregroundColor: Colors.white,
-          icon: FontAwesomeIcons.edit,
-        ),
-        SlidableAction(
-          onPressed: (context) {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: Text(
-                  "Xóa mối quan hệ",
-                  textAlign: TextAlign.center,
+        if (widget.type != 3)
+          SlidableAction(
+            onPressed: (context) {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => ShareRelationship(
+                      user: widget.user,
+                      userRelationship: widget.userRelationship),
                 ),
-                content: Text(
-                  "Bạn chắc chắn muốn xóa mối quan hệ này?",
-                  textAlign: TextAlign.center,
+              );
+            },
+            backgroundColor: Color(0xFF0392CF),
+            foregroundColor: Colors.white,
+            icon: FontAwesomeIcons.shareAlt,
+          ),
+        if (widget.type != 3)
+          SlidableAction(
+            onPressed: (context) {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => EditRelationship(
+                      user: widget.user,
+                      userRelationship: widget.userRelationship),
                 ),
-                actions: [
-                  ElevatedButton(
-                    style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.grey)),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text("Hủy"),
+              );
+            },
+            backgroundColor: Color.fromARGB(255, 238, 184, 6),
+            foregroundColor: Colors.white,
+            icon: FontAwesomeIcons.edit,
+          ),
+        if (widget.type != 3)
+          SlidableAction(
+            onPressed: (context) {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text(
+                    "Xóa mối quan hệ",
+                    textAlign: TextAlign.center,
                   ),
-                  ElevatedButton(
-                    style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.red)),
-                    onPressed: () {
-                      if (widget.user.imageUrl! != '') {
-                        File(widget.user.imageUrl!).delete();
-                      }
+                  content: Text(
+                    "Bạn chắc chắn muốn xóa mối quan hệ này?",
+                    textAlign: TextAlign.center,
+                  ),
+                  actions: [
+                    ElevatedButton(
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStatePropertyAll(Colors.grey)),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text("Hủy"),
+                    ),
+                    ElevatedButton(
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStatePropertyAll(Colors.red)),
+                      onPressed: () {
+                        context.read<UsReListBloc>().add(RemoveUsRe(
+                            usReId: widget.userRelationship.usReId!,
+                            deleteAt: DateTime.now()));
+                        showSnackbar(
+                          context,
+                          "Đã xóa mối quan hệ",
+                          Duration(seconds: 3),
+                          true,
+                        );
+                        Navigator.of(context)..pop();
+                      },
+                      child: Text("Xóa"),
+                    ),
+                  ],
+                ),
+              );
+            },
+            backgroundColor: Color.fromARGB(255, 219, 38, 6),
+            foregroundColor: Colors.white,
+            icon: FontAwesomeIcons.trash,
+            borderRadius: BorderRadius.only(
+                topRight: Radius.circular(10.sp),
+                bottomRight: Radius.circular(5.sp)),
+          ),
+        if (widget.type == 3)
+          SlidableAction(
+            onPressed: (context) {
+              context.read<UsReListBloc>().add(RemoveUsRe(
+                  usReId: widget.userRelationship.usReId!, deleteAt: null));
+            },
+            backgroundColor: Colors.green,
+            foregroundColor: Colors.white,
+            icon: FontAwesomeIcons.trashRestore,
+          ),
+        if (widget.type == 3)
+          BlocBuilder<ReCareListBloc, ReCareListState>(
+            builder: (context, state) {
+              final reCares = state.reCares;
+              return SlidableAction(
+                onPressed: (context) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text(
+                        "Xóa mối quan hệ",
+                        textAlign: TextAlign.center,
+                      ),
+                      content: Text(
+                        "Bạn chắc chắn muốn xóa vĩnh viễn mối quan hệ này?",
+                        textAlign: TextAlign.center,
+                      ),
+                      actions: [
+                        ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStatePropertyAll(Colors.grey)),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("Hủy"),
+                        ),
+                        ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStatePropertyAll(Colors.red)),
+                          onPressed: () {
+                            if (widget.user.imageUrl! != '') {
+                              File(widget.user.imageUrl!).delete();
+                            }
+                            for (var reca in reCares) {
+                              print(reca.reCareId);
+                              if (reca.usReId!.length ==
+                                      widget.userRelationship.usReId!.length &&
+                                  reca.usReId ==
+                                      widget.userRelationship.usReId) {
+                                if (reca.contentImage!.isNotEmpty) {
+                                  for (var image in reca.contentImage!) {
+                                    File(image).delete();
+                                  }
+                                }
+                                context.read<ReCareListBloc>().add(DeleteReCare(
+                                    reCareId: reca.reCareId!,
+                                    usRe: widget.userRelationship));
+                                context.read<NotificationListBloc>().add(
+                                    DeleteNotification(notiId: reca.reCareId!));
+                              }
+                            }
+                            context.read<UsReListBloc>().add(DeleteUsRe(
+                                usReId: widget.userRelationship.usReId!));
+                            context
+                                .read<UserListBloc>()
+                                .add(DeleteUser(userId: widget.user.userId!));
 
-                      context.read<UsReListBloc>().add(
-                          DeleteUsRe(usReId: widget.userRelationship.usReId!));
-                      context
-                          .read<UserListBloc>()
-                          .add(DeleteUser(userId: widget.user.userId!));
-                      showSnackbar(
-                        context,
-                        "Đã xóa mối quan hệ",
-                        Duration(seconds: 3),
-                        true,
-                      );
-                      Navigator.of(context)..pop();
-                    },
-                    child: Text("Xóa"),
-                  ),
-                ],
-              ),
-            );
-          },
-          backgroundColor: Color.fromARGB(255, 219, 38, 6),
-          foregroundColor: Colors.white,
-          icon: FontAwesomeIcons.trash,
-          borderRadius: BorderRadius.only(
-              topRight: Radius.circular(10.sp),
-              bottomRight: Radius.circular(5.sp)),
-        ),
+                            showSnackbar(
+                              context,
+                              "Đã xóa mối quan hệ",
+                              Duration(seconds: 3),
+                              true,
+                            );
+                            Navigator.of(context)..pop();
+                          },
+                          child: Text("Xóa"),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                backgroundColor: Color.fromARGB(255, 219, 38, 6),
+                foregroundColor: Colors.white,
+                icon: FontAwesomeIcons.trash,
+                borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(10.sp),
+                    bottomRight: Radius.circular(5.sp)),
+              );
+            },
+          ),
       ]),
       child: InkWell(
         onTap: () {
-          if (widget.type == 0) {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => DetailRelationship(
-                  user: widget.user, userRelationship: widget.userRelationship),
-            ));
-          } else {
-            if (widget.type == 1) {
+          switch (widget.type) {
+            case 0:
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => DetailRelationship(
+                    user: widget.user,
+                    userRelationship: widget.userRelationship),
+              ));
+              break;
+            case 1:
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => EditRelationship.update(
                     user: widget.user,
@@ -152,7 +253,8 @@ class _RelationShipCardState extends State<RelationShipCard> {
                     newUser: widget.newUser,
                     newRelationships: widget.newRelationships),
               ));
-            } else {
+              break;
+            case 2:
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => EditRelationship.updateFromPhonebook(
                     user: widget.user,
@@ -160,7 +262,8 @@ class _RelationShipCardState extends State<RelationShipCard> {
                     newUser: widget.newUser,
                     newRelationships: widget.newRelationships),
               ));
-            }
+              break;
+            default:
           }
         },
         child: Container(
@@ -217,7 +320,7 @@ class _RelationShipCardState extends State<RelationShipCard> {
                 ],
               ),
               Spacer(),
-              widget.type == 0
+              widget.type == 0 || widget.type == 3
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
@@ -239,8 +342,9 @@ class _RelationShipCardState extends State<RelationShipCard> {
                         SizedBox(
                           height: 10.sp,
                         ),
-                        Text(calculateTimeRange(
-                            widget.userRelationship.createdAt!)),
+                        Text(calculateTimeRange(widget.type != 3
+                            ? widget.userRelationship.createdAt!
+                            : widget.userRelationship.deleteAt!))
                       ],
                     )
                   : SizedBox(),

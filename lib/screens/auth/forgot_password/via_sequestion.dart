@@ -46,65 +46,72 @@ class _ViaSeQuestionState extends State<ViaSeQuestion> {
     return Scaffold(
       appBar: AppBar(),
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.only(
-              top: 10.sp, bottom: 10.sp, left: 10.sp, right: 10.sp),
-          child: Center(
-            child: Column(
-              children: [
-                Text(
-                  "Hãy điền vào câu trả lời của bạn",
-                  style: TextStyle(color: Colors.black54, fontSize: 15.sp),
-                ),
-                SizedBox(
-                  height: 10.sp,
-                ),
-                Text(
-                  widget.account.question!,
-                  style:
-                      TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(
-                  height: 10.sp,
-                ),
-                Form(
-                  key: _formKey,
-                  child: TextFormField(
-                    style: TextStyle(fontSize: 16.sp),
-                    decoration: InputDecoration(
-                      hintText: "Câu trả lời",
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(
+                top: 10.sp, bottom: 10.sp, left: 10.sp, right: 10.sp),
+            child: Center(
+              child: Column(
+                children: [
+                  Center(
+                    child: Image.asset(
+                      "assets/images/forgot.png",
                     ),
-                    enableSuggestions: false,
-                    validator: (value) {
-                      if (value == null || value.trim().length < 3) {
-                        return "Vui lòng nhập vào ít nhất 3 kí tự.";
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      _enteredAnswer = value!.trim();
-                    },
                   ),
-                ),
-                SizedBox(
-                  height: 10.sp,
-                ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      _formKey.currentState!.save();
-                      _checkSeAnswer(context);
-                    },
-                    child: Text(
-                      "Xác nhận trả lời",
-                      style: TextStyle(
-                        fontSize: 16.sp,
+                  Text(
+                    "Hãy điền vào câu trả lời của bạn",
+                    style: TextStyle(color: Colors.black54, fontSize: 15.sp),
+                  ),
+                  SizedBox(
+                    height: 10.sp,
+                  ),
+                  Text(
+                    widget.account.question!,
+                    style:
+                        TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(
+                    height: 10.sp,
+                  ),
+                  Form(
+                    key: _formKey,
+                    child: TextFormField(
+                      style: TextStyle(fontSize: 16.sp),
+                      decoration: InputDecoration(
+                        hintText: "Câu trả lời",
+                      ),
+                      enableSuggestions: false,
+                      validator: (value) {
+                        if (value == null || value.trim().length < 3) {
+                          return "Vui lòng nhập vào ít nhất 3 kí tự.";
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        _enteredAnswer = value!.trim();
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10.sp,
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _formKey.currentState!.save();
+                        _checkSeAnswer(context);
+                      },
+                      child: Text(
+                        "Xác nhận trả lời",
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

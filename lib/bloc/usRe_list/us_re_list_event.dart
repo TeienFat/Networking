@@ -28,6 +28,12 @@ class DeleteUsRe extends UsReListEvent {
   DeleteUsRe({required this.usReId});
 }
 
+class RemoveUsRe extends UsReListEvent {
+  final String usReId;
+  final DateTime? deleteAt;
+  RemoveUsRe({required this.usReId, required this.deleteAt});
+}
+
 class UpdateTimeOfCareUsRe extends UsReListEvent {
   final String usReId;
   final int timeOfCare;
