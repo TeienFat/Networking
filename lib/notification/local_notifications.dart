@@ -6,6 +6,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:networking/apis/apis_ReCare.dart';
 import 'package:networking/apis/apis_user.dart';
+import 'package:networking/main.dart';
 import 'package:networking/models/relationship_care_model.dart';
 import 'package:networking/models/user_model.dart';
 import 'package:networking/models/user_relationship_model.dart';
@@ -148,7 +149,9 @@ class LocalNotifications {
         123456,
         title,
         body,
-        RepeatInterval.daily,
+        currentUserId == '44f5bf86-81c1-4cc5-970d-dc4b83c872d9'
+            ? RepeatInterval.everyMinute
+            : RepeatInterval.daily,
         await _notificationDetailsWithoutIconPath(body, contentBody),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         payload: payload);

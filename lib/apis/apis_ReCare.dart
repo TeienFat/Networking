@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:networking/apis/apis_auth.dart';
 import 'package:networking/apis/apis_user.dart';
 import 'package:networking/apis/apis_user_relationship.dart';
+import 'package:networking/main.dart';
 import 'package:networking/models/relationship_care_model.dart';
 import 'package:networking/models/user_model.dart';
 import 'package:networking/models/user_relationship_model.dart';
@@ -297,12 +298,19 @@ class APIsReCare {
       ];
       if (isMe!.notification!) {
         LocalNotifications.showScheduleNotification(
-            dateTime: DateTime.now().add(Duration(seconds: 10)),
+            dateTime: currentUserId != '44f5bf86-81c1-4cc5-970d-dc4b83c872d9'
+                ? long
+                : DateTime.now().add(Duration(seconds: 10)),
             id: usRe.notification!['id'],
             title: "Đã lâu rồi!",
             body: "\u{1F557} Đã $longLable bạn chưa chăm sóc cho ${userName} ",
             iconPath: imageUrl!,
-            contentBody: ["Thiết lập chăm sóc ngay nào", long.toString()],
+            contentBody: [
+              "Thiết lập chăm sóc ngay nào",
+              currentUserId == '44f5bf86-81c1-4cc5-970d-dc4b83c872d9'
+                  ? long.toString()
+                  : ''
+            ],
             payload: jsonEncode(payload));
       }
     }

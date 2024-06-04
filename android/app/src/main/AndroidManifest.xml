@@ -23,6 +23,7 @@
         </receiver>
         <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ActionBroadcastReceiver" />
         <activity
+            android:screenOrientation="portrait"
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
@@ -34,7 +35,6 @@
             android:showWhenLocked="true"
             android:turnScreenOn="true"
             >
-            
             
             <!-- Specifies an Android theme to apply to this Activity as soon as
                  the Android process has started. This theme is visible to the user

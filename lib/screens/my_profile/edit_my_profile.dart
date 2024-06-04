@@ -254,7 +254,7 @@ class _EditMyProfileState extends State<EditMyProfile> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Chỉnh sửa mối quan hệ"),
+        title: Text("Sửa thông tin cá nhân"),
         actions: [
           TextButton(
             onPressed: () {

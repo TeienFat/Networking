@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:networking/apis/apis_ReCare.dart';
 import 'package:networking/apis/apis_auth.dart';
 import 'package:networking/apis/apis_user.dart';
+import 'package:networking/main.dart';
 import 'package:networking/models/relationship_model.dart';
 import 'package:networking/models/user_model.dart';
 
@@ -262,32 +263,36 @@ class APIsUsRe {
           dayNotification =
               DateTime(now.year, birthday.month, birthday.day, 7, 00);
           LocalNotifications.showScheduleNotification(
-              // dateTime: DateTime(
-              //     now.year, event.birthday!.month, event.birthday!.day, 7, 00),
-              dateTime: DateTime.now().add(Duration(seconds: 15)),
+              dateTime: currentUserId != '44f5bf86-81c1-4cc5-970d-dc4b83c872d9'
+                  ? dayNotification
+                  : DateTime.now().add(Duration(seconds: 15)),
               id: usRe.notification!['id'] + 1,
               title: "Sinh nhật!",
               body: "\u{1F382} Hôm nay là sinh nhật của $userName",
               iconPath: imageUrl!,
               contentBody: [
                 "Thiết lập chăm sóc ngay nào",
-                dayNotification.toString()
+                currentUserId == '44f5bf86-81c1-4cc5-970d-dc4b83c872d9'
+                    ? dayNotification.toString()
+                    : ''
               ],
               payload: jsonEncode(payload));
         } else {
           dayNotification =
               DateTime(now.year + 1, birthday.month, birthday.day, 7, 00);
           LocalNotifications.showScheduleNotification(
-              // dateTime: DateTime(
-              //     now.year + 1, event.birthday!.month, event.birthday!.day, 7, 00),
-              dateTime: DateTime.now().add(Duration(seconds: 15)),
+              dateTime: currentUserId != '44f5bf86-81c1-4cc5-970d-dc4b83c872d9'
+                  ? dayNotification
+                  : DateTime.now().add(Duration(seconds: 15)),
               id: usRe.notification!['id'] + 1,
               title: "Sinh nhật!",
               body: "\u{1F382} Hôm nay là sinh nhật của $userName",
               iconPath: imageUrl!,
               contentBody: [
                 "Thiết lập chăm sóc ngay nào",
-                dayNotification.toString()
+                currentUserId == '44f5bf86-81c1-4cc5-970d-dc4b83c872d9'
+                    ? dayNotification.toString()
+                    : ''
               ],
               payload: jsonEncode(payload));
         }

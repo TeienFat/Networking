@@ -157,10 +157,16 @@ class _TrashScreenState extends State<TrashScreen> {
                       .toList();
                   final my = _getUser(users, currentUserId);
                   _enteredNumDay = my!.numDayOfAutoDelete!;
+
                   if (state is UsReListUploaded && usRes.isNotEmpty) {
                     for (var us in usRes) {
-                      if (DateTime.now().difference(us.deleteAt!).inDays >=
-                          my.numDayOfAutoDelete!) {
+                      final timeCheck = currentUserId ==
+                              '44f5bf86-81c1-4cc5-970d-dc4b83c872d9'
+                          ? DateTime.now().difference(us.deleteAt!).inMinutes >=
+                              1
+                          : DateTime.now().difference(us.deleteAt!).inDays >=
+                              my.numDayOfAutoDelete!;
+                      if (timeCheck) {
                         final u = _getUser(users, us.myRelationShipId!);
 
                         if (u!.imageUrl! != '') {

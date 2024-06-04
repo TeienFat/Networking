@@ -11,6 +11,7 @@ import 'package:networking/apis/apis_user.dart';
 import 'package:networking/apis/apis_user_relationship.dart';
 import 'package:networking/bloc/notification_list/notification_list_bloc.dart';
 import 'package:networking/bloc/user_list/user_list_bloc.dart';
+import 'package:networking/main.dart';
 import 'package:networking/models/user_model.dart';
 import 'package:networking/screens/chat/contacs.dart';
 import 'package:networking/screens/chat/share_my_profile.dart';
@@ -173,7 +174,7 @@ class _MainScreenState extends State<MainScreen> {
       case 3:
         final meId = await APIsAuth.getCurrentUserId();
         Users? user = await APIsUser.getUserFromId(meId!);
-
+        print(currentUserId);
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => EditMyProfile(user: user!),
