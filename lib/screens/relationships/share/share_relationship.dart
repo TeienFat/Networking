@@ -224,7 +224,10 @@ class _ShareRelationshipState extends State<ShareRelationship> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Chia sẻ mối quan hệ"),
+        title: Text(
+            widget.shareToCloud == false && widget.userRelationship == null
+                ? "Share thông tin cá nhân"
+                : "Chia sẻ mối quan hệ"),
         actions: [
           TextButton(
             onPressed: _shareRelationship,
