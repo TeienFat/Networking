@@ -34,7 +34,7 @@ class _AuthScreenState extends State<AuthScreen> {
   var _enteredUserName;
   var _enteredAnswer;
   var _isAuthenticating = false;
-  var _heightLogin = 220.sp;
+  var _heightLogin = 215.sp;
   var _heightRegister = 155.sp;
   String _enteredQuestion = secuQuestions[0].content!;
 

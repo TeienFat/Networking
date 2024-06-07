@@ -41,14 +41,19 @@ class _SplashScreenState extends State<SplashScreen>
     if (!firstTime) {
       // not first time
       final myId = await APIsAuth.getCurrentUserId();
-      Users? isMe = await APIsUser.getUserFromId(myId!);
-      if (isMe!.notification!) {
-        LocalNotifications.showDailyNotifications(
-            title: "Chăm sóc hôm nay!",
-            body: "\u{1F4C6} Chăm sóc các mục chăm sóc hôm nay nào!",
-            contentBody: [],
-            payload: "Today");
+      if (myId != null) {
+        Users? isMe = await APIsUser.getUserFromId(myId);
+        if (isMe != null) {
+          if (isMe.notification!) {
+            LocalNotifications.showDailyNotifications(
+                title: "Chăm sóc hôm nay!",
+                body: "\u{1F4C6} Chăm sóc các mục chăm sóc hôm nay nào!",
+                contentBody: [],
+                payload: "Today");
+          }
+        }
       }
+
       return Timer(_duration, goToNextScreen(false));
     } else {
       // first time

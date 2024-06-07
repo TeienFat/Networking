@@ -305,7 +305,7 @@ class _RelationShipCardState extends State<RelationShipCard> {
                   Row(
                     children: getRowRelationship(
                         widget.userRelationship.relationships!,
-                        2,
+                        1,
                         12.sp,
                         12.sp),
                   ),
