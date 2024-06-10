@@ -34,10 +34,10 @@ class _MessageChatBotBubbleState extends State<MessageChatBotBubble> {
           ),
         Container(
           margin:
-              widget.isMe ? null : const EdgeInsets.symmetric(horizontal: 30),
+              widget.isMe ? null : const EdgeInsets.symmetric(horizontal: 45),
           child: Row(
             mainAxisAlignment:
-                widget.isMe ? MainAxisAlignment.end : MainAxisAlignment.end,
+                widget.isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
             children: [
               Column(
                 crossAxisAlignment: widget.isMe
@@ -81,7 +81,7 @@ class _MessageChatBotBubbleState extends State<MessageChatBotBubble> {
                             ),
                           )
                         : null,
-                    constraints: const BoxConstraints(maxWidth: 295),
+                    constraints: const BoxConstraints(maxWidth: 275),
                     padding: widget.message.type! == TypeSend.text
                         ? const EdgeInsets.symmetric(
                             vertical: 10,
