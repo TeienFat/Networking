@@ -247,7 +247,7 @@ class _ChangeAddressState extends State<ChangeAddress> {
                           ),
                         ),
                         Container(
-                          width: ScreenUtil().screenWidth / 2.5,
+                          width: ScreenUtil().screenWidth / 2.4,
                           child: DropdownButtonFormField<int>(
                             value: _enteredAddressType,
                             decoration:

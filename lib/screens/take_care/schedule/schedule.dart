@@ -258,7 +258,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                 ' ' +
                                 day.year.toString(),
                             style: TextStyle(
-                                fontSize: 14.sp, fontWeight: FontWeight.bold),
+                                fontSize: 13.sp, fontWeight: FontWeight.bold),
                           ),
                           IconButton(
                             onPressed: () {

@@ -343,7 +343,7 @@ class _MessageBubbleState extends State<MessageBubble>
                                             )
                                           : null,
                                       constraints:
-                                          const BoxConstraints(maxWidth: 295),
+                                          const BoxConstraints(maxWidth: 275),
                                       padding:
                                           widget.message.type! == TypeSend.text
                                               ? const EdgeInsets.symmetric(

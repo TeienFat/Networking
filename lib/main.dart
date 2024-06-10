@@ -34,6 +34,7 @@ void main() async {
   Gemini.init(
     apiKey: GEMINI_API_KEY,
   );
+  print(currentUserId);
   runApp(const MyApp());
 }
 

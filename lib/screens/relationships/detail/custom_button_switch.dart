@@ -230,10 +230,10 @@ class MySliverButtonSwicth extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => page ? 90.sp : 225.sp;
+  double get maxExtent => page ? 114.sp : 225.sp;
 
   @override
-  double get minExtent => page ? 90.sp : 225.sp;
+  double get minExtent => page ? 114.sp : 225.sp;
 
   @override
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => true;

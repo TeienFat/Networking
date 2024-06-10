@@ -49,6 +49,7 @@ class QRScan extends StatelessWidget {
                 context: context,
                 builder: (context) {
                   return AlertDialog(
+                    actionsPadding: EdgeInsets.all(5.sp),
                     title: Text(
                       "Mối quan hệ mới từ mã QR",
                       style: TextStyle(
@@ -245,7 +246,7 @@ class QRScan extends StatelessWidget {
                             : SizedBox(),
                       ],
                     ),
-                    actionsAlignment: MainAxisAlignment.spaceAround,
+                    actionsAlignment: MainAxisAlignment.spaceBetween,
                     actions: [
                       ElevatedButton(
                         style: ButtonStyle(

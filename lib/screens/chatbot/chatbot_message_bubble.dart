@@ -81,7 +81,7 @@ class _MessageChatBotBubbleState extends State<MessageChatBotBubble> {
                             ),
                           )
                         : null,
-                    constraints: const BoxConstraints(maxWidth: 295),
+                    constraints: const BoxConstraints(maxWidth: 275),
                     padding: widget.message.type! == TypeSend.text
                         ? const EdgeInsets.symmetric(
                             vertical: 10,
